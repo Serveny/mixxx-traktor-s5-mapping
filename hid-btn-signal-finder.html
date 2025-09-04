@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8" />
+  <title>HID Signal Finder</title>
+  <style>
+    body {
+      font-family: system-ui, Arial;
+      padding: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 240px;
+      font-family: monospace;
+    }
+
+    button {
+      margin-top: 8px;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <label for="keydown">Keydown output</label>
+  <textarea id="keydown" placeholder="add keydown output"></textarea>
+  <label for="keyup">Keyup output</label>
+  <textarea id="keyup" placeholder="add keyup output"></textarea>
+  <div>
+    <label for="byteIndex">Zu suchendes Byte-Index (0-basiert) — optional:</label>
+    <input id="byteIndex" type="number" min="0" placeholder="z. B. 9" value="9" />
+  </div>
+  <button id="parse">Parse</button>
+
+  <table>
+    <tr>
+      <th>Index</th>
+      <th>Keydown</th>
+      <th>Keyup</th>
+    </tr>
+    <tbody id="outputTable"></tbody>
+  </table>
+  <div>
+    <label for="inByte">InByte</label>
+    <input type="number" id="inByte" style="font-size: 30px;" />
+    <label for="inBit">InBit</label>
+    <input type="number" id="inBit" style="font-size: 30px;" />
+  </div>
+
+  <script>
+    function toHexArr(inputStr) {
+      return inputStr.trim().split(/[\s\n]+/)
+    }
+
+    function diffArrays(a, b) {
+      const diffs = []
+      for (let i = 0; i < Math.min(a.length, b.length); i++) {
+        if (a[i] !== b[i]) diffs.push({
+          idx: i, valA: a[i], valB: b[i]
+        })
+      }
+      return diffs;
+    }
+
+    function hex2bin(hexStr) {
+      return ("00000000" + (parseInt(hexStr, 16)).toString(2)).substr(-8);
+    }
+
+    function calcInBit(hexStr) {
+      console.log("hex: ", hexStr)
+      const binStr = hex2bin(hexStr)
+      console.log("bin: ", binStr)
+      const binArr = binStr.split("").reverse()
+      for (let i = 0; i < binArr.length; i++) {
+        if (binArr[i] === "1") return i
+      }
+      return -1
+    }
+
+    const outputTable = document.getElementById("outputTable")
+    const inByteEl = document.getElementById("inByte")
+    const inBitEl = document.getElementById("inBit")
+
+    document.getElementById("parse").addEventListener("click", () => {
+      const keydown = document.getElementById("keydown").value ?? ""
+      const keyup = document.getElementById("keyup").value ?? ""
+      diffs = diffArrays(toHexArr(keydown), toHexArr(keyup))
+
+      let rowsStr = ""
+      for (diff of diffs) rowsStr += `<tr><td>${diff.idx}</td><td>${diff.valA}</td><td>${diff.valB}</td></tr>`;
+      outputTable.innerHTML = rowsStr
+
+      if (diffs.length === 0) return;
+      const inByte = diffs[0].idx
+      const inBit = calcInBit(diffs[0].valA)
+      console.log(inByte, inBit)
+
+      inByteEl.value = inByte
+      inBitEl.value = inBit
+
+      // console.log(diffRanges(keydown, keyup))
+    })
+  </script>
+</body>
+
+</html>

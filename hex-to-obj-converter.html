@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Byte/Bit Parser</title>
+  <style>
+    body {
+      font-family: system-ui, Arial;
+      padding: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 240px;
+      font-family: monospace;
+    }
+
+    button {
+      margin-top: 8px;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <label for="input">Debug-Ausgabe einfügen:</label>
+  <textarea id="input" placeholder="Debug-Text hier einfügen..."></textarea>
+  <div>
+    <label for="byteIndex">Zu suchendes Byte-Index (0-basiert) — optional:</label>
+    <input id="byteIndex" type="number" min="0" placeholder="z. B. 9" value="9" />
+  </div>
+  <button id="parse">Parse</button>
+
+  <div>
+    <input type="number" id="output_inBit" />
+    <input type="number" id="output_inByte" />
+  </div>
+
+  <script>
+    // Liest Hex-Zeilen aus Text, baut Byte-Array, bestimmt Byte und Bit.
+    function parseHexBytes(text) {
+      // Entferne Kommentare, Zeiten und Nicht-Hex-Zeichen außer Whitespace
+      // Suche alle hex-Paare (00 bis FF)
+      const matches = text.match(/\b[0-9A-Fa-f]{2}\b/g);
+      if (!matches) return [];
+      return matches.map(h => parseInt(h, 16));
+    }
+
+    // Liefert { inByte, inBit } oder null bei Fehler
+    function detectByteBit(bytes, preferredIndex) {
+      if (!bytes || bytes.length === 0) return null;
+
+      // Wenn ein Index angegeben wurde, nutze ihn; sonst versuche heuristisch:
+      let index = (typeof preferredIndex === 'number' && !isNaN(preferredIndex))
+        ? preferredIndex
+        : 9; // Default 9 gemäß Beispiel (10. Byte)
+
+      if (index < 0 || index >= bytes.length) return null;
+
+      const value = bytes[index];
+      // Finde niedrigstwertiges gesetztes Bit (bits von rechts nach links, 0..7)
+      let inBit = null;
+      for (let b = 0; b < 8; b++) {
+        if ((value & (1 << b)) !== 0) { inBit = b; break; }
+      }
+      if (inBit === null) inBit = 0; // falls kein Bit gesetzt, 0 als Default (oder null)
+      return { inByte: index, inBit };
+    }
+
+    document.getElementById('parse').addEventListener('click', () => {
+      const text = document.getElementById('input').value;
+      const idxVal = document.getElementById('byteIndex').value;
+      const preferredIndex = idxVal === '' ? undefined : Number(idxVal);
+
+      const bytes = parseHexBytes(text);
+      console.log('Parsed bytes count:', bytes.length);
+
+      const result = detectByteBit(bytes, preferredIndex);
+      if (!result) {
+        console.error('Keine gültigen Bytes oder Index außerhalb des Bereichs.');
+        return;
+      }
+      console.log('Result object:', result);
+      // zusätzliches Ausgabeformat wie gewünscht:
+      console.log(JSON.stringify(result));
+      // Für direkte Anzeige im Fenster (optional)
+      // alert('Ergebnis in Konsole geloggt: ' + JSON.stringify(result));
+
+      document.getElementById("output_inByte").value = result.inByte
+      document.getElementById("output_inBit").value = result.inBit
+    });
+
+    // Optional: Beispieltext automatisch einfüllen (dein Beispiel)
+    document.getElementById('input').value =
+      `debug [Controller] t:463774 ms, 97 bytes:
+
+01 0E 91 0B  00 00 00 00  00 04 00 00  00 00 00 00
+
+00 00 12 9A  00 00 00 00  F4 89 00 00  00 00 00 00
+
+00 00 00 07  08 00 00 00  00 00 00 00  00 00 00 00
+
+00 00 00 00  00 00 00 C9  07 00 00 0D  00 0D 00 C9
+
+07 A7 07 07  08 10 00 ED  07 DE 07 13  0E AD 07 00
+
+00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+
+00`;
+  </script>
+</body>
+
+</html>
