@@ -92,9 +92,9 @@
       for (diff of diffs) rowsStr += `<tr><td>${diff.idx}</td><td>${diff.valA}</td><td>${diff.valB}</td></tr>`;
       outputTable.innerHTML = rowsStr
 
-      if (diffs.length === 0) return;
-      const inByte = diffs[0].idx
-      const inBit = calcInBit(diffs[0].valA)
+      if (diffs.length < 2) return;
+      const inByte = diffs[1].idx
+      const inBit = calcInBit(diffs[1].valA)
       console.log(inByte, inBit)
 
       inByteEl.value = inByte

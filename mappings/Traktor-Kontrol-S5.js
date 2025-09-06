@@ -1189,7 +1189,7 @@ class Mixer extends ComponentContainer {
       quickEffectButton: {},
       volume: { inByte: 2 },
       pfl: { inByte: 7, inBit: 3, outByte: 77 },
-      crossfaderSwitch: { inByte: 17, inBit: 4 },
+      // crossfaderSwitch: { inByte: 17, inBit: 4 },
     });
     this.mixerColumnDeck2 = new S5MixerColumn(2, inReports, outReports[128], {
       saveGain: { inByte: 11, inBit: 1, outByte: 84 },
@@ -1202,7 +1202,7 @@ class Mixer extends ComponentContainer {
       quickEffectKnob: { inByte: 66 },
       volume: { inByte: 4 },
       pfl: { inByte: 7, inBit: 6, outByte: 81 },
-      crossfaderSwitch: { inByte: 17, inBit: 2 },
+      // crossfaderSwitch: { inByte: 17, inBit: 2 },
     });
     this.mixerColumnDeck3 = new S5MixerColumn(3, inReports, outReports[128], {
       saveGain: { inByte: 2, inBit: 1, outByte: 88 },
@@ -1215,7 +1215,7 @@ class Mixer extends ComponentContainer {
       quickEffectKnob: { inByte: 62 },
       volume: { inByte: 6 },
       pfl: { inByte: 7, inBit: 2, outByte: 85 },
-      crossfaderSwitch: { inByte: 17, inBit: 6 },
+      // crossfaderSwitch: { inByte: 17, inBit: 6 },
     });
     this.mixerColumnDeck4 = new S5MixerColumn(4, inReports, outReports[128], {
       saveGain: { inByte: 11, inBit: 2, outByte: 92 },
@@ -1228,7 +1228,7 @@ class Mixer extends ComponentContainer {
       quickEffectKnob: { inByte: 68 },
       volume: { inByte: 8 },
       pfl: { inByte: 7, inBit: 7, outByte: 89 },
-      crossfaderSwitch: { inByte: 17, inBit: 0 },
+      // crossfaderSwitch: { inByte: 17, inBit: 0 },
     });
 
     this.firstPressedFxSelector = null;
@@ -3415,8 +3415,8 @@ class S5 {
       this.inReports,
       this.outReports[128],
       {
-        playButton: { inByte: 9, inBit: 2, outByte: 55 },
-        cueButton: { inByte: 4, inBit: 1, outByte: 8 },
+        playButton: { inByte: 17, inBit: 0, outByte: 55 },
+        cueButton: { inByte: 17, inBit: 1, outByte: 8 },
         syncButton: { inByte: 5, inBit: 7, outByte: 14 },
         syncMasterButton: { inByte: 0, inBit: 0, outByte: 15 },
         hotcuePadModeButton: { inByte: 4, inBit: 2, outByte: 9 },
@@ -3489,8 +3489,8 @@ class S5 {
       this.inReports,
       this.outReports[128],
       {
-        playButton: { inByte: 12, inBit: 5, outByte: 66 },
-        cueButton: { inByte: 12, inBit: 2, outByte: 31 },
+        playButton: { inByte: 17, inBit: 3, outByte: 66 },
+        cueButton: { inByte: 17, inBit: 2, outByte: 31 },
         syncButton: { inByte: 14, inBit: 4, outByte: 37 },
         syncMasterButton: { inByte: 10, inBit: 0, outByte: 38 },
         hotcuePadModeButton: { inByte: 12, inBit: 2, outByte: 32 },
