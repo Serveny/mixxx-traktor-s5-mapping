@@ -1,4 +1,9 @@
+import { Button, PushButton } from './buttons/button';
+import { CueButton } from './buttons/cue-button';
+import { PlayButton } from './buttons/play-button';
 import { Deck } from './deck';
+import { Encoder } from './encoder';
+import { Pot } from './pot';
 
 export class S5Deck extends Deck {
   constructor(

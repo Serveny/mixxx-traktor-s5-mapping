@@ -197,7 +197,7 @@ export class ToggleButton extends Button {
     super(options);
   }
   onShortPress() {
-    script.toggleControl(this.group, this.inKey, true);
+    script.toggleControl(this.group, this.inKey);
   }
 }
 

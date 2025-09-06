@@ -61,16 +61,6 @@ export class Deck extends ComponentContainer {
     if (this.secondDeckModes !== null) {
       this.wheelMode = this.secondDeckModes.wheelMode;
       this.moveMode = this.secondDeckModes.moveMode;
-
-      if (this.wheelMode === wheelModes.motor) {
-        engine.beginTimer(
-          MotorWindUpMilliseconds,
-          () => {
-            engine.setValue(newGroup, 'scratch2_enable', true);
-          },
-          true
-        );
-      }
     }
     this.reconnectComponents(function (component) {
       if (
