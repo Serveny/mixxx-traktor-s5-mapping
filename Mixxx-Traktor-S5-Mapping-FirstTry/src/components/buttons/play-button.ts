@@ -10,11 +10,11 @@ export class PlayButton extends Button {
     this.outConnect();
   }
   onShortPress() {
-    script.toggleControl(this.group, this.inKey, true);
+    script.toggleControl(this.group, this.inKey);
   }
   onLongPress() {
     if (this.shifted) {
-      engine.setValue(this.group, this.inKey, false);
+      engine.setValue(this.group, this.inKey, 0);
       script.triggerControl(this.group, 'eject');
     } else if (!engine.getValue(this.group, this.inKey)) {
       script.triggerControl(this.group, 'CloneFromDeck');
