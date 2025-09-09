@@ -1,3 +1,4 @@
+import { moveModes } from '../../settings';
 import type { Deck } from '../deck';
 import { PushButton } from './button';
 

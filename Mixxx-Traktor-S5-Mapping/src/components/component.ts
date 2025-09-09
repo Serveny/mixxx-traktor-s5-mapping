@@ -7,7 +7,7 @@ import type { HIDOutputReport } from '../hid-output-record';
 import type { ComponentOptions } from '../types';
 
 export class Component implements ComponentOptions {
-  key?: string;
+  key: string;
   inKey!: string;
   outKey?: string;
   inConnection?: ScriptConnection;

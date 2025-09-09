@@ -50,7 +50,7 @@ export class HIDInputReport {
     } as any;
   }
 
-  handleInput(reportData: ArrayBuffer) {
+  handleInput(reportData: ArrayBufferLike) {
     const view = new DataView(reportData);
 
     for (const field of this.fields) {

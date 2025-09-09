@@ -1,15 +1,22 @@
+import { settings } from '../settings';
 import { Button, PushButton } from './buttons/button';
 import { CueButton } from './buttons/cue-button';
 import { PlayButton } from './buttons/play-button';
 import { Deck } from './deck';
 import { Encoder } from './encoder';
-import { Pot } from './pot';
+import type { S5EffectUnit } from './s5-effect-unit';
+import type { S5MixerColumn } from './s5-mixer-column';
 
 export class S5Deck extends Deck {
+  playButton: PlayButton;
+  cueButton: CueButton;
+  effectUnit: S5EffectUnit;
+  mixer: S5MixerColumn;
+  syncButton: Button;
+  fluxButton: Button;
   constructor(
-    decks,
+    decks: number | number[],
     colors,
-    settings,
     effectUnit,
     mixer,
     inReports,
@@ -19,7 +26,7 @@ export class S5Deck extends Deck {
     super(decks, colors, settings);
 
     this.playButton = new PlayButton({
-      output: InactiveLightsAlwaysBacklit
+      output: settings.inactiveLightsAlwaysBacklit
         ? undefined
         : Button.prototype.uncoloredOutput,
     });
@@ -31,225 +38,46 @@ export class S5Deck extends Deck {
     this.effectUnit = effectUnit;
     this.mixer = mixer;
 
-    this.syncMasterButton = new Button({
-      key: 'sync_leader',
-      defaultRange: 0.08,
-      shift: UseKeylockOnMaster
-        ? function () {
-            this.setKey('keylock');
-          }
-        : undefined,
-      unshift: UseKeylockOnMaster
-        ? function () {
-            this.setKey('sync_leader');
-          }
-        : undefined,
-      onShortRelease: function () {
-        script.toggleControl(this.group, this.inKey);
-      },
-      onLongPress: function () {
-        const currentRange = engine.getValue(this.group, 'rateRange');
-        if (currentRange < 1.0) {
-          engine.setValue(this.group, 'rateRange', 1.0);
-          this.indicator(true);
-        } else {
-          engine.setValue(this.group, 'rateRange', this.defaultRange);
-          this.indicator(false);
-        }
-      },
-    });
     this.syncButton = new Button({
       key: 'sync_enabled',
-      onLongPress: function () {
+      onLongPress: function (this: Button) {
         if (this.shifted) {
-          engine.setValue(this.group, 'sync_key', true);
-          engine.setValue(this.group, 'sync_key', false);
+          engine.setValue(this.group, 'sync_key', 1);
+          engine.setValue(this.group, 'sync_key', 0);
         } else {
-          script.triggerControl(this.group, 'beatsync_tempo');
+          script.triggerControl(this.group, 'beatsync_tempo', 0);
         }
       },
-      onShortRelease: function () {
+      onShortRelease: function (this: Button) {
         script.toggleControl(this.group, this.inKey);
         if (!this.shifted) {
           engine.softTakeover(this.group, 'rate', true);
         }
       },
-      shift: !UseKeylockOnMaster
-        ? function () {
+      shift: !settings.useKeylockOnMaster
+        ? function (this: Button) {
             this.setKey('keylock');
           }
         : undefined,
-      unshift: !UseKeylockOnMaster
-        ? function () {
+      unshift: !settings.useKeylockOnMaster
+        ? function (this: Button) {
             this.setKey('sync_enabled');
           }
         : undefined,
     });
-    this.tempoFader = new Pot({
-      deck: this,
-      inKey: 'rate',
-      outKey: 'rate',
-      appliedValue: null,
-      tempoCenterUpper: this.settings.tempoCenterUpper,
-      tempoCenterLower: this.settings.tempoCenterLower,
-      input: function (value) {
-        const receivingFirstValue = this.appliedValue === null;
 
-        if (value < this.tempoCenterLower) {
-          // scale input for lower range
-          this.appliedValue = script.absoluteLin(
-            value,
-            -1,
-            0,
-            0,
-            this.tempoCenterLower
-          );
-        } else if (value > this.tempoCenterUpper) {
-          // scale input for upper range
-          this.appliedValue = script.absoluteLin(
-            value,
-            0,
-            1,
-            this.tempoCenterUpper,
-            4096
-          );
-        } else {
-          // reset rate in center region
-          this.appliedValue = 0;
-        }
-        engine.setValue(this.group, this.inKey, this.appliedValue);
-
-        if (receivingFirstValue) {
-          engine.softTakeover(this.group, this.inKey, true);
-          // Forec-update LED.
-          // Output connection is made and updated before input() can set this.appliedValue
-          // (doesn't happen until getInputReport())
-          this.outTrigger();
-        }
-      },
-      output: function (value) {
-        if (this.appliedValue === null) {
-          return;
-        }
-
-        const hardwareOffset = this.appliedValue - value;
-        // Use LED to indicate softTakeover pickup position
-        if (hardwareOffset > 0) {
-          // engine is faster
-          this.send(
-            TempoFaderSoftTakeoverColorLow + Button.prototype.brightnessOn
-          );
-          return;
-        } else if (hardwareOffset < 0) {
-          // engine is slower
-          this.send(
-            TempoFaderSoftTakeoverColorHigh + Button.prototype.brightnessOn
-          );
-          return;
-        }
-
-        // Fader is in sync with engine, set center LED on/off
-        if (value === 0) {
-          this.send(this.color + Button.prototype.brightnessOn);
-        } else {
-          this.send(0);
-        }
-      },
-    });
-
-    this.reverseButton = new Button({
-      key: 'reverseroll',
-      deck: this,
-      previousWheelMode: null,
-      loopModeConnection: null,
-      unshift: function () {
-        this.setKey('reverseroll');
-      },
-      shift: function () {
-        this.setKey('loop_enabled');
-      },
-      output: InactiveLightsAlwaysBacklit
-        ? undefined
-        : Button.prototype.uncoloredOutput,
-      onShortRelease: function () {
-        if (!this.shifted) {
-          engine.setValue(this.group, this.key, false);
-        }
-      },
-      loopModeOff: function (skipRestore) {
-        if (this.previousWheelMode !== null) {
-          this.indicator(false);
-          const wheelOutput = new Uint8Array(40).fill(0);
-          wheelOutput[0] = decks[0] - 1;
-          controller.sendOutputReport(50, wheelOutput.buffer, true);
-          if (!skipRestore) {
-            this.deck.wheelMode = this.previousWheelMode;
-          }
-          this.previousWheelMode = null;
-          if (this.loopModeConnection !== null) {
-            this.loopModeConnection.disconnect();
-            this.loopModeConnection = null;
-          }
-        }
-      },
-      onLoopChange: function (loopEnabled) {
-        if (loopEnabled) {
-          return;
-        }
-        this.loopModeOff();
-      },
-      onShortPress: function () {
-        this.indicator(false);
-        if (this.shifted) {
-          const loopEnabled = engine.getValue(this.group, 'loop_enabled');
-          // If there is currently no loop, we set the loop in of a new loop
-          if (!loopEnabled) {
-            engine.setValue(this.group, 'loop_end_position', -1);
-            engine.setValue(this.group, 'loop_in', true);
-            this.indicator(true);
-            // Else, we enter/exit the loop in wheel mode
-          } else if (this.previousWheelMode === null) {
-            this.deck.fluxButton.loopModeOff();
-            engine.setValue(this.group, 'scratch2_enable', false);
-            this.previousWheelMode = this.deck.wheelMode;
-            this.deck.wheelMode = wheelModes.loopIn;
-
-            if (this.loopModeConnection === null) {
-              this.loopModeConnection = engine.makeConnection(
-                this.group,
-                this.outKey,
-                this.onLoopChange.bind(this)
-              );
-            }
-
-            const wheelOutput = new Uint8Array(40).fill(0);
-            wheelOutput[0] = decks[0] - 1;
-            wheelOutput[1] = wheelLEDmodes.ringFlash;
-            wheelOutput[4] = this.color + Button.prototype.brightnessOn;
-
-            controller.sendOutputReport(50, wheelOutput.buffer, true);
-
-            this.indicator(true);
-          } else if (this.previousWheelMode !== null) {
-            this.loopModeOff();
-          }
-        } else {
-          engine.setValue(this.group, this.key, true);
-        }
-      },
-    });
     this.fluxButton = new Button({
       key: 'slip_enabled',
       deck: this,
       previousWheelMode: null,
       loopModeConnection: null,
-      unshift: function () {
+      unshift: function (this: Button) {
         this.setKey('slip_enabled');
       },
-      shift: function () {
+      shift: function (this: Button) {
         this.setKey('loop_enabled');
       },
-      outConnect: function () {
+      outConnect: function (this: Button) {
         if (this.outKey !== undefined && this.group !== undefined) {
           const connection = engine.makeConnection(
             this.group,
@@ -265,16 +93,16 @@ export class S5Deck extends Deck {
           }
         }
       },
-      output: InactiveLightsAlwaysBacklit
+      output: settings.inactiveLightsAlwaysBacklit
         ? undefined
         : Button.prototype.uncoloredOutput,
-      onShortRelease: function () {
+      onShortRelease: function (this: Button) {
         if (!this.shifted) {
           engine.setValue(this.group, this.key, false);
           engine.setValue(this.group, 'scratch2_enable', false);
         }
       },
-      loopModeOff: function (skipRestore) {
+      loopModeOff: function (this: Button, skipRestore: boolean) {
         if (this.previousWheelMode !== null) {
           this.indicator(false);
           const wheelOutput = new Uint8Array(40).fill(0);
@@ -290,13 +118,13 @@ export class S5Deck extends Deck {
           }
         }
       },
-      onLoopChange: function (loopEnabled) {
+      onLoopChange: function (this: Button, loopEnabled: boolean) {
         if (loopEnabled) {
           return;
         }
         this.loopModeOff();
       },
-      onShortPress: function () {
+      onShortPress: function (this: Button) {
         this.indicator(false);
         if (this.shifted) {
           const loopEnabled = engine.getValue(this.group, 'loop_enabled');
@@ -1246,7 +1074,7 @@ export class S5Deck extends Deck {
     }
   }
 
-  assignKeyboardPlayMode(group, action) {
+  assignKeyboardPlayMode(group: string, action) {
     this.keyboardPlayMode = {
       group: group,
       action: action,

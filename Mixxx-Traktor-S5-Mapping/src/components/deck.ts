@@ -8,9 +8,9 @@ export class Deck extends ComponentContainer {
   settings?: object;
   groupsToColors?: { [key: string]: string };
   secondDeckModes: null;
-  wheelMode: string;
-  moveMode: string;
-  constructor(decks: number, colors: string[], settings: object) {
+  moveMode: number = 0;
+  keyboardPlayMode: number = 0;
+  constructor(decks: number | number[], colors: string[], settings: object) {
     super();
     if (typeof decks === 'number') {
       this.group = Deck.groupForNumber(decks);

@@ -1,5 +1,40 @@
 import { LedColors } from './color';
 
+// Constant used to define custom default pad layout
+export const DefaultPadLayoutHotcue = 'hotcue';
+export const DefaultPadLayoutSamplerBeatloop = 'samplerBeatloop';
+export const DefaultPadLayoutKeyboard = 'keyboard';
+
+// assign samplers to the crossfader on startup
+export const SamplerCrossfaderAssign = true;
+
+/*
+ * Kontrol S5 hardware-specific constants
+ */
+export const wheelLEDmodes = {
+  off: 0,
+  dimFlash: 1,
+  spot: 2,
+  ringFlash: 3,
+  dimSpot: 4,
+  individuallyAddressable: 5, // set byte 4 to 0 and set byes 8 - 40 to color values
+};
+
+// The mode available, which the wheel can be used for.
+export const wheelModes = {
+  jog: 0,
+  vinyl: 1,
+  motor: 2,
+  loopIn: 3,
+  loopOut: 4,
+};
+
+export const moveModes = {
+  beat: 0,
+  bpm: 1,
+  grid: 2,
+  keyboard: 3,
+};
 /*
  * USER CONFIGURABLE SETTINGS
  * Change settings in the preferences

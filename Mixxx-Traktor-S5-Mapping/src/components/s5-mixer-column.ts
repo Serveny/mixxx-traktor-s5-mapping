@@ -1,7 +1,17 @@
+import type { S5 } from '../s5';
+import { settings } from '../settings';
 import { ComponentContainer } from './component-container';
+import { Pot } from './pot';
 
 export class S5MixerColumn extends ComponentContainer {
-  constructor(idx, inReports, outReport, io) {
+  idx: number;
+  gain: Pot;
+  eqHigh: Pot;
+  eqMid: Pot;
+  eqLow: Pot;
+  quickEffectKnob: Pot;
+  volume: Pot;
+  constructor(idx: number, inReports, outReport, io) {
     super();
 
     this.idx = idx;
@@ -29,8 +39,8 @@ export class S5MixerColumn extends ComponentContainer {
     this.volume = new Pot({
       inKey: 'volume',
       mixer: this,
-      input: MixerControlsMixAuxOnShift
-        ? function (value) {
+      input: settings.mixerControlsMixAuxOnShift
+        ? function (this: S5, value) {
             if (this.mixer.shifted && this.group !== `[Channel${idx}]`) {
               // FIXME only if group != [ChannelX]
               const controlKey =

@@ -4,7 +4,8 @@ import { Button } from './button';
  * Represent a pad button that interact with a sampler (load, play/pause, cue, eject)
  */
 export class SamplerButton extends Button {
-  constructor(options) {
+  number?: number;
+  constructor(options: Partial<SamplerButton>) {
     super(options);
     if (
       this.number === undefined ||

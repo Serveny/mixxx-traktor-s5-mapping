@@ -4,8 +4,10 @@ export class Pot extends Component {
   max = 2 ** 12 - 1;
   inBit = 0;
   inBitLength = 16;
+  hardwarePosition: number | null;
+  shiftedHardwarePosition: number | null;
 
-  constructor(options) {
+  constructor(options: Partial<Pot>) {
     super(options);
     this.hardwarePosition = null;
     this.shiftedHardwarePosition = null;
@@ -14,7 +16,7 @@ export class Pot extends Component {
       this.input = this.defaultInput;
     }
   }
-  setGroupKey(group, key) {
+  setGroupKey(group: string, key: string) {
     this.inKey = key;
     if (key === this.outKey && group === this.group) {
       return;
@@ -24,7 +26,7 @@ export class Pot extends Component {
     this.outKey = key;
     this.outConnect();
   }
-  defaultInput(value) {
+  defaultInput(value: number) {
     const receivingFirstValue = this.hardwarePosition === null;
     this.hardwarePosition = value / this.max;
     engine.setParameter(this.group, this.inKey, this.hardwarePosition);
