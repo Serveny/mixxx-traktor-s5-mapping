@@ -7,7 +7,7 @@ import type { HIDOutputReport } from '../hid-output-record';
 import type { ComponentOptions } from '../types';
 
 export class Component implements ComponentOptions {
-  key: string;
+  key!: string;
   inKey!: string;
   outKey?: string;
   inConnection?: ScriptConnection;
@@ -24,19 +24,20 @@ export class Component implements ComponentOptions {
   oldDataDefault?: number;
   outByte?: number;
   group!: string;
-  constructor(options?: Partial<Component>) {
-    if (options) {
-      Object.entries(options).forEach(function ([key, value]) {
-        if (value === undefined) {
-          delete (options as any)[key];
-        }
-      });
-      Object.assign(this, options);
-    }
+  bitLength!: number;
+  constructor(options: Partial<Component>) {
+    //if (options) {
+    //Object.entries(options).forEach(function ([key, value]) {
+    //if (value === undefined) {
+    //delete (options as any)[key];
+    //}
+    //});
+    //Object.assign(this, options);
+    //}
     this.outConnections = [];
-    if (typeof this.key === 'string') {
-      this.inKey = this.key;
-      this.outKey = this.key;
+    if (typeof options.key === 'string') {
+      this.inKey = options.key;
+      this.outKey = options.key;
     }
     if (typeof this.unshift === 'function' && this.unshift.length === 0) {
       this.unshift();

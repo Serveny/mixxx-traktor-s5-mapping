@@ -6,7 +6,7 @@ export class Deck extends ComponentContainer {
   currentDeckNumber: number = 0;
   color?: string;
   settings?: object;
-  groupsToColors?: { [key: string]: string };
+  groupsToColors: { [key: string]: string } = {};
   secondDeckModes: null;
   moveMode: number = 0;
   keyboardPlayMode: number = 0;
@@ -19,17 +19,12 @@ export class Deck extends ComponentContainer {
       this.currentDeckNumber = decks[0];
       this.group = Deck.groupForNumber(decks[0]);
     }
-    if (colors !== undefined && Array.isArray(colors)) {
-      this.groupsToColors = {};
-      let index = 0;
-      if (this.decks) {
-        for (const deck of this.decks) {
-          this.groupsToColors[Deck.groupForNumber(deck)] = colors[index];
-          index++;
-        }
+    if (this.decks) {
+      for (const i in this.decks) {
+        this.groupsToColors[Deck.groupForNumber(this.decks[i])] = colors[i];
       }
-      this.color = colors[0];
     }
+    this.color = colors[0];
     this.settings = settings;
     this.secondDeckModes = null;
   }
@@ -50,7 +45,6 @@ export class Deck extends ComponentContainer {
   }
   switchDeck(newGroup: string) {
     const currentModes = {
-      wheelMode: this.wheelMode,
       moveMode: this.moveMode,
     };
 
@@ -62,7 +56,7 @@ export class Deck extends ComponentContainer {
       this.wheelMode = this.secondDeckModes.wheelMode;
       this.moveMode = this.secondDeckModes.moveMode;
     }
-    this.reconnectComponents(function (component) {
+    this.reconnectComponents(function (this: Deck, component) {
       if (
         component.group === undefined ||
         component.group.search(script.channelRegEx) !== -1

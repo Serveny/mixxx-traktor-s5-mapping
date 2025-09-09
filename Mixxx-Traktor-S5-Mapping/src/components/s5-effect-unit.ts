@@ -2,14 +2,25 @@
  * Kontrol S5 hardware specific mapping logic
  */
 
+import type { HIDInputReport } from '../hid-input-record';
+import type { HIDOutputReport } from '../hid-output-record';
+import type { S5FxUnitMapping } from '../mapping';
+import { PowerWindowButton } from './buttons/button';
 import { ComponentContainer } from './component-container';
+import { Pot } from './pot';
 
 export class S5EffectUnit extends ComponentContainer {
-  constructor(unitNumber, inReports, outReport, io) {
+  focusedEffect = null;
+  mixKnob: Pot;
+  mainButton: PowerWindowButton;
+  constructor(
+    public unitNumber: number,
+    inReports: HIDInputReport[],
+    outReport: HIDOutputReport,
+    io: S5FxUnitMapping
+  ) {
     super();
     this.group = `[EffectRack1_EffectUnit${unitNumber}]`;
-    this.unitNumber = unitNumber;
-    this.focusedEffect = null;
 
     this.mixKnob = new Pot({
       inKey: 'mix',

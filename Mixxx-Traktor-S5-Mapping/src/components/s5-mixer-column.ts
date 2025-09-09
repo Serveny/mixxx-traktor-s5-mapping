@@ -1,5 +1,9 @@
+import type { HIDInputReport } from '../hid-input-record';
+import type { HIDOutputReport } from '../hid-output-record';
 import type { S5 } from '../s5';
 import { settings } from '../settings';
+import { PowerWindowButton, PushButton, ToggleButton } from './buttons/button';
+import { Component } from './component';
 import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
 
@@ -11,7 +15,12 @@ export class S5MixerColumn extends ComponentContainer {
   eqLow: Pot;
   quickEffectKnob: Pot;
   volume: Pot;
-  constructor(idx: number, inReports, outReport, io) {
+  constructor(
+    idx: number,
+    inReports: HIDInputReport[],
+    outReport: HIDOutputReport,
+    io: S5MixerColumnMapping
+  ) {
     super();
 
     this.idx = idx;
@@ -114,20 +123,20 @@ export class S5MixerColumn extends ComponentContainer {
       }
     }
 
-    if (MixerControlsMixAuxOnShift) {
+    if (settings.mixerControlsMixAuxOnShift) {
       this.shift = function () {
-        engine.setValue('[Microphone]', 'show_microphone', true);
+        engine.setValue('[Microphone]', 'show_microphone', 1);
         this.updateGroup(true);
       };
 
       this.unshift = function () {
-        engine.setValue('[Microphone]', 'show_microphone', false);
+        engine.setValue('[Microphone]', 'show_microphone', 0);
         this.updateGroup(false);
       };
     }
   }
 
-  updateGroup(shifted) {
+  updateGroup(shifted: boolean) {
     let alternativeInput = null;
     if (engine.getValue(`[Auxiliary${this.idx}]`, 'input_configured')) {
       alternativeInput = `[Auxiliary${this.idx}]`;
@@ -146,7 +155,7 @@ export class S5MixerColumn extends ComponentContainer {
     }
     this.group = shifted ? alternativeInput : `[Channel${this.idx}]`;
     for (const property of ['gain', 'volume', 'pfl', 'crossfaderSwitch']) {
-      const component = this[property];
+      const component = (this as any)[property];
       if (component instanceof Component) {
         component.outDisconnect();
         component.inDisconnect();
@@ -157,7 +166,7 @@ export class S5MixerColumn extends ComponentContainer {
       }
     }
     for (const property of ['effectUnit1Assign', 'effectUnit2Assign']) {
-      const component = this[property];
+      const component = (this as any)[property];
       if (component instanceof Component) {
         component.outDisconnect();
         component.inDisconnect();

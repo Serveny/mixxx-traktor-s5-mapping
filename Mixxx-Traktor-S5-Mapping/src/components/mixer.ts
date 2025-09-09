@@ -1,7 +1,27 @@
+import { QuickEffectPresetColors } from '../color';
+import type { HIDInputReport } from '../hid-input-record';
+import type { HIDOutputReport } from '../hid-output-record';
+import { settings } from '../settings';
+import { Button } from './buttons/button';
+import { FXSelect } from './buttons/fx-select-button';
 import { ComponentContainer } from './component-container';
+import { Pot } from './pot';
+import { S5MixerColumn } from './s5-mixer-column';
 
 export class Mixer extends ComponentContainer {
-  constructor(inReports, outReports) {
+  mixerColumnDeck1: S5MixerColumn;
+  mixerColumnDeck2: S5MixerColumn;
+  mixerColumnDeck3: S5MixerColumn;
+  mixerColumnDeck4: S5MixerColumn;
+  fxSelects: FXSelect[] = [];
+  quantizeButton: Button;
+  crossfader: Pot;
+  master?: Pot;
+  booth?: Pot;
+  cue?: Pot;
+  pflGain?: Pot;
+
+  constructor(inReports: HIDInputReport[], outReports: HIDOutputReport[]) {
     super();
 
     this.outReport = outReports[128];
@@ -18,7 +38,6 @@ export class Mixer extends ComponentContainer {
       quickEffectButton: {},
       volume: { inByte: 2 },
       pfl: { inByte: 7, inBit: 3, outByte: 77 },
-      // crossfaderSwitch: { inByte: 17, inBit: 4 },
     });
     this.mixerColumnDeck2 = new S5MixerColumn(2, inReports, outReports[128], {
       saveGain: { inByte: 11, inBit: 1, outByte: 84 },
@@ -31,7 +50,6 @@ export class Mixer extends ComponentContainer {
       quickEffectKnob: { inByte: 66 },
       volume: { inByte: 4 },
       pfl: { inByte: 7, inBit: 6, outByte: 81 },
-      // crossfaderSwitch: { inByte: 17, inBit: 2 },
     });
     this.mixerColumnDeck3 = new S5MixerColumn(3, inReports, outReports[128], {
       saveGain: { inByte: 2, inBit: 1, outByte: 88 },
@@ -44,7 +62,6 @@ export class Mixer extends ComponentContainer {
       quickEffectKnob: { inByte: 62 },
       volume: { inByte: 6 },
       pfl: { inByte: 7, inBit: 2, outByte: 85 },
-      // crossfaderSwitch: { inByte: 17, inBit: 6 },
     });
     this.mixerColumnDeck4 = new S5MixerColumn(4, inReports, outReports[128], {
       saveGain: { inByte: 11, inBit: 2, outByte: 92 },
@@ -57,12 +74,7 @@ export class Mixer extends ComponentContainer {
       quickEffectKnob: { inByte: 68 },
       volume: { inByte: 8 },
       pfl: { inByte: 7, inBit: 7, outByte: 89 },
-      // crossfaderSwitch: { inByte: 17, inBit: 0 },
     });
-
-    this.firstPressedFxSelector = null;
-    this.secondPressedFxSelector = null;
-    this.comboSelected = false;
 
     const fxSelectsInputs = [
       { inByte: 8, inBit: 5 },
@@ -71,7 +83,7 @@ export class Mixer extends ComponentContainer {
       { inByte: 8, inBit: 0 },
       { inByte: 8, inBit: 7 },
     ];
-    this.fxSelects = [];
+
     // FX SELECT buttons: Filter, 1, 2, 3, 4
     for (const i of [0, 1, 2, 3, 4]) {
       this.fxSelects[i] = new FXSelect(
@@ -82,26 +94,10 @@ export class Mixer extends ComponentContainer {
       );
     }
 
-    const quickEffectInputs = [
-      { inByte: 7, inBit: 0, outByte: 46 },
-      { inByte: 7, inBit: 5, outByte: 47 },
-      { inByte: 7, inBit: 1, outByte: 48 },
-      { inByte: 7, inBit: 4, outByte: 49 },
-    ];
-    this.quickEffectButtons = [];
-    // FX SELECT buttons: 1, 2, 3, 4
-    for (const i of [0, 1, 2, 3]) {
-      this.quickEffectButtons[i] = new QuickEffectButton(
-        Object.assign(quickEffectInputs[i], {
-          number: i + 1,
-          mixer: this,
-        })
-      );
-    }
     this.resetFxSelectorColors();
 
     this.quantizeButton = new Button({
-      input: function (pressed) {
+      input: function (this: Button, pressed) {
         if (pressed) {
           this.globalQuantizeOn = !this.globalQuantizeOn;
           for (let deckIdx = 1; deckIdx <= 4; deckIdx++) {
@@ -126,33 +122,8 @@ export class Mixer extends ComponentContainer {
       inByte: 0,
       inReport: inReports[2],
     });
-    this.crossfaderCurveSwitch = new Component({
-      inByte: 18,
-      inBit: 0,
-      inBitLength: 2,
-      input: function (value) {
-        switch (value) {
-          case 0x00: // Picnic Bench / Fast Cut
-            engine.setValue('[Mixer Profile]', 'xFaderMode', 0);
-            engine.setValue('[Mixer Profile]', 'xFaderCurve', 7.0);
-            break;
-          case 0x01: // Constant Power
-            engine.setValue('[Mixer Profile]', 'xFaderMode', 1);
-            engine.setValue('[Mixer Profile]', 'xFaderCurve', 0.6);
-            // Constant power requires to set an appropriate calibration value
-            // in order to get a smooth curve.
-            // This is the output of EngineXfader::getPowerCalibration() for
-            // the "xFaderCurve" 0.6 (pow(0.5, 1.0 / 0.6))
-            engine.setValue('[Mixer Profile]', 'xFaderCalibration', 0.31498);
-            break;
-          case 0x02: // Additive
-            engine.setValue('[Mixer Profile]', 'xFaderMode', 0);
-            engine.setValue('[Mixer Profile]', 'xFaderCurve', 0.9);
-        }
-      },
-    });
 
-    if (SoftwareMixerMain) {
+    if (settings.softwareMixerMain) {
       this.master = new Pot({
         group: '[Master]',
         inKey: 'gain',
@@ -161,7 +132,7 @@ export class Mixer extends ComponentContainer {
         inReport: inReports[2],
       });
     }
-    if (SoftwareMixerBooth) {
+    if (settings.softwareMixerBooth) {
       this.booth = new Pot({
         group: '[Master]',
         inKey: 'booth_gain',
@@ -170,7 +141,7 @@ export class Mixer extends ComponentContainer {
         inReport: inReports[2],
       });
     }
-    if (SoftwareMixerHeadphone) {
+    if (settings.softwareMixerHeadphone) {
       this.cue = new Pot({
         group: '[Master]',
         inKey: 'headMix',
@@ -208,22 +179,8 @@ export class Mixer extends ComponentContainer {
     this.quantizeButton.globalQuantizeOn = lightQuantizeButton;
   }
 
-  calculatePresetNumber() {
-    if (
-      this.firstPressedFxSelector === this.secondPressedFxSelector ||
-      this.secondPressedFxSelector === null
-    ) {
-      return this.firstPressedFxSelector;
-    }
-    let presetNumber =
-      5 + 4 * (this.firstPressedFxSelector - 1) + this.secondPressedFxSelector;
-    if (this.secondPressedFxSelector > this.firstPressedFxSelector) {
-      presetNumber--;
-    }
-    return presetNumber;
-  }
-
   resetFxSelectorColors() {
+    if (!this.outReport) return;
     for (const selector of [1, 2, 3, 4, 5]) {
       this.outReport.data[49 + selector] =
         QuickEffectPresetColors[selector - 1] + Button.prototype.brightnessOn;

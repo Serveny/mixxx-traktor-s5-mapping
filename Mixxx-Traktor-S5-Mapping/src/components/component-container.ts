@@ -1,7 +1,7 @@
 import { Component } from './component';
 export class ComponentContainer extends Component {
   constructor() {
-    super();
+    super({});
   }
   *[Symbol.iterator]() {
     // can't use for...of here because it would create an infinite loop

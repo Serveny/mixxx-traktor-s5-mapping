@@ -1,4 +1,5 @@
 import { Component } from './component';
+import type { Mixer } from './mixer';
 
 export class Pot extends Component {
   max = 2 ** 12 - 1;
@@ -6,6 +7,7 @@ export class Pot extends Component {
   inBitLength = 16;
   hardwarePosition: number | null;
   shiftedHardwarePosition: number | null;
+  mixer?: Mixer;
 
   constructor(options: Partial<Pot>) {
     super(options);

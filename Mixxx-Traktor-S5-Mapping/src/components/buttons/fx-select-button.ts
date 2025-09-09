@@ -1,12 +1,16 @@
+import type { Mixer } from '../mixer';
 import { Button } from './button';
 
 export class FXSelect extends Button {
-  constructor(options) {
+  mixer: Mixer;
+  constructor(options: Partial<FXSelect>) {
     super(options);
 
-    if (this.mixer === undefined) {
+    if (options.mixer === undefined) {
       throw Error('The mixer must be specified');
     }
+
+    this.mixer = options.mixer;
   }
 
   onShortPress() {

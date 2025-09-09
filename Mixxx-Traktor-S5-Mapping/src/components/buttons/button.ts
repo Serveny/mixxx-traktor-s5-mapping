@@ -52,6 +52,7 @@ export class Button extends Component {
   onShortRelease() {}
   onLongPress(button: Button) {}
   onLongRelease() {}
+  globalQuantizeOn?: boolean;
   constructor(options: Partial<Button>) {
     options.oldDataDefault = 0;
 
@@ -215,6 +216,7 @@ export class TriggerButton extends Button {
 
 export class PowerWindowButton extends Button {
   isLongPressed: boolean;
+  unit!: Component;
   constructor(options: Partial<PowerWindowButton>) {
     super(options);
     this.isLongPressed = false;

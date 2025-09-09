@@ -2,11 +2,13 @@ import { Component } from './component';
 
 export class Encoder extends Component {
   inBitLength = 4;
-  constructor(options) {
+  lastValue: number | null = null;
+  max: number = 0;
+  onChange(isRight: boolean) {}
+  constructor(options: Partial<Component>) {
     super(options);
-    this.lastValue = null;
   }
-  input(value) {
+  input(value: number) {
     const oldValue = this.lastValue;
     this.lastValue = value;
 
