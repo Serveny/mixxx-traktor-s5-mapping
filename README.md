@@ -56,3 +56,148 @@ function getType(value) {
   ],
 }
 ```
+
+##### Report-ID 1
+
+```
+Unknown[0x0..0xf]: 0x0
+Unknown[0x0..0xf]: 0x0
+Unknown[0x0..0xf]: 0x0
+Unknown[0x0..0xf]: 0x0
+Unknown[0x0..0xf]: 0x0
+Unknown[0x0..0xf]: 0x0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown: 0
+Unknown[0..65535]: 18734
+Unknown[0..1023]: 0
+Unknown[0..1023]: 0
+Unknown[0..65535]: 15038
+Unknown[0..1023]: 0
+Unknown[0..1023]: 0
+
+```
+
+#### Controller Inputs
+
+Report-ID 128
+
+[128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+FX Button 2: byte 25
+
+Brightness from 0 to 127 ( --> 7 bit?)
+
+#### Displays
+
+- prop. Bulk/Isochronous endpoint
+- layout with QML
