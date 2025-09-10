@@ -2,11 +2,13 @@
 export interface BytePosIn {
   inByte: number;
   inBit: number;
+  inLengthBit: number;
 }
 
 // Out: from software to controller
 export interface BytePosOut {
   outByte: number;
+  // outLengthBit: number;
 }
 
 export interface BytePosInOut extends BytePosIn, BytePosOut {}
@@ -14,6 +16,11 @@ export interface BytePosInOut extends BytePosIn, BytePosOut {}
 export interface Encoder {
   touch: BytePosIn;
   press: BytePosIn;
+  fade: BytePosIn;
+}
+
+export interface TouchKnob {
+  touch: BytePosIn;
   fade: BytePosIn;
 }
 
@@ -50,12 +57,14 @@ export interface S5MixerMapping {
 
   channelB: S5MixerChannelMapping;
   channelD: S5MixerChannelMapping;
+
+  cross: Fader;
 }
 
 export interface S5MixerChannelMapping {
   gain: Knob;
   fxUnit1Assign: Button;
-  effectUnit2Assign: Button;
+  fxUnit2Assign: Button;
   eqHigh: Knob;
   eqMid: Knob;
   eqLow: Knob;
@@ -104,6 +113,6 @@ export interface S5DisplayArea {
 }
 
 export interface S5FxUnitMapping {
-  knobs: [Knob, Knob, Knob, Knob];
+  knobs: [TouchKnob, TouchKnob, TouchKnob, TouchKnob];
   buttons: [Button, Button, Button, Button];
 }

@@ -1,3 +1,4 @@
+import type { HIDInputReport } from '../hid-input-record';
 import { Component } from './component';
 import type { Mixer } from './mixer';
 
@@ -9,8 +10,14 @@ export class Pot extends Component {
   shiftedHardwarePosition: number | null;
   mixer?: Mixer;
 
-  constructor(options: Partial<Pot>) {
-    super(options);
+  constructor(
+    group: string,
+    inKey: string,
+    inByte: number,
+    bitLength: number,
+    inReport: HIDInputReport
+  ) {
+    super(undefined, inKey, undefined, undefined);
     this.hardwarePosition = null;
     this.shiftedHardwarePosition = null;
 

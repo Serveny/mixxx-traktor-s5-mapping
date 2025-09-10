@@ -1,6 +1,7 @@
 import { QuickEffectPresetColors } from '../color';
 import type { HIDInputReport } from '../hid-input-record';
 import type { HIDOutputReport } from '../hid-output-record';
+import type { S5MixerMapping } from '../mapping';
 import { settings } from '../settings';
 import { Button } from './buttons/button';
 import { FXSelect } from './buttons/fx-select-button';
@@ -9,10 +10,10 @@ import { Pot } from './pot';
 import { S5MixerColumn } from './s5-mixer-column';
 
 export class Mixer extends ComponentContainer {
-  mixerColumnDeck1: S5MixerColumn;
-  mixerColumnDeck2: S5MixerColumn;
-  mixerColumnDeck3: S5MixerColumn;
-  mixerColumnDeck4: S5MixerColumn;
+  channelC: S5MixerColumn;
+  channelA: S5MixerColumn;
+  channelB: S5MixerColumn;
+  channelD: S5MixerColumn;
   fxSelects: FXSelect[] = [];
   quantizeButton: Button;
   crossfader: Pot;
@@ -21,60 +22,39 @@ export class Mixer extends ComponentContainer {
   cue?: Pot;
   pflGain?: Pot;
 
-  constructor(inReports: HIDInputReport[], outReports: HIDOutputReport[]) {
+  constructor(
+    inReports: HIDInputReport[],
+    outReports: HIDOutputReport[],
+    io: S5MixerMapping
+  ) {
     super();
 
     this.outReport = outReports[128];
 
-    this.mixerColumnDeck1 = new S5MixerColumn(1, inReports, outReports[128], {
-      saveGain: { inByte: 11, inBit: 0, outByte: 80 },
-      effectUnit1Assign: { inByte: 2, inBit: 3, outByte: 78 },
-      effectUnit2Assign: { inByte: 2, inBit: 4, outByte: 79 },
-      gain: { inByte: 16 },
-      eqHigh: { inByte: 44 },
-      eqMid: { inByte: 46 },
-      eqLow: { inByte: 48 },
-      quickEffectKnob: { inByte: 64 },
-      quickEffectButton: {},
-      volume: { inByte: 2 },
-      pfl: { inByte: 7, inBit: 3, outByte: 77 },
-    });
-    this.mixerColumnDeck2 = new S5MixerColumn(2, inReports, outReports[128], {
-      saveGain: { inByte: 11, inBit: 1, outByte: 84 },
-      effectUnit1Assign: { inByte: 2, inBit: 5, outByte: 82 },
-      effectUnit2Assign: { inByte: 2, inBit: 6, outByte: 83 },
-      gain: { inByte: 18 },
-      eqHigh: { inByte: 50 },
-      eqMid: { inByte: 52 },
-      eqLow: { inByte: 54 },
-      quickEffectKnob: { inByte: 66 },
-      volume: { inByte: 4 },
-      pfl: { inByte: 7, inBit: 6, outByte: 81 },
-    });
-    this.mixerColumnDeck3 = new S5MixerColumn(3, inReports, outReports[128], {
-      saveGain: { inByte: 2, inBit: 1, outByte: 88 },
-      effectUnit1Assign: { inByte: 2, inBit: 0, outByte: 86 },
-      effectUnit2Assign: { inByte: 2, inBit: 2, outByte: 87 },
-      gain: { inByte: 14 },
-      eqHigh: { inByte: 38 },
-      eqMid: { inByte: 40 },
-      eqLow: { inByte: 42 },
-      quickEffectKnob: { inByte: 62 },
-      volume: { inByte: 6 },
-      pfl: { inByte: 7, inBit: 2, outByte: 85 },
-    });
-    this.mixerColumnDeck4 = new S5MixerColumn(4, inReports, outReports[128], {
-      saveGain: { inByte: 11, inBit: 2, outByte: 92 },
-      effectUnit1Assign: { inByte: 2, inBit: 7, outByte: 90 },
-      effectUnit2Assign: { inByte: 11, inBit: 7, outByte: 91 },
-      gain: { inByte: 20 },
-      eqHigh: { inByte: 56 },
-      eqMid: { inByte: 58 },
-      eqLow: { inByte: 60 },
-      quickEffectKnob: { inByte: 68 },
-      volume: { inByte: 8 },
-      pfl: { inByte: 7, inBit: 7, outByte: 89 },
-    });
+    this.channelC = new S5MixerColumn(
+      1,
+      inReports,
+      outReports[128],
+      io.channelC
+    );
+    this.channelA = new S5MixerColumn(
+      2,
+      inReports,
+      outReports[128],
+      io.channelA
+    );
+    this.channelB = new S5MixerColumn(
+      3,
+      inReports,
+      outReports[128],
+      io.channelB
+    );
+    this.channelD = new S5MixerColumn(
+      4,
+      inReports,
+      outReports[128],
+      io.channelD
+    );
 
     const fxSelectsInputs = [
       { inByte: 8, inBit: 5 },

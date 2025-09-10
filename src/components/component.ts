@@ -7,25 +7,26 @@ import type { HIDOutputReport } from '../hid-output-record';
 import type { ComponentOptions } from '../types';
 
 export class Component implements ComponentOptions {
-  key!: string;
-  inKey!: string;
-  outKey?: string;
-  inConnection?: ScriptConnection;
-  outConnections: ScriptConnection[];
-  shift() {}
-  unshift() {}
-  shifted?: boolean;
-  inReport?: HIDInputReport;
-  outReport?: HIDOutputReport;
-  input(value: number): void {}
-  inByte?: number;
-  inBit?: number;
-  inBitLength?: number;
-  oldDataDefault?: number;
-  outByte?: number;
-  group!: string;
-  bitLength!: number;
-  constructor(options: Partial<Component>) {
+  constructor(
+    public key: string,
+    public inKey: string,
+    public outKey: string,
+    public inConnection: ScriptConnection,
+    public outConnections: ScriptConnection[],
+    public shift: () => void,
+    public unshift: () => void,
+    public shifted: boolean,
+    public inReport: HIDInputReport,
+    public outReport: HIDOutputReport,
+    public input: (value: number) => void,
+    public inByte: number,
+    public inBit: number,
+    public inBitLength: number,
+    public oldDataDefault: number,
+    public outByte: number,
+    public group: string
+  ) //public bitLength: number
+  {
     //if (options) {
     //Object.entries(options).forEach(function ([key, value]) {
     //if (value === undefined) {
@@ -35,9 +36,9 @@ export class Component implements ComponentOptions {
     //Object.assign(this, options);
     //}
     this.outConnections = [];
-    if (typeof options.key === 'string') {
-      this.inKey = options.key;
-      this.outKey = options.key;
+    if (typeof key === 'string') {
+      this.inKey = key;
+      this.outKey = key;
     }
     if (typeof this.unshift === 'function' && this.unshift.length === 0) {
       this.unshift();

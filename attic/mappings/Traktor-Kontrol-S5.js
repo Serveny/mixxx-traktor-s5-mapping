@@ -303,7 +303,6 @@ class HIDOutputReport {
     this.data = new Uint8Array(length).fill(0);
   }
   send() {
-    console.log('CONTROLLER LEL: ', controller);
     controller.sendOutputReport(this.reportId, this.data.buffer);
   }
 }
@@ -3341,6 +3340,93 @@ class S5MixerColumn extends ComponentContainer {
   }
 }
 
+/**
+ * Analysiert ein HID-Signal-Array basierend auf dem spezifischen HID-Bericht
+ * für Report ID 1 und wandelt es in ein strukturiertes JavaScript-Objekt um.
+ *
+ * @param {number[]} signal - Das rohe HID-Signal als Array von Bytes.
+ * @returns {object|null} Ein Objekt mit den geparsten Daten oder null bei einem Fehler.
+ */
+function parseHidReport(signal) {
+  // Überprüfen, ob das Signal für Report ID 1 bestimmt ist.
+  if (!signal || signal[0] !== 1) {
+    console.error(
+      'Fehler: Signal ist nicht für Report ID 1 oder ist ungültig.'
+    );
+    return null;
+  }
+
+  // Die Nutzdaten beginnen nach der Report ID (Byte 0).
+  // Wir erstellen einen DataView für einfachen Zugriff auf die Binärdaten.
+  const payload = new Uint8Array(signal.slice(1));
+  const dataView = new DataView(payload.buffer);
+
+  // Das Objekt, das die aufbereiteten Daten enthalten wird.
+  const parsedData = {
+    vendor_ff01_3: [],
+    vendor_ff01_2: [],
+    vendor_ff01_4_a: 0,
+    vendor_ff01_4_b: [],
+    vendor_ff01_32: 0,
+    vendor_ff01_41: [],
+  };
+
+  try {
+    // 1. Usage {ff01:3}: 6 Werte zu je 4 Bits (3 Bytes)
+    const nibbles = [];
+    for (let i = 0; i < 3; i++) {
+      const byte = dataView.getUint8(i);
+      nibbles.push(byte & 0x0f); // Untere 4 Bits
+      nibbles.push(byte >> 4); // Obere 4 Bits
+      if (nibbles[nibbles.length - 2] !== 0)
+        console.log(`\x1b[37m\x1b[46mByte: ${i}, Bit: ${0}\x1b[0m`);
+      if (nibbles[nibbles.length - 1] !== 0)
+        console.log(`\x1b[37m\x1b[46mByte: ${i}, Bit: ${4}\x1b[0m`);
+    }
+    parsedData.vendor_ff01_3 = nibbles;
+
+    // 2. Usage {ff01:2}: 112 einzelne Bits (14 Bytes)
+    const flags = [];
+    for (let i = 3; i < 17; i++) {
+      const byte = dataView.getUint8(i);
+      for (let j = 0; j < 8; j++) {
+        // Prüft jedes Bit im Byte und fügt true/false zum Array hinzu.
+        flags.push((byte & (1 << j)) !== 0);
+        if (flags[flags.length - 1] === true)
+          console.log(`\x1b[37m\x1b[41mByte: ${i}, Bit: ${j}\x1b[0m`);
+      }
+    }
+    parsedData.vendor_ff01_2 = flags;
+
+    // 3. Usage {ff01:4}: 1 Wert zu 16 Bits (2 Bytes)
+    // Das 'true' als dritter Parameter steht für Little-Endian.
+    parsedData.vendor_ff01_4_a = dataView.getUint16(17, true);
+
+    // 4. Usage {ff01:4}: 2 Werte zu je 16 Bits (4 Bytes)
+    parsedData.vendor_ff01_4_b = [
+      dataView.getUint16(19, true),
+      dataView.getUint16(21, true),
+    ];
+
+    // 5. Usage {ff01:32}: 1 Wert zu 16 Bits (2 Bytes)
+    parsedData.vendor_ff01_32 = dataView.getUint16(23, true);
+
+    // 6. Usage {ff01:41}: 2 Werte zu je 16 Bits (4 Bytes)
+    parsedData.vendor_ff01_41 = [
+      dataView.getUint16(25, true),
+      dataView.getUint16(27, true),
+    ];
+  } catch (error) {
+    console.error(
+      'Fehler beim Parsen des Signals. Es ist möglicherweise zu kurz.',
+      error
+    );
+    return null;
+  }
+
+  return parsedData;
+}
+
 class S5 {
   constructor() {
     if (engine.getValue('[App]', 'num_decks') < 4) {
@@ -3415,9 +3501,9 @@ class S5 {
       this.inReports,
       this.outReports[128],
       {
-        playButton: { inByte: 17, inBit: 0, outByte: 55 },
-        cueButton: { inByte: 17, inBit: 1, outByte: 8 },
-        syncButton: { inByte: 5, inBit: 7, outByte: 14 },
+        playButton: { inByte: 8, inBit: 2, outByte: 55 },
+        cueButton: { inByte: 8, inBit: 5, outByte: 8 },
+        syncButton: { inByte: 8, inBit: 3, outByte: 14 },
         syncMasterButton: { inByte: 0, inBit: 0, outByte: 15 },
         hotcuePadModeButton: { inByte: 4, inBit: 2, outByte: 9 },
         recordPadModeButton: { inByte: 4, inBit: 3, outByte: 56 },
@@ -3427,7 +3513,7 @@ class S5 {
         deckButtonLeft: { inByte: 5, inBit: 2 },
         deckButtonRight: { inByte: 5, inBit: 3 },
         deckButtonOutputByteOffset: 12,
-        shiftButton: { inByte: 5, inBit: 1, outByte: 59 },
+        shiftButton: { inByte: 8, inBit: 4, outByte: 59 },
         leftEncoder: { inByte: 19, inBit: 0 },
         leftEncoderPress: { inByte: 6, inBit: 2 },
         rightEncoder: { inByte: 19, inBit: 4 },
@@ -3438,7 +3524,7 @@ class S5 {
         jogButton: { inByte: 5, inBit: 4, outByte: 16 },
         gridButton: { inByte: 5, inBit: 6, outByte: 18 },
         reverseButton: { inByte: 1, inBit: 4, outByte: 60 },
-        fluxButton: { inByte: 1, inBit: 5, outByte: 61 },
+        fluxButton: { inByte: 9, inBit: 0, outByte: 61 },
         libraryPlayButton: { inByte: 0, inBit: 5, outByte: 22 },
         libraryStarButton: { inByte: 0, inBit: 4, outByte: 21 },
         libraryPlaylistButton: { inByte: 1, inBit: 1, outByte: 20 },
@@ -3489,9 +3575,9 @@ class S5 {
       this.inReports,
       this.outReports[128],
       {
-        playButton: { inByte: 17, inBit: 3, outByte: 66 },
-        cueButton: { inByte: 17, inBit: 2, outByte: 31 },
-        syncButton: { inByte: 14, inBit: 4, outByte: 37 },
+        playButton: { inByte: 11, inBit: 5, outByte: 66 },
+        cueButton: { inByte: 11, inBit: 2, outByte: 31 },
+        syncButton: { inByte: 11, inBit: 1, outByte: 37 },
         syncMasterButton: { inByte: 10, inBit: 0, outByte: 38 },
         hotcuePadModeButton: { inByte: 12, inBit: 2, outByte: 32 },
         recordPadModeButton: { inByte: 12, inBit: 3, outByte: 67 },
@@ -3512,7 +3598,7 @@ class S5 {
         jogButton: { inByte: 14, inBit: 0, outByte: 39 },
         gridButton: { inByte: 14, inBit: 7, outByte: 41 },
         reverseButton: { inByte: 10, inBit: 4, outByte: 71 },
-        fluxButton: { inByte: 10, inBit: 5, outByte: 72 },
+        fluxButton: { inByte: 15, inBit: 0, outByte: 72 },
         libraryPlayButton: { inByte: 9, inBit: 2, outByte: 45 },
         libraryStarButton: { inByte: 9, inBit: 1, outByte: 44 },
         libraryPlaylistButton: { inByte: 9, inBit: 3, outByte: 43 },
@@ -3609,8 +3695,75 @@ class S5 {
     motorData.set(this.rightMotor.tick(), 5);
     controller.sendOutputReport(49, motorData.buffer, true);
   }
+
+  getFaderInfo(signal) {
+    const payload = new Uint8Array(signal.slice(1));
+    const dataView = new DataView(payload.buffer);
+    console.log(`Fader-Position: \x1b[37m\x1b[41m${signal[3]}\x1b[0m`);
+    const byte = dataView.getUint8(6);
+    const byte2 = dataView.getUint8(7);
+    console.log(byte2, byte);
+    console.log(byte2 * 256 + byte);
+  }
+
   incomingData(data) {
+    if (this.toggler === undefined) this.toggler = false;
+    console.log(data);
+    console.log('\x1b[96m Hello World\x1b[96m');
+    //const y = new HIDOutputReport(128, 97);
+
+    //y.send();
+    const x = new Uint8Array(
+      !this.toggler
+        ? [
+            0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 20, 20, 20, 0, 20, 20, 127, 127, 127, 127, 127, 0, 0, 0,
+            127, 0, 0, 0, 127, 0, 20, 0, 0, 20, 20, 20, 0, 20, 127, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0,
+          ]
+        : [
+            0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 20, 20, 20, 0, 20, 20, 127, 127, 127, 127, 127, 0, 0, 0,
+            127, 0, 0, 0, 127, 0, 20, 0, 0, 20, 20, 20, 0, 20, 20, 0, 20, 20,
+            20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
+            20, 20, 20, 20, 20, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          ]
+    );
+    controller.sendOutputReport(128, x.buffer);
+    this.toggler = !this.toggler;
+    return;
+    //console.log('\033[33m Hello World \033[39m');
     const reportId = data[0];
+    //console.log(typeof data, Object.prototype.toString.call(data), data);
+    //const idxes = [8, 18, 19, 24, 25];
+
+    //for (let i = 0; i < idxes.length; i++) {
+    //console.log(
+    //idxes[i].toString().padStart(2, '0'),
+    //': ',
+    //Number(data[idxes[i]]).toString(2).padStart(8, '0')
+    //);
+    //}
+    // const x = data.map((num) => Number(num).toString(2).padStart(8, '0'));
+    console.log('Report-ID: ', reportId);
+    if (reportId === 1) {
+      const signal = parseHidReport(data);
+      console.log(signal);
+      console.log('vendor_ff01_3: ', signal.vendor_ff01_3);
+      console.log('vendor_ff01_2: ', signal.vendor_ff01_2);
+      console.log('vendor_ff01_4_a: ', signal.vendor_ff01_4_a);
+      console.log('vendor_ff01_4_b: ', signal.vendor_ff01_4_b);
+      console.log('vendor_ff01_32: ', signal.vendor_ff01_32);
+      console.log('vendor_ff01_41: ', signal.vendor_ff01_41);
+      for (const i in signal.vendor_ff01_2)
+        if (signal.vendor_ff01_2[i] === true) console.log('Index button: ', i);
+    } else if (reportId === 2) {
+      this.getFaderInfo(data);
+    }
+    return;
     if (reportId in this.inReports && reportId !== 3) {
       this.inReports[reportId].handleInput(data.buffer.slice(1));
     } else if (reportId === 3) {
