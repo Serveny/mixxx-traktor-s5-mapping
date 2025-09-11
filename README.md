@@ -57,7 +57,7 @@ function getType(value) {
 }
 ```
 
-##### Report-ID 1
+##### Report-ID 1 (IN)
 
 ```
 Unknown[0x0..0xf]: 0x0
@@ -187,118 +187,126 @@ Unknown[0..1023]: 0
 
 ```
 
-#### Controller Inputs
+##### Report-ID 2 (IN)
 
-Report-ID 128
-length for sides: 104 byte (832 bit)
-length for mixer: 73 byte (584 bit)
+// TODO
 
+#### Report-ID 128, 129 (OUT)
+
+- Used to control the LED's of the left and right fx units, decks, transport buttons and touch bar
+- Report-ID 128 for left side
+- Report-ID 129 for right side
+- length: 104 byte (832 bit)
+
+```JS
 [
-127,
-0,
-31, // left pad 1 (rgb color)
-127,
-0,
-31, // left pad 2 (rgb color)
-127,
-0,
-31, // left pad 3 (rgb color)
-127,
-0,
-31, // left pad 4 (rgb color)
-127,
-0,
-31, // left pad 5 (rgb color)
-127,
-0,
-31, // left pad 6 (rgb color)
-127,
-0,
-31, // left pad 7 (rgb color)
-127,
-0,
-31, // left pad 8 (rgb color)
-127, // left fx button 1
-127, // left fx button 2
-127, // left fx button 3
-127, // left fx button 4
-127, // left setting button
-127, // left display button 1
-127, // left display button 2
-127, // left performance button
-127, // left view button
-127, // left display button 3
-127, // left display button 4
-127, // left performance button 2
-127, // left back button
-31, // EMPTY
-14,
-127, // left deck button (2 bit color (white/blue))
-127, // left loop LED
-0, // EMPTY
-20,
-127, // left Hotcue button (2 bit color (white/blue))
-20,
-127, // left freeze button (2 bit color (white/blue))
-20,
-127, // left remix button (2 bit color (white/blue))
-127, // left flux button
-127, // left shift button
-127,
-127, // left sync button (2 bit color (green/red))
-127, // left cue button
-127, // left play button
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96,
-96, // left touch table 25 LED's (blue)
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100,
-100, // left touch table 25 LED's (red)
+  127,
+  0,
+  31, // left pad 1 (rgb color)
+  127,
+  0,
+  31, // left pad 2 (rgb color)
+  127,
+  0,
+  31, // left pad 3 (rgb color)
+  127,
+  0,
+  31, // left pad 4 (rgb color)
+  127,
+  0,
+  31, // left pad 5 (rgb color)
+  127,
+  0,
+  31, // left pad 6 (rgb color)
+  127,
+  0,
+  31, // left pad 7 (rgb color)
+  127,
+  0,
+  31, // left pad 8 (rgb color)
+  127, // left fx button 1
+  127, // left fx button 2
+  127, // left fx button 3
+  127, // left fx button 4
+  127, // left setting button
+  127, // left display button 1
+  127, // left display button 2
+  127, // left performance button
+  127, // left view button
+  127, // left display button 3
+  127, // left display button 4
+  127, // left performance button 2
+  127, // left back button
+  31, // EMPTY
+  14,
+  127, // left deck button (2 bit color (white/blue))
+  127, // left loop LED
+  0, // EMPTY
+  20,
+  127, // left Hotcue button (2 bit color (white/blue))
+  20,
+  127, // left freeze button (2 bit color (white/blue))
+  20,
+  127, // left remix button (2 bit color (white/blue))
+  127, // left flux button
+  127, // left shift button
+  127,
+  127, // left sync button (2 bit color (green/red))
+  127, // left cue button
+  127, // left play button
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96,
+  96, // left touch table 25 LED's (blue)
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100,
+  100, // left touch table 25 LED's (red)
 ]
+```
+
 Byte 0-23: 8 Pad-Buttons RGB of 3 byte
 
 Brightness from 0 to 127 ( --> 7 bit?)
@@ -308,7 +316,88 @@ Byte 1 (0-127): red
 Byte 2 (0-127): green
 Byte 3 (0-127): blue
 
-FX Button 2: byte 25
+# Report-ID 130 (OUT)
+
+- Used to control the LEDS of the mixer
+- length: 73 byte (584 bit)
+
+```JS
+[
+  127, // channel C: fx assign left button
+  127, // channel C: fx assign right button
+  127, // channel A: fx assign left button
+  127, // channel A: fx assign right button
+  127, // snap button
+  127, // quantize button
+  127, // channel B: fx assign left button
+  127, // channel B: fx assign right button
+  127, // channel D: fx assign left button
+  127, // channel D: fx assign right button
+  127, // channel C: filter button
+  127, // channel A: filter button
+  127, // channel B: filter button
+  127, // channel D: filter button
+  127, // channel C: cue button
+  127, // channel A: cue button
+  0, // UNKNOWN: maybe AUX?
+  127, // channel B: cue button
+  127, // channel D: cue button
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127, // channel A: 11 LED's loudness meter
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127, // channel C: 11 LED's loudness meter
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127, // channel B: 11 LED's loudness meter
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127,
+  127, // channel D: 11 LED's loudness meter
+  127, // main gain left: loudness meter top LED
+  127, // main gain right: Loudness meter top LED
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0, // last 8 byte UNKNOWN
+]
+```
 
 #### Displays
 

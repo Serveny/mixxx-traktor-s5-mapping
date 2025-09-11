@@ -3714,8 +3714,15 @@ class S5 {
 
     //y.send();
     const x = new Uint8Array(
-      !this.toggler
+      this.toggler
         ? [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          ]
+        : [
             127,
             0,
             31, // left pad 1 (color)
@@ -3821,16 +3828,95 @@ class S5 {
             100,
             100, // left touch table 25 LED's (red)
           ]
-        : [
-            0, 127, 0, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 127, 31, 0, 0, 31, 0, 0,
-            31, 0, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0,
-            0, 0, 127, 0, 20, 0, 0, 20, 20, 20, 0, 20, 20, 0, 20, 20, 20, 20,
-            20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
-            20, 20, 20, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0,
-          ]
     );
     controller.sendOutputReport(128, x.buffer);
+    controller.sendOutputReport(129, x.buffer);
+
+    const mixerOut = new Uint8Array(
+      this.toggler
+        ? [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0,
+          ]
+        : [
+            127, // channel C: fx assign left button
+            127, // channel C: fx assign right button
+            127, // channel A: fx assign left button
+            127, // channel A: fx assign right button
+            127, // snap button
+            127, // quantize button
+            127, // channel B: fx assign left button
+            127, // channel B: fx assign right button
+            127, // channel D: fx assign left button
+            127, // channel D: fx assign right button
+            127, // channel C: filter button
+            127, // channel A: filter button
+            127, // channel B: filter button
+            127, // channel D: filter button
+            127, // channel C: cue button
+            127, // channel A: cue button
+            0, // MAYBE AUX?
+            127, // channel B: cue button
+            127, // channel D: cue button
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127, // channel A: 11 LED's loudness meter
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127, // channel C: 11 LED's loudness meter
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127, // channel B: 11 LED's loudness meter
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127,
+            127, // channel D: 11 LED's loudness meter
+            127, // main gain left: loudness meter top LED
+            127, // main gain right: Loudness meter top LED
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0, // last 8 byte UNKNOWN
+          ]
+    );
+    controller.sendOutputReport(130, mixerOut.buffer);
     this.toggler = !this.toggler;
     return;
     //console.log('\033[33m Hello World \033[39m');
