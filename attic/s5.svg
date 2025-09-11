@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" width="1200" height="650">
+  <!-- Hintergrund -->
+  <rect x="0" y="0" width="1200" height="650" fill="black" stroke="gray" stroke-width="4" rx="20" />
+
+  <!-- Linke obere Potis -->
+  <g transform="translate(80,60)">
+    <circle cx="0" cy="0" r="20" stroke="white" fill="none" />
+    <circle cx="80" cy="0" r="20" stroke="white" fill="none" />
+    <circle cx="160" cy="0" r="20" stroke="white" fill="none" />
+    <circle cx="240" cy="0" r="20" stroke="white" fill="none" />
+  </g>
+
+  <!-- Rechte obere Potis -->
+  <g transform="translate(880,60)">
+    <circle cx="0" cy="0" r="20" stroke="white" fill="none" />
+    <circle cx="80" cy="0" r="20" stroke="white" fill="none" />
+    <circle cx="160" cy="0" r="20" stroke="white" fill="none" />
+    <circle cx="240" cy="0" r="20" stroke="white" fill="none" />
+  </g>
+
+  <!-- Linker Screen -->
+  <rect x="60" y="120" width="220" height="140" stroke="white" fill="none" />
+
+  <!-- Buttons links vom Screen -->
+  <g transform="translate(20,130)">
+    <rect x="0" y="0" width="30" height="30" stroke="white" fill="none" />
+    <rect x="0" y="40" width="30" height="30" stroke="white" fill="none" />
+    <rect x="0" y="80" width="30" height="30" stroke="white" fill="none" />
+    <rect x="0" y="120" width="30" height="30" stroke="white" fill="none" />
+  </g>
+
+  <!-- Rechter Screen -->
+  <rect x="920" y="120" width="220" height="140" stroke="white" fill="none" />
+
+  <!-- Buttons rechts vom Screen -->
+  <g transform="translate(1150,130)">
+    <rect x="0" y="0" width="30" height="30" stroke="white" fill="none" />
+    <rect x="0" y="40" width="30" height="30" stroke="white" fill="none" />
+    <rect x="0" y="80" width="30" height="30" stroke="white" fill="none" />
+    <rect x="0" y="120" width="30" height="30" stroke="white" fill="none" />
+  </g>
+
+  <!-- Mode-Buttons über Pads links -->
+  <g transform="translate(60,250)">
+    <rect x="0" y="0" width="50" height="20" stroke="white" fill="none" />
+    <rect x="70" y="0" width="50" height="20" stroke="white" fill="none" />
+    <rect x="140" y="0" width="50" height="20" stroke="white" fill="none" />
+    <rect x="210" y="0" width="50" height="20" stroke="white" fill="none" />
+  </g>
+
+  <!-- Mode-Buttons über Pads rechts -->
+  <g transform="translate(890,250)">
+    <rect x="0" y="0" width="50" height="20" stroke="white" fill="none" />
+    <rect x="70" y="0" width="50" height="20" stroke="white" fill="none" />
+    <rect x="140" y="0" width="50" height="20" stroke="white" fill="none" />
+    <rect x="210" y="0" width="50" height="20" stroke="white" fill="none" />
+  </g>
+
+  <!-- Linke Pads -->
+  <g transform="translate(60,280)">
+    <rect x="0" y="0" width="50" height="50" stroke="white" fill="none" />
+    <rect x="70" y="0" width="50" height="50" stroke="white" fill="none" />
+    <rect x="140" y="0" width="50" height="50" stroke="white" fill="none" />
+    <rect x="210" y="0" width="50" height="50" stroke="white" fill="none" />
+
+    <rect x="0" y="70" width="50" height="50" stroke="white" fill="none" />
+    <rect x="70" y="70" width="50" height="50" stroke="white" fill="none" />
+    <rect x="140" y="70" width="50" height="50" stroke="white" fill="none" />
+    <rect x="210" y="70" width="50" height="50" stroke="white" fill="none" />
+  </g>
+
+  <!-- Rechte Pads -->
+  <g transform="translate(890,280)">
+    <rect x="0" y="0" width="50" height="50" stroke="white" fill="none" />
+    <rect x="70" y="0" width="50" height="50" stroke="white" fill="none" />
+    <rect x="140" y="0" width="50" height="50" stroke="white" fill="none" />
+    <rect x="210" y="0" width="50" height="50" stroke="white" fill="none" />
+
+    <rect x="0" y="70" width="50" height="50" stroke="white" fill="none" />
+    <rect x="70" y="70" width="50" height="50" stroke="white" fill="none" />
+    <rect x="140" y="70" width="50" height="50" stroke="white" fill="none" />
+    <rect x="210" y="70" width="50" height="50" stroke="white" fill="none" />
+  </g>
+
+  <!-- Loop-Encoder links -->
+  <circle cx="300" cy="270" r="25" stroke="white" fill="none" />
+  <!-- Loop-Encoder rechts -->
+  <circle cx="900" cy="270" r="25" stroke="white" fill="none" />
+
+  <!-- Transport-Buttons links -->
+  <g transform="translate(60,500)">
+    <rect x="0" y="0" width="50" height="30" stroke="white" fill="none" />
+    <rect x="70" y="0" width="50" height="30" stroke="white" fill="none" />
+    <rect x="140" y="0" width="50" height="30" stroke="white" fill="none" />
+    <rect x="210" y="0" width="50" height="30" stroke="white" fill="none" />
+  </g>
+
+  <!-- Transport-Buttons rechts -->
+  <g transform="translate(890,500)">
+    <rect x="0" y="0" width="50" height="30" stroke="white" fill="none" />
+    <rect x="70" y="0" width="50" height="30" stroke="white" fill="none" />
+    <rect x="140" y="0" width="50" height="30" stroke="white" fill="none" />
+    <rect x="210" y="0" width="50" height="30" stroke="white" fill="none" />
+  </g>
+
+  <!-- Mixer-Sektion -->
+  <g transform="translate(480,100)">
+    <!-- 4 Kanäle -->
+    <g transform="translate(0,0)">
+      <circle cx="0" cy="0" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="50" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="100" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="150" r="15" stroke="white" fill="none" />
+      <rect x="-10" y="200" width="20" height="150" stroke="white" fill="none" />
+    </g>
+    <g transform="translate(60,0)">
+      <circle cx="0" cy="0" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="50" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="100" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="150" r="15" stroke="white" fill="none" />
+      <rect x="-10" y="200" width="20" height="150" stroke="white" fill="none" />
+    </g>
+    <g transform="translate(120,0)">
+      <circle cx="0" cy="0" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="50" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="100" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="150" r="15" stroke="white" fill="none" />
+      <rect x="-10" y="200" width="20" height="150" stroke="white" fill="none" />
+    </g>
+    <g transform="translate(180,0)">
+      <circle cx="0" cy="0" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="50" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="100" r="15" stroke="white" fill="none" />
+      <circle cx="0" cy="150" r="15" stroke="white" fill="none" />
+      <rect x="-10" y="200" width="20" height="150" stroke="white" fill="none" />
+    </g>
+  </g>
+
+  <!-- Mittlere Sektion oben -->
+  <g transform="translate(500,40)">
+    <circle cx="0" cy="0" r="20" stroke="white" fill="none" /> <!-- Main Gain -->
+    <rect x="50" y="-10" width="30" height="20" stroke="white" fill="none" /> <!-- Snap -->
+    <rect x="90" y="-10" width="30" height="20" stroke="white" fill="none" /> <!-- Quantize -->
+    <circle cx="150" cy="0" r="20" stroke="white" fill="none" /> <!-- Booth Gain -->
+    <circle cx="220" cy="0" r="20" stroke="white" fill="none" /> <!-- Tempo -->
+    <circle cx="290" cy="0" r="20" stroke="white" fill="none" /> <!-- Cue Mix -->
+    <circle cx="360" cy="0" r="20" stroke="white" fill="none" /> <!-- Cue Vol -->
+    <rect x="400" y="-10" width="30" height="20" stroke="white" fill="none" /> <!-- Aux -->
+  </g>
+
+  <!-- Crossfader -->
+  <rect x="500" y="580" width="200" height="20" stroke="white" fill="none" />
+</svg>
