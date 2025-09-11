@@ -8,7 +8,7 @@ export interface BytePosIn {
 // Out: from software to controller
 export interface BytePosOut {
   outByte: number;
-  // outLengthBit: number;
+  outLengthByte: number;
 }
 
 export interface BytePosInOut extends BytePosIn, BytePosOut {}
