@@ -3716,20 +3716,118 @@ class S5 {
     const x = new Uint8Array(
       !this.toggler
         ? [
-            0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 20, 20, 20, 0, 20, 20, 127, 127, 127, 127, 127, 0, 0, 0,
-            127, 0, 0, 0, 127, 0, 20, 0, 0, 20, 20, 20, 0, 20, 127, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            127,
             0,
+            31, // left pad 1 (color)
+            127,
+            0,
+            31, // left pad 2 (color)
+            127,
+            0,
+            31, // left pad 3 (color)
+            127,
+            0,
+            31, // left pad 4 (rgb color)
+            127,
+            0,
+            31, // left pad 5 (rgb color)
+            127,
+            0,
+            31, // left pad 6 (rgb color)
+            127,
+            0,
+            31, // left pad 7 (rgb color)
+            127,
+            0,
+            31, // left pad 8 (rgb color)
+            127, // left fx button 1
+            127, // left fx button 2
+            127, // left fx button 3
+            127, // left fx button 4
+            127, // left setting button
+            127, // left display button 1
+            127, // left display button 2
+            127, // left performance button
+            127, // left view button
+            127, // left display button 3
+            127, // left display button 4
+            127, // left performance button 2
+            127, // left back button
+            31, // EMPTY
+            14,
+            127, // left deck button (2 bit color (white/blue))
+            127, // left loop LED
+            0, // EMPTY
+            20,
+            127, // left Hotcue button (2 bit color (white/blue))
+            20,
+            127, // left freeze button (2 bit color (white/blue))
+            20,
+            127, // left remix button (2 bit color (white/blue))
+            127, // left flux button
+            127, // left shift button
+            127,
+            127, // left sync button (2 bit color (green/red))
+            127, // left cue button
+            127, // left play button
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96,
+            96, // left touch table 25 LED's (blue)
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100, // left touch table 25 LED's (red)
           ]
         : [
-            0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 20, 20, 20, 0, 20, 20, 127, 127, 127, 127, 127, 0, 0, 0,
-            127, 0, 0, 0, 127, 0, 20, 0, 0, 20, 20, 20, 0, 20, 20, 0, 20, 20,
+            0, 127, 0, 0, 0, 31, 0, 0, 31, 0, 0, 31, 0, 127, 31, 0, 0, 31, 0, 0,
+            31, 0, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0,
+            0, 0, 127, 0, 20, 0, 0, 20, 20, 20, 0, 20, 20, 0, 20, 20, 20, 20,
             20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,
-            20, 20, 20, 20, 20, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            20, 20, 20, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0,
           ]
     );
     controller.sendOutputReport(128, x.buffer);
