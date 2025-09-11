@@ -190,6 +190,8 @@ Unknown[0..1023]: 0
 #### Controller Inputs
 
 Report-ID 128
+length for sides: 104 byte (832 bit)
+length for mixer: 73 byte (584 bit)
 
 [
 127,
