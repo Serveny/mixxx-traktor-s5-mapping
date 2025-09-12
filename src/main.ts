@@ -1,10 +1,10 @@
 /// Created by Be <be@mixxx.org> and A. Colombier <mixxx@acolombier.dev>
+import type { S5Mapping } from './mapping';
 import { S5 } from './s5';
 
-/* eslint no-unused-vars: "off", no-var: "off" */
 // prettier-ignore
-export var TraktorS5 = new S5({
-            /*
+export const mapping: S5Mapping = {
+  /*
    * Left side
    */
   fxUnitLeft: {
@@ -119,8 +119,8 @@ export var TraktorS5 = new S5({
     tempo    : { inReportId: 1, inByte: 2, inBit: 0, inLengthBit: 4 },
     cueMix   : { inReportId: 2, inByte: 14 },
     cueVol   : { inReportId: 2, inByte: 16 },
-    aux      : { inReportId: 1, inByte: 11, inBit: 0, inLengthBit: 1, outReportId: 0, outByte: 16, outLengthByte: 1 },
-    auxToggle: { inReportId: 1, inByte: 10, inBit: 3, inLengthBit: 1, outReportId: 0, outByte: 16, outLengthByte: 1 },
+    aux      : { inReportId: 1, inByte: 11, inBit: 0, inLengthBit: 1, outReportId: 130, outByte: 16, outLengthByte: 1 },
+    auxToggle: { inReportId: 1, inByte: 10, inBit: 3, inLengthBit: 1, outReportId: 130, outByte: 16, outLengthByte: 1 },
     channelB : {
       gain             : { inReportId: 2, inByte: 28 },
       fxUnitAssignLeft : { inReportId: 1, inByte: 12, inBit: 0, inLengthBit: 1, outReportId: 130, outByte: 6, outLengthByte: 1 },
@@ -130,9 +130,9 @@ export var TraktorS5 = new S5({
       eqMid            : { inReportId: 2, inByte: 32 },
       eqLow            : { inReportId: 2, inByte: 34 },
       filter           : { inReportId: 2, inByte: 36 },
-      filterBtn        : { inReportId: 1, inByte: 10, inBit: 2, inLengthBit: 1, outReportId: 0, outByte: 12, outLengthByte: 1 },
-      cue              : { inReportId: 1, inByte: 10, inBit: 5, inLengthBit: 1, outReportId: 0, outByte: 17, outLengthByte: 1 },
-      volume           : { inReportId: 2, inByte: 0 },
+      filterBtn        : { inReportId: 1, inByte: 10, inBit: 2, inLengthBit: 1, outReportId: 130, outByte: 12, outLengthByte: 1 },
+      cue              : { inReportId: 1, inByte: 10, inBit: 5, inLengthBit: 1, outReportId: 130, outByte: 17, outLengthByte: 1 },
+      volume           : { inReportId: 2, inByte: 2 },
     },
     channelD: {
       gain             : { inReportId: 2, inByte: 48 },
@@ -145,7 +145,7 @@ export var TraktorS5 = new S5({
       filter           : { inReportId: 2, inByte: 56 },
       filterBtn        : { inReportId: 1, inByte: 10, inBit: 6, inLengthBit: 1, outReportId: 130, outByte: 13, outLengthByte: 1 },
       cue              : { inReportId: 1, inByte: 10, inBit: 4, inLengthBit: 1, outReportId: 130, outByte: 18, outLengthByte: 1 },
-      volume           : { inReportId: 2, inByte: 0 },
+      volume           : { inReportId: 2, inByte: 6 },
     },
     cross: { inReportId: 2, inByte: 8 },
   },
@@ -227,4 +227,7 @@ export var TraktorS5 = new S5({
     },
     deck: { inReportId: 1, inByte: 14, inBit: 2, inLengthBit: 1, outReportId: 129, outByte: 38, outLengthByte: 2 },
   },
-});
+};
+
+/* eslint no-unused-vars: "off", no-var: "off" */
+export var TraktorS5 = new S5(mapping);
