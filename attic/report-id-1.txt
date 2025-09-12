@@ -1,0 +1,29 @@
+0, /* Left browse fader  & left loop fader */ 0, // right browse fader & right loop fader
+0, // tempo fader & 4bit EMPTY
+0, // left fx4 knob touch & left fx3 knob touch & left fx2 knob touch & left fx1 knob touch & right fx4 knob touch & right fx3 knob touch & right fx2 knob touch & right fx1 knob touch
+0, // snap button & channelA fxUnitAssignLeft & channelA fxUnitAssignRight & channelC fxUnitAssignLeft & channelC cue
+0, // channelA cue & channelA filterBtn & fxUnitLeft button1 & fxUnitLeft button3 & fxUnitLeft button4 
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0

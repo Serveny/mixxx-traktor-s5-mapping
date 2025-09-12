@@ -1,6 +1,9 @@
 // In: from cotroller to software
-export interface BytePosIn {
+export interface FullBytePosIn {
   inByte: number;
+}
+
+export interface BytePosIn extends FullBytePosIn {
   inBit: number;
   inLengthBit: number;
 }
@@ -13,6 +16,13 @@ export interface BytePosOut {
 
 export interface BytePosInOut extends BytePosIn, BytePosOut {}
 
+export type Button = BytePosInOut;
+export type Meter = BytePosOut;
+
+// Fader and Knobs (Report-ID 2) are always a 16bit int (in other words: inLengthBit is always 16)
+export type Knob = FullBytePosIn;
+export type Fader = FullBytePosIn;
+
 export interface Encoder {
   touch: BytePosIn;
   press: BytePosIn;
@@ -21,12 +31,8 @@ export interface Encoder {
 
 export interface TouchKnob {
   touch: BytePosIn;
-  fade: BytePosIn;
+  fade: Fader;
 }
-
-export type Button = BytePosInOut;
-export type Fader = BytePosIn;
-export type Knob = BytePosIn;
 
 /*
  * S% Mapping - Based on the official documentation:
@@ -45,11 +51,11 @@ export interface S5MixerMapping {
   channelA: S5MixerChannelMapping;
 
   // Middle column
-  mainVol: Knob;
+  mainGain: Knob;
   snap: Button;
   quantize: Button;
-  boothVol: Knob;
-  tempoEncoder: Encoder;
+  boothGain: Knob;
+  tempo: BytePosIn;
   cueMix: Knob;
   cueVol: Knob;
   aux: Button;
@@ -63,8 +69,9 @@ export interface S5MixerMapping {
 
 export interface S5MixerChannelMapping {
   gain: Knob;
-  fxUnit1Assign: Button;
-  fxUnit2Assign: Button;
+  fxUnitAssignLeft: Button;
+  fxUnitAssignRight: Button;
+  volumeLevel: Meter;
   eqHigh: Knob;
   eqMid: Knob;
   eqLow: Knob;
@@ -95,6 +102,7 @@ export interface S5DeckMapping {
     remix: Button;
   };
   pads: [Button, Button, Button, Button, Button, Button, Button, Button];
+  phase: Meter;
   transportControls: { shift: Button; sync: Button; cue: Button; play: Button };
   flux: Button;
   loop: Encoder;

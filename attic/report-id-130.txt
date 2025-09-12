@@ -1,0 +1,72 @@
+127, /* channel C: fx assign left button */ 127, // channel C: fx assign right button
+127, // channel A: fx assign left button
+127, // channel A: fx assign right button
+127, // snap button
+127, // quantize button
+127, // channel B: fx assign left button
+127, // channel B: fx assign right button
+127, // channel D: fx assign left button
+127, // channel D: fx assign right button
+127, // channel C: filter button
+127, // channel A: filter button
+127, // channel B: filter button
+127, // channel D: filter button
+127, // channel C: cue button
+127, // channel A: cue button
+0, // UNKNOWN: maybe AUX?
+127, // channel B: cue button
+127, // channel D: cue button
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127, // channel C: 11 LED's loudness meter
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127, // channel A: 11 LED's loudness meter
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127, // channel B: 11 LED's loudness meter
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127,
+127, // channel D: 11 LED's loudness meter
+127, // main gain left: loudness meter top LED
+127, // main gain right: Loudness meter top LED
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0, // last 8 byte UNKNOWN

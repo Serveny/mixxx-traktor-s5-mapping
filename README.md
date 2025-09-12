@@ -189,6 +189,54 @@ Unknown[0..1023]: 0
 
 ##### Report-ID 2 (IN)
 
+- Used for fader data
+- 38 Values of 16 bit (here 0-4095)
+- 1 Number is 2 bytes (1. byte = substep (0-255), 2. byte = step (0-15))
+
+```JS
+[
+  0, 0, // channel A: volume fader
+  0, 0, // channel B: volume fader
+  0, 0, // channel C: volume fader
+  0, 0, // channel D: volume fader
+  0, 0, // crossfader
+  0, 0, // main gain
+  0, 0, // booth gain
+  0, 0, // cue mix
+  0, 0, // cue vol
+  0, 0, // channel A: gain
+  0, 0, // channel A: hi eq
+  0, 0, // channel A: mid eq
+  0, 0, // channel A: low eq
+  0, 0, // channel A: filter
+  0, 0, // channel B: gain
+  0, 0, // channel B: hi eq
+  0, 0, // channel B: mid eq
+  0, 0, // channel B: low eq
+  0, 0, // channel B: filter
+  0, 0, // channel C: gain
+  0, 0, // channel C: hi eq
+  0, 0, // channel C: mid eq
+  0, 0, // channel C: low eq
+  0, 0, // channel C: filter
+  0, 0, // channel D: gain
+  0, 0, // channel D: hi eq
+  0, 0, // channel D: mid eq
+  0, 0, // channel D: low eq
+  0, 0, // channel D: filter
+  0, 0, // left fx1
+  0, 0, // left fx2
+  0, 0, // left fx3
+  0, 0, // left fx4
+  0, 0, // right fx1
+  0, 0, // right fx2
+  0, 0, // right fx3
+  0, 0, // right fx4
+  0, 0, // UNKNOWN
+  0, 0, // UNKNOWN
+]
+```
+
 // TODO
 
 #### Report-ID 128, 129 (OUT)
@@ -200,30 +248,14 @@ Unknown[0..1023]: 0
 
 ```JS
 [
-  127,
-  0,
-  31, // left pad 1 (rgb color)
-  127,
-  0,
-  31, // left pad 2 (rgb color)
-  127,
-  0,
-  31, // left pad 3 (rgb color)
-  127,
-  0,
-  31, // left pad 4 (rgb color)
-  127,
-  0,
-  31, // left pad 5 (rgb color)
-  127,
-  0,
-  31, // left pad 6 (rgb color)
-  127,
-  0,
-  31, // left pad 7 (rgb color)
-  127,
-  0,
-  31, // left pad 8 (rgb color)
+  127, 0, 31, // left pad 1 (rgb color)
+  127, 0, 31, // left pad 2 (rgb color)
+  127, 0, 31, // left pad 3 (rgb color)
+  127, 0, 31, // left pad 4 (rgb color)
+  127, 0, 31, // left pad 5 (rgb color)
+  127, 0, 31, // left pad 6 (rgb color)
+  127, 0, 31, // left pad 7 (rgb color)
+  127, 0, 31, // left pad 8 (rgb color)
   127, // left fx button 1
   127, // left fx button 2
   127, // left fx button 3
@@ -238,72 +270,19 @@ Unknown[0..1023]: 0
   127, // left performance button 2
   127, // left back button
   31, // EMPTY
-  14,
-  127, // left deck button (2 bit color (white/blue))
+  14, 127, // left deck button (2 bit color (white/blue))
   127, // left loop LED
   0, // EMPTY
-  20,
-  127, // left Hotcue button (2 bit color (white/blue))
-  20,
-  127, // left freeze button (2 bit color (white/blue))
-  20,
-  127, // left remix button (2 bit color (white/blue))
+  20, 127, // left Hotcue button (2 bit color (white/blue))
+  20, 127, // left freeze button (2 bit color (white/blue))
+  20, 127, // left remix button (2 bit color (white/blue))
   127, // left flux button
   127, // left shift button
-  127,
-  127, // left sync button (2 bit color (green/red))
+  127, 127, // left sync button (2 bit color (green/red))
   127, // left cue button
   127, // left play button
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96,
-  96, // left touch table 25 LED's (blue)
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100,
-  100, // left touch table 25 LED's (red)
+  96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, // left touch table 25 LED's (blue)
+  84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, // left touch table 25 LED's (red)
 ]
 ```
 
@@ -342,60 +321,13 @@ Byte 3 (0-127): blue
   0, // UNKNOWN: maybe AUX?
   127, // channel B: cue button
   127, // channel D: cue button
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127, // channel A: 11 LED's loudness meter
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127, // channel C: 11 LED's loudness meter
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127, // channel B: 11 LED's loudness meter
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127,
-  127, // channel D: 11 LED's loudness meter
+  127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, // channel A: 11 LED's loudness meter
+  127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, // channel C: 11 LED's loudness meter
+  127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, // channel B: 11 LED's loudness meter
+  127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, // channel D: 11 LED's loudness meter
   127, // main gain left: loudness meter top LED
   127, // main gain right: Loudness meter top LED
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0, // last 8 byte UNKNOWN
+  0, 0, 0, 0, 0, 0, 0, 0, // last 8 byte UNKNOWN
 ]
 ```
 

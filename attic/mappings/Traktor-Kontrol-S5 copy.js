@@ -67,15 +67,12 @@ const LibrarySortableColumns = [
 
 const LoopWheelMoveFactor = engine.getSetting('loopWheelMoveFactor') || 50;
 const LoopEncoderMoveFactor = engine.getSetting('loopEncoderMoveFactor') || 500;
-const LoopEncoderShiftMoveFactor =
-  engine.getSetting('loopEncoderShiftMoveFactor') || 2500;
+const LoopEncoderShiftMoveFactor = engine.getSetting('loopEncoderShiftMoveFactor') || 2500;
 
 const TempoFaderSoftTakeoverColorLow =
-  LedColors[engine.getSetting('tempoFaderSoftTakeoverColorLow')] ||
-  LedColors.white;
+  LedColors[engine.getSetting('tempoFaderSoftTakeoverColorLow')] || LedColors.white;
 const TempoFaderSoftTakeoverColorHigh =
-  LedColors[engine.getSetting('tempoFaderSoftTakeoverColorHigh')] ||
-  LedColors.green;
+  LedColors[engine.getSetting('tempoFaderSoftTakeoverColorHigh')] || LedColors.green;
 
 // Tempo fader center snap range
 // Transform user value (mm) into upper/lower values
@@ -92,20 +89,14 @@ const TempoCenterValueOffsetLeft =
   (engine.getSetting('tempoCenterOffsetMmLeft') || 0.0) * TempoFaderTicksPerMm;
 const TempoCenterValueOffsetRright =
   (engine.getSetting('tempoCenterOffsetMmRight') || 0.0) * TempoFaderTicksPerMm;
-const TempoCenterUpperLeft =
-  4096 / 2 + TempoCenterRangeTicks / 2 + TempoCenterValueOffsetLeft;
-const TempoCenterLowerLeft =
-  4096 / 2 - TempoCenterRangeTicks / 2 + TempoCenterValueOffsetLeft;
-const TempoCenterUpperRight =
-  4096 / 2 + TempoCenterRangeTicks / 2 + TempoCenterValueOffsetRright;
-const TempoCenterLowerRight =
-  4096 / 2 - TempoCenterRangeTicks / 2 + TempoCenterValueOffsetRright;
+const TempoCenterUpperLeft = 4096 / 2 + TempoCenterRangeTicks / 2 + TempoCenterValueOffsetLeft;
+const TempoCenterLowerLeft = 4096 / 2 - TempoCenterRangeTicks / 2 + TempoCenterValueOffsetLeft;
+const TempoCenterUpperRight = 4096 / 2 + TempoCenterRangeTicks / 2 + TempoCenterValueOffsetRright;
+const TempoCenterLowerRight = 4096 / 2 - TempoCenterRangeTicks / 2 + TempoCenterValueOffsetRright;
 
 // Define whether or not to keep LED that have only one color (reverse, flux, play, shift) dimmed if they are inactive.
 // 'true' will keep them dimmed, 'false' will turn them off. Default: true
-const InactiveLightsAlwaysBacklit = !!engine.getSetting(
-  'inactiveLightsAlwaysBacklit'
-);
+const InactiveLightsAlwaysBacklit = !!engine.getSetting('inactiveLightsAlwaysBacklit');
 
 // Keep both deck select buttons backlit and do not fully turn off the inactive deck button.
 // 'true' will keep the unselected deck dimmed, 'false' to fully turn it off. Default: true
@@ -125,15 +116,11 @@ const WheelLedBlinkOnTrackEnd = !!engine.getSetting('wheelLedBlinkOnTrackEnd');
 
 // When shifting either decks, the mixer will control microphones or auxiliary lines. If there is both a mic and an configure on the same channel, the mixer will control the auxiliary.
 // Default: false
-const MixerControlsMixAuxOnShift = !!engine.getSetting(
-  'mixerControlsMicAuxOnShift'
-);
+const MixerControlsMixAuxOnShift = !!engine.getSetting('mixerControlsMicAuxOnShift');
 
 // Make the sampler tab a beatlooproll tab instead
 // Default: false
-const UseBeatloopRollInsteadOfSampler = !!engine.getSetting(
-  'useBeatloopRollInsteadOfSampler'
-);
+const UseBeatloopRollInsteadOfSampler = !!engine.getSetting('useBeatloopRollInsteadOfSampler');
 
 // Predefined beatlooproll sizes. Note that if you use AddLoopHalveAndDoubleOnBeatloopRollTab, the first and
 // last size will be ignored
@@ -151,8 +138,7 @@ const BeatLoopRolls = [
 // Define the speed of the jogwheel. This will impact the speed of the LED playback indicator, the scratch, and the speed of
 // the motor if enable. Recommended value are 33 + 1/3 or 45.
 // Default: 33 + 1/3
-const BaseRevolutionsPerMinute =
-  engine.getSetting('baseRevolutionsPerMinute') || 33 + 1 / 3;
+const BaseRevolutionsPerMinute = engine.getSetting('baseRevolutionsPerMinute') || 33 + 1 / 3;
 
 // Define how much the wheel will resist. It is a similar setting that the Grid+Wheel in Tracktor
 // Value must defined between 0 to 1. 0 is very tight, 1 is very loose.
@@ -224,13 +210,7 @@ class HIDInputReport {
     this.fields = [];
   }
 
-  registerCallback(
-    callback,
-    byteOffset,
-    bitOffset = 0,
-    bitLength = 1,
-    defaultOldData = undefined
-  ) {
+  registerCallback(callback, byteOffset, bitOffset = 0, bitLength = 1, defaultOldData = undefined) {
     if (typeof callback !== 'function') {
       throw Error('callback must be a function');
     }
@@ -375,11 +355,7 @@ class Component {
   }
   outConnect() {
     if (this.outKey !== undefined && this.group !== undefined) {
-      const connection = engine.makeConnection(
-        this.group,
-        this.outKey,
-        this.output.bind(this)
-      );
+      const connection = engine.makeConnection(this.group, this.outKey, this.output.bind(this));
       // This is useful for case where effect would have been fully disabled in Mixxx. This appears to be the case during unit tests.
       if (connection) {
         this.outConnections[0] = connection;
@@ -425,36 +401,24 @@ class ComponentContainer extends Component {
   }
   reconnectComponents(callback) {
     for (const component of this) {
-      if (
-        typeof component.outDisconnect === 'function' &&
-        component.outDisconnect.length === 0
-      ) {
+      if (typeof component.outDisconnect === 'function' && component.outDisconnect.length === 0) {
         component.outDisconnect();
       }
       if (typeof callback === 'function' && callback.length === 1) {
         callback.call(this, component);
       }
-      if (
-        typeof component.outConnect === 'function' &&
-        component.outConnect.length === 0
-      ) {
+      if (typeof component.outConnect === 'function' && component.outConnect.length === 0) {
         component.outConnect();
       }
       component.outTrigger();
-      if (
-        typeof component.unshift === 'function' &&
-        component.unshift.length === 0
-      ) {
+      if (typeof component.unshift === 'function' && component.unshift.length === 0) {
         component.unshift();
       }
     }
   }
   unshift() {
     for (const component of this) {
-      if (
-        typeof component.unshift === 'function' &&
-        component.unshift.length === 0
-      ) {
+      if (typeof component.unshift === 'function' && component.unshift.length === 0) {
         component.unshift();
       }
       component.shifted = false;
@@ -463,10 +427,7 @@ class ComponentContainer extends Component {
   }
   shift() {
     for (const component of this) {
-      if (
-        typeof component.shift === 'function' &&
-        component.shift.length === 0
-      ) {
+      if (typeof component.shift === 'function' && component.shift.length === 0) {
         component.shift();
       }
       component.shifted = true;
@@ -538,10 +499,7 @@ class Deck extends ComponentContainer {
       }
     }
     this.reconnectComponents(function (component) {
-      if (
-        component.group === undefined ||
-        component.group.search(script.channelRegEx) !== -1
-      ) {
+      if (component.group === undefined || component.group.search(script.channelRegEx) !== -1) {
         component.group = newGroup;
       } else if (component.group.search(script.eqRegEx) !== -1) {
         component.group = `[EqualizerRack1_${newGroup}_Effect1]`;
@@ -640,17 +598,12 @@ class Button extends Component {
   defaultInput(pressed) {
     if (pressed) {
       this.isLongPress = false;
-      if (
-        typeof this.onShortPress === 'function' &&
-        this.onShortPress.length === 0
-      ) {
+      if (typeof this.onShortPress === 'function' && this.onShortPress.length === 0) {
         this.onShortPress();
       }
       if (
-        (typeof this.onLongPress === 'function' &&
-          this.onLongPress.length === 0) ||
-        (typeof this.onLongRelease === 'function' &&
-          this.onLongRelease.length === 0)
+        (typeof this.onLongPress === 'function' && this.onLongPress.length === 0) ||
+        (typeof this.onLongRelease === 'function' && this.onLongRelease.length === 0)
       ) {
         this.longPressTimer = engine.beginTimer(
           this.longPressTimeOutMillis,
@@ -666,10 +619,7 @@ class Button extends Component {
         );
       }
     } else if (this.isLongPress) {
-      if (
-        typeof this.onLongRelease === 'function' &&
-        this.onLongRelease.length === 0
-      ) {
+      if (typeof this.onLongRelease === 'function' && this.onLongRelease.length === 0) {
         this.onLongRelease();
       }
     } else {
@@ -677,10 +627,7 @@ class Button extends Component {
         engine.stopTimer(this.longPressTimer);
         this.longPressTimer = 0;
       }
-      if (
-        typeof this.onShortRelease === 'function' &&
-        this.onShortRelease.length === 0
-      ) {
+      if (typeof this.onShortRelease === 'function' && this.onShortRelease.length === 0) {
         this.onShortRelease();
       }
     }
@@ -766,10 +713,7 @@ class CueButton extends PushButton {
     this.inKey = 'start_stop';
   }
   input(pressed) {
-    if (
-      this.deck.moveMode === moveModes.keyboard &&
-      !this.deck.keyboardPlayMode
-    ) {
+    if (this.deck.moveMode === moveModes.keyboard && !this.deck.keyboardPlayMode) {
       this.deck.assignKeyboardPlayMode(this.group, this.inKey);
     } else if (
       this.deck.wheelMode === wheelModes.motor &&
@@ -830,9 +774,7 @@ class HotcueButton extends PushButton {
       this.number < 1 ||
       this.number > 32
     ) {
-      throw Error(
-        'HotcueButton must have a number property of an integer between 1 and 32'
-      );
+      throw Error('HotcueButton must have a number property of an integer between 1 and 32');
     }
     this.outKey = `hotcue_${this.number}_status`;
     this.colorKey = `hotcue_${this.number}_color`;
@@ -857,11 +799,7 @@ class HotcueButton extends PushButton {
   }
   outConnect() {
     if (undefined !== this.group) {
-      const connection0 = engine.makeConnection(
-        this.group,
-        this.outKey,
-        this.output.bind(this)
-      );
+      const connection0 = engine.makeConnection(this.group, this.outKey, this.output.bind(this));
       if (connection0) {
         this.outConnections[0] = connection0;
       } else {
@@ -869,14 +807,10 @@ class HotcueButton extends PushButton {
           `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
         );
       }
-      const connection1 = engine.makeConnection(
-        this.group,
-        this.colorKey,
-        (colorCode) => {
-          this.color = this.colorMap.getValueForNearestColor(colorCode);
-          this.output(engine.getValue(this.group, this.outKey));
-        }
-      );
+      const connection1 = engine.makeConnection(this.group, this.colorKey, (colorCode) => {
+        this.color = this.colorMap.getValueForNearestColor(colorCode);
+        this.output(engine.getValue(this.group, this.outKey));
+      });
       if (connection1) {
         this.outConnections[1] = connection1;
       } else {
@@ -900,9 +834,7 @@ class KeyboardButton extends PushButton {
       this.number < 1 ||
       this.number > 8
     ) {
-      throw Error(
-        'KeyboardButton must have a number property of an integer between 1 and 8'
-      );
+      throw Error('KeyboardButton must have a number property of an integer between 1 and 8');
     }
     if (this.deck === undefined) {
       throw Error('KeyboardButton must have a deck attached to it');
@@ -981,9 +913,7 @@ class BeatLoopRollButton extends TriggerButton {
       options.number < 0 ||
       options.number > 7
     ) {
-      throw Error(
-        'BeatLoopRollButton must have a number property of an integer between 0 and 7'
-      );
+      throw Error('BeatLoopRollButton must have a number property of an integer between 0 and 7');
     }
     if (BeatLoopRolls[options.number] === 'half') {
       options.key = 'loop_halve';
@@ -1009,9 +939,7 @@ class BeatLoopRollButton extends TriggerButton {
   }
   output(value) {
     if (this.key.startsWith('beatlooproll_')) {
-      this.send(
-        LedColors.white + (value ? this.brightnessOn : this.brightnessOff)
-      );
+      this.send(LedColors.white + (value ? this.brightnessOn : this.brightnessOff));
     } else {
       this.send(this.color);
     }
@@ -1030,9 +958,7 @@ class SamplerButton extends Button {
       this.number < 1 ||
       this.number > 64
     ) {
-      throw Error(
-        'SamplerButton must have a number property of an integer between 1 and 64'
-      );
+      throw Error('SamplerButton must have a number property of an integer between 1 and 64');
     }
     this.group = `[Sampler${this.number}]`;
     this.outConnect();
@@ -1073,11 +999,7 @@ class SamplerButton extends Button {
   }
   outConnect() {
     if (undefined !== this.group) {
-      const connection0 = engine.makeConnection(
-        this.group,
-        'play',
-        this.output.bind(this)
-      );
+      const connection0 = engine.makeConnection(this.group, 'play', this.output.bind(this));
       if (connection0) {
         this.outConnections[0] = connection0;
       } else {
@@ -1085,11 +1007,7 @@ class SamplerButton extends Button {
           `Unable to connect ${this.group}.play' to the controller output. The control appears to be unavailable.`
         );
       }
-      const connection1 = engine.makeConnection(
-        this.group,
-        'track_loaded',
-        this.output.bind(this)
-      );
+      const connection1 = engine.makeConnection(this.group, 'track_loaded', this.output.bind(this));
       if (connection1) {
         this.outConnections[1] = connection1;
       } else {
@@ -1107,13 +1025,8 @@ class SamplerButton extends Button {
 class IntroOutroButton extends PushButton {
   constructor(options) {
     super(options);
-    if (
-      this.cueBaseName === undefined ||
-      typeof this.cueBaseName !== 'string'
-    ) {
-      throw Error(
-        'must specify cueBaseName as intro_start, intro_end, outro_start, or outro_end'
-      );
+    if (this.cueBaseName === undefined || typeof this.cueBaseName !== 'string') {
+      throw Error('must specify cueBaseName as intro_start, intro_end, outro_start, or outro_end');
     }
     this.outKey = `${this.cueBaseName}_enabled`;
     this.outConnect();
@@ -1275,11 +1188,7 @@ class Mixer extends ComponentContainer {
         if (pressed) {
           this.globalQuantizeOn = !this.globalQuantizeOn;
           for (let deckIdx = 1; deckIdx <= 4; deckIdx++) {
-            engine.setValue(
-              `[Channel${deckIdx}]`,
-              'quantize',
-              this.globalQuantizeOn
-            );
+            engine.setValue(`[Channel${deckIdx}]`, 'quantize', this.globalQuantizeOn);
           }
           this.send(this.globalQuantizeOn ? 127 : 0);
         }
@@ -1385,8 +1294,7 @@ class Mixer extends ComponentContainer {
     ) {
       return this.firstPressedFxSelector;
     }
-    let presetNumber =
-      5 + 4 * (this.firstPressedFxSelector - 1) + this.secondPressedFxSelector;
+    let presetNumber = 5 + 4 * (this.firstPressedFxSelector - 1) + this.secondPressedFxSelector;
     if (this.secondPressedFxSelector > this.firstPressedFxSelector) {
       presetNumber--;
     }
@@ -1416,8 +1324,7 @@ class FXSelect extends Button {
       this.mixer.firstPressedFxSelector = this.number;
       for (const selector of [1, 2, 3, 4, 5]) {
         if (selector !== this.number) {
-          let presetNumber =
-            5 + 4 * (this.mixer.firstPressedFxSelector - 1) + selector;
+          let presetNumber = 5 + 4 * (this.mixer.firstPressedFxSelector - 1) + selector;
           if (selector > this.number) {
             presetNumber--;
           }
@@ -1434,10 +1341,7 @@ class FXSelect extends Button {
   onShortRelease() {
     // After a second selector was released, avoid loading a different preset when
     // releasing the first pressed selector.
-    if (
-      this.mixer.comboSelected &&
-      this.number === this.mixer.firstPressedFxSelector
-    ) {
+    if (this.mixer.comboSelected && this.number === this.mixer.firstPressedFxSelector) {
       this.mixer.comboSelected = false;
       this.mixer.firstPressedFxSelector = null;
       this.mixer.secondPressedFxSelector = null;
@@ -1449,11 +1353,7 @@ class FXSelect extends Button {
     if (this.mixer.firstPressedFxSelector !== null) {
       for (const deck of [1, 2, 3, 4]) {
         const presetNumber = this.mixer.calculatePresetNumber();
-        engine.setValue(
-          `[QuickEffectRack1_[Channel${deck}]]`,
-          'loaded_chain_preset',
-          presetNumber
-        );
+        engine.setValue(`[QuickEffectRack1_[Channel${deck}]]`, 'loaded_chain_preset', presetNumber);
       }
     }
     if (this.mixer.firstPressedFxSelector === this.number) {
@@ -1473,11 +1373,7 @@ class QuickEffectButton extends Button {
     if (this.mixer === undefined) {
       throw Error('The mixer must be specified');
     }
-    if (
-      this.number === undefined ||
-      !Number.isInteger(this.number) ||
-      this.number < 1
-    ) {
+    if (this.number === undefined || !Number.isInteger(this.number) || this.number < 1) {
       throw Error('number attribute must be an integer >= 1');
     }
     this.group = `[QuickEffectRack1_[Channel${this.number}]]`;
@@ -1527,11 +1423,7 @@ class QuickEffectButton extends Button {
           `Unable to connect ${this.group}.loaded_chain_preset' to the controller output. The control appears to be unavailable.`
         );
       }
-      const connection1 = engine.makeConnection(
-        this.group,
-        'enabled',
-        this.output.bind(this)
-      );
+      const connection1 = engine.makeConnection(this.group, 'enabled', this.output.bind(this));
       if (connection1) {
         this.outConnections[1] = connection1;
       } else {
@@ -1560,10 +1452,7 @@ Button.prototype.uncoloredOutput = function (value) {
   if (this.indicatorTimer !== 0) {
     return;
   }
-  const color =
-    value > 0
-      ? (this.color || LedColors.white) + this.brightnessOn
-      : LedColors.off;
+  const color = value > 0 ? (this.color || LedColors.white) + this.brightnessOn : LedColors.off;
   this.send(color);
 };
 Button.prototype.colorMap = new ColorMapper({
@@ -1597,8 +1486,7 @@ const wheelTimerMax = 2 ** 32 - 1;
 const wheelTimerTicksPerSecond = 100000000; // One tick every 10ns
 
 const baseRevolutionsPerSecond = BaseRevolutionsPerMinute / 60;
-const wheelTicksPerTimerTicksToRevolutionsPerSecond =
-  wheelTimerTicksPerSecond / wheelAbsoluteMax;
+const wheelTicksPerTimerTicksToRevolutionsPerSecond = wheelTimerTicksPerSecond / wheelAbsoluteMax;
 
 const wheelLEDmodes = {
   off: 0,
@@ -1672,9 +1560,7 @@ class S5EffectUnit extends ComponentContainer {
       input: function (pressed) {
         if (!this.shifted) {
           for (const index of [0, 1, 2]) {
-            const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${
-              index + 1
-            }]`;
+            const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${index + 1}]`;
             engine.setValue(effectGroup, 'enabled', pressed);
           }
           this.output(pressed);
@@ -1692,9 +1578,7 @@ class S5EffectUnit extends ComponentContainer {
     this.knobs = [];
     this.buttons = [];
     for (const index of [0, 1, 2]) {
-      const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${
-        index + 1
-      }]`;
+      const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${index + 1}]`;
       this.knobs[index] = new Pot({
         inKey: 'meta',
         group: effectGroup,
@@ -1752,16 +1636,11 @@ class S5EffectUnit extends ComponentContainer {
       this.focusedEffect + 1
     }]`;
     for (const index of [0, 1, 2]) {
-      const unfocusGroup = `[EffectRack1_EffectUnit${this.unitNumber}_Effect${
-        index + 1
-      }]`;
+      const unfocusGroup = `[EffectRack1_EffectUnit${this.unitNumber}_Effect${index + 1}]`;
       this.buttons[index].outDisconnect();
-      this.buttons[index].group =
-        this.focusedEffect === null ? unfocusGroup : effectGroup;
+      this.buttons[index].group = this.focusedEffect === null ? unfocusGroup : effectGroup;
       this.buttons[index].inKey =
-        this.focusedEffect === null
-          ? 'enabled'
-          : 'button_parameter' + (index + 1);
+        this.focusedEffect === null ? 'enabled' : 'button_parameter' + (index + 1);
       this.buttons[index].shift =
         this.focusedEffect === null
           ? undefined
@@ -1778,8 +1657,7 @@ class S5EffectUnit extends ComponentContainer {
             };
       this.buttons[index].outKey = this.buttons[index].inKey;
       this.knobs[index].group = this.buttons[index].group;
-      this.knobs[index].inKey =
-        this.focusedEffect === null ? 'meta' : 'parameter' + (index + 1);
+      this.knobs[index].inKey = this.focusedEffect === null ? 'meta' : 'parameter' + (index + 1);
       this.knobs[index].shift =
         this.focusedEffect === null
           ? undefined
@@ -1798,22 +1676,11 @@ class S5EffectUnit extends ComponentContainer {
 }
 
 class S5Deck extends Deck {
-  constructor(
-    decks,
-    colors,
-    settings,
-    effectUnit,
-    mixer,
-    inReports,
-    outReport,
-    io
-  ) {
+  constructor(decks, colors, settings, effectUnit, mixer, inReports, outReport, io) {
     super(decks, colors, settings);
 
     this.playButton = new PlayButton({
-      output: InactiveLightsAlwaysBacklit
-        ? undefined
-        : Button.prototype.uncoloredOutput,
+      output: InactiveLightsAlwaysBacklit ? undefined : Button.prototype.uncoloredOutput,
     });
 
     this.cueButton = new CueButton({
@@ -1889,22 +1756,10 @@ class S5Deck extends Deck {
 
         if (value < this.tempoCenterLower) {
           // scale input for lower range
-          this.appliedValue = script.absoluteLin(
-            value,
-            -1,
-            0,
-            0,
-            this.tempoCenterLower
-          );
+          this.appliedValue = script.absoluteLin(value, -1, 0, 0, this.tempoCenterLower);
         } else if (value > this.tempoCenterUpper) {
           // scale input for upper range
-          this.appliedValue = script.absoluteLin(
-            value,
-            0,
-            1,
-            this.tempoCenterUpper,
-            4096
-          );
+          this.appliedValue = script.absoluteLin(value, 0, 1, this.tempoCenterUpper, 4096);
         } else {
           // reset rate in center region
           this.appliedValue = 0;
@@ -1928,15 +1783,11 @@ class S5Deck extends Deck {
         // Use LED to indicate softTakeover pickup position
         if (hardwareOffset > 0) {
           // engine is faster
-          this.send(
-            TempoFaderSoftTakeoverColorLow + Button.prototype.brightnessOn
-          );
+          this.send(TempoFaderSoftTakeoverColorLow + Button.prototype.brightnessOn);
           return;
         } else if (hardwareOffset < 0) {
           // engine is slower
-          this.send(
-            TempoFaderSoftTakeoverColorHigh + Button.prototype.brightnessOn
-          );
+          this.send(TempoFaderSoftTakeoverColorHigh + Button.prototype.brightnessOn);
           return;
         }
 
@@ -1960,9 +1811,7 @@ class S5Deck extends Deck {
       shift: function () {
         this.setKey('loop_enabled');
       },
-      output: InactiveLightsAlwaysBacklit
-        ? undefined
-        : Button.prototype.uncoloredOutput,
+      output: InactiveLightsAlwaysBacklit ? undefined : Button.prototype.uncoloredOutput,
       onShortRelease: function () {
         if (!this.shifted) {
           engine.setValue(this.group, this.key, false);
@@ -2043,11 +1892,7 @@ class S5Deck extends Deck {
       },
       outConnect: function () {
         if (this.outKey !== undefined && this.group !== undefined) {
-          const connection = engine.makeConnection(
-            this.group,
-            this.outKey,
-            this.output.bind(this)
-          );
+          const connection = engine.makeConnection(this.group, this.outKey, this.output.bind(this));
           if (connection) {
             this.outConnections[0] = connection;
           } else {
@@ -2057,9 +1902,7 @@ class S5Deck extends Deck {
           }
         }
       },
-      output: InactiveLightsAlwaysBacklit
-        ? undefined
-        : Button.prototype.uncoloredOutput,
+      output: InactiveLightsAlwaysBacklit ? undefined : Button.prototype.uncoloredOutput,
       onShortRelease: function () {
         if (!this.shifted) {
           engine.setValue(this.group, this.key, false);
@@ -2177,11 +2020,11 @@ class S5Deck extends Deck {
       input: function (value) {
         if (value) {
           this.deck.switchDeck(Deck.groupForNumber(decks[0]));
-          this.outReport.data[io.deckButtonOutputByteOffset] =
-            colors[0] + this.brightnessOn;
+          this.outReport.data[io.deckButtonOutputByteOffset] = colors[0] + this.brightnessOn;
           // turn off the other deck selection button's LED
-          this.outReport.data[io.deckButtonOutputByteOffset + 1] =
-            DeckSelectAlwaysBacklit ? colors[1] + this.brightnessOff : 0;
+          this.outReport.data[io.deckButtonOutputByteOffset + 1] = DeckSelectAlwaysBacklit
+            ? colors[1] + this.brightnessOff
+            : 0;
           this.outReport.send();
         }
       },
@@ -2192,18 +2035,17 @@ class S5Deck extends Deck {
         if (value) {
           this.deck.switchDeck(Deck.groupForNumber(decks[1]));
           // turn off the other deck selection button's LED
-          this.outReport.data[io.deckButtonOutputByteOffset] =
-            DeckSelectAlwaysBacklit ? colors[0] + this.brightnessOff : 0;
-          this.outReport.data[io.deckButtonOutputByteOffset + 1] =
-            colors[1] + this.brightnessOn;
+          this.outReport.data[io.deckButtonOutputByteOffset] = DeckSelectAlwaysBacklit
+            ? colors[0] + this.brightnessOff
+            : 0;
+          this.outReport.data[io.deckButtonOutputByteOffset + 1] = colors[1] + this.brightnessOn;
           this.outReport.send();
         }
       },
     });
 
     // set deck selection button LEDs
-    outReport.data[io.deckButtonOutputByteOffset] =
-      colors[0] + Button.prototype.brightnessOn;
+    outReport.data[io.deckButtonOutputByteOffset] = colors[0] + Button.prototype.brightnessOn;
     outReport.data[io.deckButtonOutputByteOffset + 1] = DeckSelectAlwaysBacklit
       ? colors[1] + Button.prototype.brightnessOff
       : 0;
@@ -2211,9 +2053,7 @@ class S5Deck extends Deck {
 
     this.shiftButton = new PushButton({
       deck: this,
-      output: InactiveLightsAlwaysBacklit
-        ? undefined
-        : Button.prototype.uncoloredOutput,
+      output: InactiveLightsAlwaysBacklit ? undefined : Button.prototype.uncoloredOutput,
       unshift: function () {
         this.output(false);
       },
@@ -2298,27 +2138,17 @@ class S5Deck extends Deck {
           this.deck.wheelMode === wheelModes.loopIn ||
           this.deck.wheelMode === wheelModes.loopOut
         ) {
-          const moveFactor = this.shifted
-            ? LoopEncoderShiftMoveFactor
-            : LoopEncoderMoveFactor;
+          const moveFactor = this.shifted ? LoopEncoderShiftMoveFactor : LoopEncoderMoveFactor;
           const valueIn =
-            engine.getValue(this.group, 'loop_start_position') +
-            (right ? moveFactor : -moveFactor);
+            engine.getValue(this.group, 'loop_start_position') + (right ? moveFactor : -moveFactor);
           const valueOut =
-            engine.getValue(this.group, 'loop_end_position') +
-            (right ? moveFactor : -moveFactor);
+            engine.getValue(this.group, 'loop_end_position') + (right ? moveFactor : -moveFactor);
           engine.setValue(this.group, 'loop_start_position', valueIn);
           engine.setValue(this.group, 'loop_end_position', valueOut);
         } else if (this.shifted) {
-          script.triggerControl(
-            this.group,
-            right ? 'loop_move_1_forward' : 'loop_move_1_backward'
-          );
+          script.triggerControl(this.group, right ? 'loop_move_1_forward' : 'loop_move_1_backward');
         } else {
-          script.triggerControl(
-            this.group,
-            right ? 'loop_double' : 'loop_halve'
-          );
+          script.triggerControl(this.group, right ? 'loop_double' : 'loop_halve');
         }
       },
     });
@@ -2346,9 +2176,7 @@ class S5Deck extends Deck {
       onChange: function (right) {
         if (this.libraryViewButtonPressed) {
           this.currentSortedColumnIdx =
-            (LibrarySortableColumns.length +
-              this.currentSortedColumnIdx +
-              (right ? 1 : -1)) %
+            (LibrarySortableColumns.length + this.currentSortedColumnIdx + (right ? 1 : -1)) %
             LibrarySortableColumns.length;
           engine.setValue(
             '[Library]',
@@ -2358,21 +2186,12 @@ class S5Deck extends Deck {
         } else if (this.starButtonPressed) {
           if (this.shifted) {
             // FIXME doesn't exist, feature request needed
-            script.triggerControl(
-              this.group,
-              right ? 'track_color_prev' : 'track_color_next'
-            );
+            script.triggerControl(this.group, right ? 'track_color_prev' : 'track_color_next');
           } else {
-            script.triggerControl(
-              this.group,
-              right ? 'stars_up' : 'stars_down'
-            );
+            script.triggerControl(this.group, right ? 'stars_up' : 'stars_down');
           }
         } else if (this.gridButtonPressed) {
-          script.triggerControl(
-            this.group,
-            right ? 'waveform_zoom_up' : 'waveform_zoom_down'
-          );
+          script.triggerControl(this.group, right ? 'waveform_zoom_up' : 'waveform_zoom_down');
         } else if (this.libraryPlayButtonPressed) {
           script.triggerControl(
             '[PreviewDeck1]',
@@ -2381,10 +2200,7 @@ class S5Deck extends Deck {
         } else {
           // FIXME there is a bug where this action has no effect when the Mixxx window has no focused. https://github.com/mixxxdj/mixxx/issues/11285
           // As a workaround, we are using deprecated control, hoping the bug will be fixed before the controls get removed
-          const currentlyFocusWidget = engine.getValue(
-            '[Library]',
-            'focused_widget'
-          );
+          const currentlyFocusWidget = engine.getValue('[Library]', 'focused_widget');
           if (currentlyFocusWidget === 0) {
             if (this.shifted) {
               script.triggerControl(
@@ -2392,17 +2208,10 @@ class S5Deck extends Deck {
                 right ? 'SelectNextPlaylist' : 'SelectPrevPlaylist'
               );
             } else {
-              script.triggerControl(
-                '[Playlist]',
-                right ? 'SelectNextTrack' : 'SelectPrevTrack'
-              );
+              script.triggerControl('[Playlist]', right ? 'SelectNextTrack' : 'SelectPrevTrack');
             }
           } else {
-            engine.setValue(
-              '[Library]',
-              'focused_widget',
-              this.shifted ? 2 : 3
-            );
+            engine.setValue('[Library]', 'focused_widget', this.shifted ? 2 : 3);
             engine.setValue('[Library]', 'MoveVertical', right ? 1 : -1);
           }
         }
@@ -2414,10 +2223,7 @@ class S5Deck extends Deck {
         if (this.libraryViewButtonPressed) {
           script.toggleControl('[Library]', 'sort_order');
         } else {
-          const currentlyFocusWidget = engine.getValue(
-            '[Library]',
-            'focused_widget'
-          );
+          const currentlyFocusWidget = engine.getValue('[Library]', 'focused_widget');
           // 3 == Tracks table or root views of library features
           if (this.shifted && currentlyFocusWidget === 0) {
             script.triggerControl('[Playlist]', 'ToggleSelectedSidebarItem');
@@ -2451,10 +2257,7 @@ class S5Deck extends Deck {
       group: '[Library]',
       libraryEncoder: this.libraryEncoder,
       onShortRelease: function () {
-        script.triggerControl(
-          this.group,
-          this.shifted ? 'track_color_prev' : 'track_color_next'
-        );
+        script.triggerControl(this.group, this.shifted ? 'track_color_prev' : 'track_color_next');
       },
       onLongPress: function () {
         this.libraryEncoder.starButtonPressed = true;
@@ -2468,14 +2271,10 @@ class S5Deck extends Deck {
       group: '[Library]',
       libraryEncoder: this.libraryEncoder,
       outConnect: function () {
-        const connection = engine.makeConnection(
-          this.group,
-          'focused_widget',
-          (widget) => {
-            // 4 == Context menu
-            this.output(widget === 4);
-          }
-        );
+        const connection = engine.makeConnection(this.group, 'focused_widget', (widget) => {
+          // 4 == Context menu
+          this.output(widget === 4);
+        });
         // This is useful for case where effect would have been fully disabled in Mixxx. This appears to be the case during unit tests.
         if (connection) {
           this.outConnections[0] = connection;
@@ -2486,10 +2285,7 @@ class S5Deck extends Deck {
         }
       },
       onShortRelease: function () {
-        const currentlyFocusWidget = engine.getValue(
-          '[Library]',
-          'focused_widget'
-        );
+        const currentlyFocusWidget = engine.getValue('[Library]', 'focused_widget');
         // 3 == Tracks table or root views of library features
         // 4 == Context menu
         if (currentlyFocusWidget !== 3 && currentlyFocusWidget !== 4) {
@@ -2587,11 +2383,7 @@ class S5Deck extends Deck {
           number: samplerNumber,
         });
         if (SamplerCrossfaderAssign) {
-          engine.setValue(
-            `[Sampler${samplerNumber}]`,
-            'orientation',
-            decks[0] === 1 ? 0 : 2
-          );
+          engine.setValue(`[Sampler${samplerNumber}]`, 'orientation', decks[0] === 1 ? 0 : 2);
         }
       }
       this.keyboard[i] = new KeyboardButton({
@@ -2761,9 +2553,7 @@ class S5Deck extends Deck {
       },
       outTrigger: function () {
         const vinylOn = this.deck.wheelMode === wheelModes.vinyl;
-        this.send(
-          this.color + (vinylOn ? this.brightnessOn : this.brightnessOff)
-        );
+        this.send(this.color + (vinylOn ? this.brightnessOn : this.brightnessOff));
         if (this.deck.turntableButton) {
           const motorOn = this.deck.wheelMode === wheelModes.motor;
           this.deck.turntableButton.send(
@@ -2778,10 +2568,7 @@ class S5Deck extends Deck {
       deck: this,
       input: function (touched) {
         this.touched = touched;
-        if (
-          this.deck.wheelMode === wheelModes.vinyl ||
-          this.deck.wheelMode === wheelModes.motor
-        ) {
+        if (this.deck.wheelMode === wheelModes.vinyl || this.deck.wheelMode === wheelModes.motor) {
           if (touched) {
             engine.setValue(this.group, 'scratch2_enable', true);
           } else {
@@ -2796,8 +2583,7 @@ class S5Deck extends Deck {
 
         if (
           engine.getValue(this.group, 'play') &&
-          engine.getValue(this.group, 'scratch2') <
-            1.5 * baseRevolutionsPerSecond &&
+          engine.getValue(this.group, 'scratch2') < 1.5 * baseRevolutionsPerSecond &&
           engine.getValue(this.group, 'scratch2') > 0
         ) {
           engine.setValue(this.group, 'scratch2_enable', false);
@@ -2861,14 +2647,8 @@ class S5Deck extends Deck {
             break;
           case wheelModes.loopIn:
             {
-              const loopStartPosition = engine.getValue(
-                this.group,
-                'loop_start_position'
-              );
-              const loopEndPosition = engine.getValue(
-                this.group,
-                'loop_end_position'
-              );
+              const loopStartPosition = engine.getValue(this.group, 'loop_start_position');
+              const loopEndPosition = engine.getValue(this.group, 'loop_end_position');
               const value = Math.min(
                 loopStartPosition + this.speed * LoopWheelMoveFactor,
                 loopEndPosition - LoopWheelMoveFactor
@@ -2878,19 +2658,13 @@ class S5Deck extends Deck {
             break;
           case wheelModes.loopOut:
             {
-              const loopEndPosition = engine.getValue(
-                this.group,
-                'loop_end_position'
-              );
+              const loopEndPosition = engine.getValue(this.group, 'loop_end_position');
               const value = loopEndPosition + this.speed * LoopWheelMoveFactor;
               engine.setValue(this.group, 'loop_end_position', value);
             }
             break;
           case wheelModes.vinyl:
-            if (
-              this.deck.wheelTouch.touched ||
-              engine.getValue(this.group, 'scratch2') !== 0
-            ) {
+            if (this.deck.wheelTouch.touched || engine.getValue(this.group, 'scratch2') !== 0) {
               engine.setValue(this.group, 'scratch2', this.speed);
             } else {
               engine.setValue(this.group, 'jog', this.speed);
@@ -2908,10 +2682,8 @@ class S5Deck extends Deck {
       lastMode: null,
       outConnect: function () {
         if (this.group !== undefined) {
-          const connection0 = engine.makeConnection(
-            this.group,
-            'playposition',
-            (position) => this.output.bind(this)(position, true, true)
+          const connection0 = engine.makeConnection(this.group, 'playposition', (position) =>
+            this.output.bind(this)(position, true, true)
           );
           // This is useful for case where effect would have been fully disabled in Mixxx. This appears to be the case during unit tests.
           if (connection0) {
@@ -2921,15 +2693,12 @@ class S5Deck extends Deck {
               `Unable to connect ${this.group}.playposition' to the controller output. The control appears to be unavailable.`
             );
           }
-          const connection1 = engine.makeConnection(
-            this.group,
-            'play',
-            (play) =>
-              this.output.bind(this)(
-                engine.getValue(this.group, 'playposition'),
-                play,
-                play || engine.getValue(this.group, 'track_loaded')
-              )
+          const connection1 = engine.makeConnection(this.group, 'play', (play) =>
+            this.output.bind(this)(
+              engine.getValue(this.group, 'playposition'),
+              play,
+              play || engine.getValue(this.group, 'track_loaded')
+            )
           );
           // This is useful for case where effect would have been fully disabled in Mixxx. This appears to be the case during unit tests.
           if (connection1) {
@@ -2939,15 +2708,12 @@ class S5Deck extends Deck {
               `Unable to connect ${this.group}.play' to the controller output. The control appears to be unavailable.`
             );
           }
-          const connection2 = engine.makeConnection(
-            this.group,
-            'track_loaded',
-            (trackLoaded) =>
-              this.output.bind(this)(
-                engine.getValue(this.group, 'playposition'),
-                !trackLoaded ? false : engine.getValue(this.group, 'play'),
-                trackLoaded
-              )
+          const connection2 = engine.makeConnection(this.group, 'track_loaded', (trackLoaded) =>
+            this.output.bind(this)(
+              engine.getValue(this.group, 'playposition'),
+              !trackLoaded ? false : engine.getValue(this.group, 'play'),
+              trackLoaded
+            )
           );
           // This is useful for case where effect would have been fully disabled in Mixxx. This appears to be the case during unit tests.
           if (connection2) {
@@ -3052,9 +2818,7 @@ class S5Deck extends Deck {
         this.hotcuePadModeButton.color + this.hotcuePadModeButton.brightnessOn
       );
     } else if (this.currentPadLayer === this.padLayers.hotcuePage3) {
-      this.hotcuePadModeButton.send(
-        LedColors.white + this.hotcuePadModeButton.brightnessOn
-      );
+      this.hotcuePadModeButton.send(LedColors.white + this.hotcuePadModeButton.brightnessOn);
     } else {
       this.hotcuePadModeButton.send(
         this.hotcuePadModeButton.color + this.hotcuePadModeButton.brightnessOff
@@ -3065,19 +2829,15 @@ class S5Deck extends Deck {
     // const recordPadModeLEDOn = this.currentPadLayer === this.padLayers.hotcuePage3;
     // this.recordPadModeButton.send(recordPadModeLEDOn ? 127 : 0);
 
-    const samplesPadModeLEDOn =
-      this.currentPadLayer === this.padLayers.samplerPage;
+    const samplesPadModeLEDOn = this.currentPadLayer === this.padLayers.samplerPage;
     this.samplesPadModeButton.send(samplesPadModeLEDOn ? 127 : 0);
 
     // this.mutePadModeButtonLEDOn = this.currentPadLayer === this.padLayers.samplerPage2;
     // const mutedModeButton.send(mutePadModeButtonLEDOn ? 127 : 0);
     if (this.keyboardPlayMode !== null) {
-      this.stemsPadModeButton.send(
-        LedColors.green + this.stemsPadModeButton.brightnessOn
-      );
+      this.stemsPadModeButton.send(LedColors.green + this.stemsPadModeButton.brightnessOn);
     } else {
-      const keyboardPadModeLEDOn =
-        this.currentPadLayer === this.padLayers.keyboard;
+      const keyboardPadModeLEDOn = this.currentPadLayer === this.padLayers.keyboard;
       this.stemsPadModeButton.send(
         this.stemsPadModeButton.color +
           (keyboardPadModeLEDOn
@@ -3104,18 +2864,13 @@ class S5MotorManager {
 
     let expectedSpeed = 0;
 
-    const currentSpeed =
-      this.deck.wheelRelative.speed / baseRevolutionsPerSecond;
+    const currentSpeed = this.deck.wheelRelative.speed / baseRevolutionsPerSecond;
 
-    if (
-      this.deck.wheelMode === wheelModes.motor &&
-      engine.getValue(this.deck.group, 'play')
-    ) {
+    if (this.deck.wheelMode === wheelModes.motor && engine.getValue(this.deck.group, 'play')) {
       expectedSpeed = engine.getValue(this.deck.group, 'rate_ratio');
       const normalisationFactor = 1 / expectedSpeed / 5;
       velocity =
-        expectedSpeed +
-        Math.pow(-5 * (expectedSpeed / 1) * (currentSpeed - expectedSpeed), 3);
+        expectedSpeed + Math.pow(-5 * (expectedSpeed / 1) * (currentSpeed - expectedSpeed), 3);
     } else if (this.deck.wheelMode !== wheelModes.motor) {
       if (TightnessFactor > 0.5) {
         // Super loose
@@ -3128,10 +2883,7 @@ class S5MotorManager {
           expectedSpeed +
           Math.min(
             maxVelocity,
-            Math.max(
-              -maxVelocity,
-              (expectedSpeed - currentSpeed) * reduceFactor
-            )
+            Math.max(-maxVelocity, (expectedSpeed - currentSpeed) * reduceFactor)
           );
       }
     }
@@ -3157,13 +2909,8 @@ class S5MotorManager {
 
     if (this.isBlockedByUser()) {
       engine.setValue(this.deck.group, 'scratch2_enable', true);
-      this.currentMaxWheelForce =
-        this.zeroSpeedForce + parseInt(this.baseFactor * expectedSpeed);
-    } else if (
-      expectedSpeed &&
-      this.userHold === 0 &&
-      !this.deck.wheelTouch.touched
-    ) {
+      this.currentMaxWheelForce = this.zeroSpeedForce + parseInt(this.baseFactor * expectedSpeed);
+    } else if (expectedSpeed && this.userHold === 0 && !this.deck.wheelTouch.touched) {
       engine.setValue(this.deck.group, 'scratch2_enable', false);
       this.currentMaxWheelForce = MaxWheelForce;
     }
@@ -3213,8 +2960,7 @@ class S5MixerColumn extends ComponentContainer {
             if (this.mixer.shifted && this.group !== `[Channel${idx}]`) {
               // FIXME only if group != [ChannelX]
               const controlKey =
-                this.group === `[Microphone${idx}]` ||
-                this.group === '[Microphone]'
+                this.group === `[Microphone${idx}]` || this.group === '[Microphone]'
                   ? 'talkover'
                   : 'main_mix';
               const isPlaying = engine.getValue(this.group, controlKey);
@@ -3306,8 +3052,7 @@ class S5MixerColumn extends ComponentContainer {
         'input_configured'
       )
     ) {
-      alternativeInput =
-        this.idx !== 1 ? `[Microphone${this.idx}]` : '[Microphone]';
+      alternativeInput = this.idx !== 1 ? `[Microphone${this.idx}]` : '[Microphone]';
     }
 
     if (!alternativeInput) {
@@ -3350,9 +3095,7 @@ class S5MixerColumn extends ComponentContainer {
 function parseHidReport(signal) {
   // Überprüfen, ob das Signal für Report ID 1 bestimmt ist.
   if (!signal || signal[0] !== 1) {
-    console.error(
-      'Fehler: Signal ist nicht für Report ID 1 oder ist ungültig.'
-    );
+    console.error('Fehler: Signal ist nicht für Report ID 1 oder ist ungültig.');
     return null;
   }
 
@@ -3403,24 +3146,15 @@ function parseHidReport(signal) {
     parsedData.vendor_ff01_4_a = dataView.getUint16(17, true);
 
     // 4. Usage {ff01:4}: 2 Werte zu je 16 Bits (4 Bytes)
-    parsedData.vendor_ff01_4_b = [
-      dataView.getUint16(19, true),
-      dataView.getUint16(21, true),
-    ];
+    parsedData.vendor_ff01_4_b = [dataView.getUint16(19, true), dataView.getUint16(21, true)];
 
     // 5. Usage {ff01:32}: 1 Wert zu 16 Bits (2 Bytes)
     parsedData.vendor_ff01_32 = dataView.getUint16(23, true);
 
     // 6. Usage {ff01:41}: 2 Werte zu je 16 Bits (4 Bytes)
-    parsedData.vendor_ff01_41 = [
-      dataView.getUint16(25, true),
-      dataView.getUint16(27, true),
-    ];
+    parsedData.vendor_ff01_41 = [dataView.getUint16(25, true), dataView.getUint16(27, true)];
   } catch (error) {
-    console.error(
-      'Fehler beim Parsen des Signals. Es ist möglicherweise zu kurz.',
-      error
-    );
+    console.error('Fehler beim Parsen des Signals. Es ist möglicherweise zu kurz.', error);
     return null;
   }
 
@@ -3450,36 +3184,26 @@ class S5 {
     this.outReports = [];
     this.outReports[128] = new HIDOutputReport(128, 94);
 
-    this.effectUnit1 = new S5EffectUnit(
-      1,
-      this.inReports,
-      this.outReports[128],
-      {
-        mixKnob: { inByte: 30 },
-        mainButton: { inByte: 1, inBit: 6, outByte: 62 },
-        knobs: [{ inByte: 32 }, { inByte: 34 }, { inByte: 36 }],
-        buttons: [
-          { inByte: 1, inBit: 7, outByte: 63 },
-          { inByte: 1, inBit: 3, outByte: 64 },
-          { inByte: 1, inBit: 2, outByte: 65 },
-        ],
-      }
-    );
-    this.effectUnit2 = new S5EffectUnit(
-      2,
-      this.inReports,
-      this.outReports[128],
-      {
-        mixKnob: { inByte: 70 },
-        mainButton: { inByte: 9, inBit: 4, outByte: 73 },
-        knobs: [{ inByte: 72 }, { inByte: 74 }, { inByte: 76 }],
-        buttons: [
-          { inByte: 9, inBit: 5, outByte: 74 },
-          { inByte: 9, inBit: 6, outByte: 75 },
-          { inByte: 9, inBit: 7, outByte: 76 },
-        ],
-      }
-    );
+    this.effectUnit1 = new S5EffectUnit(1, this.inReports, this.outReports[128], {
+      mixKnob: { inByte: 30 },
+      mainButton: { inByte: 1, inBit: 6, outByte: 62 },
+      knobs: [{ inByte: 32 }, { inByte: 34 }, { inByte: 36 }],
+      buttons: [
+        { inByte: 1, inBit: 7, outByte: 63 },
+        { inByte: 1, inBit: 3, outByte: 64 },
+        { inByte: 1, inBit: 2, outByte: 65 },
+      ],
+    });
+    this.effectUnit2 = new S5EffectUnit(2, this.inReports, this.outReports[128], {
+      mixKnob: { inByte: 70 },
+      mainButton: { inByte: 9, inBit: 4, outByte: 73 },
+      knobs: [{ inByte: 72 }, { inByte: 74 }, { inByte: 76 }],
+      buttons: [
+        { inByte: 9, inBit: 5, outByte: 74 },
+        { inByte: 9, inBit: 6, outByte: 75 },
+        { inByte: 9, inBit: 7, outByte: 76 },
+      ],
+    });
 
     // The interaction between the FX SELECT buttons and the QuickEffect enable buttons is rather complex.
     // It is easier to have this separate from the S5MixerColumn dhe FX SELECT buttons are not
@@ -3657,8 +3381,7 @@ class S5 {
                 'input_configured'
               )
             ) {
-              deckGroup =
-                deckNum !== 1 ? `[Microphone${deckNum}]` : '[Microphone]';
+              deckGroup = deckNum !== 1 ? `[Microphone${deckNum}]` : '[Microphone]';
             }
           }
           const deckLevel = engine.getValue(deckGroup, 'vu_meter');
@@ -3671,10 +3394,7 @@ class S5 {
             for (let i = 0; i <= segmentsToLightFully; i++) {
               deckMeters[columnBaseIndex + i] = 127;
             }
-            if (
-              partialSegmentValue > 0.5 &&
-              segmentsToLightFully < deckSegments
-            ) {
+            if (partialSegmentValue > 0.5 && segmentsToLightFully < deckSegments) {
               deckMeters[columnBaseIndex + segmentsToLightFully + 1] = 125;
             }
           }
@@ -3696,229 +3416,266 @@ class S5 {
     controller.sendOutputReport(49, motorData.buffer, true);
   }
 
-  getFaderInfo(signal) {
-    const payload = new Uint8Array(signal.slice(1));
-    const dataView = new DataView(payload.buffer);
-    console.log(`Fader-Position: \x1b[37m\x1b[41m${signal[3]}\x1b[0m`);
-    const byte = dataView.getUint8(6);
-    const byte2 = dataView.getUint8(7);
-    console.log(byte2, byte);
-    console.log(byte2 * 256 + byte);
+  twoBytesToNumber(substep, step) {
+    // if params are definitly a uint8, its the same as:
+    // return step * 256 + substep;
+    return (step << 8) | substep;
   }
 
-  incomingData(data) {
+  getFaderInfo(signal) {
+    const payload = new Uint8Array(signal.slice(1));
+    const view = new DataView(payload.buffer);
+    if (this.lastReport2 === undefined)
+      this.lastReport2 = new DataView(new Uint8Array(payload.length).fill(0).buffer);
+    // let changedValsCount = 0;
+    for (let i = 0; i < payload.length - 1; i = i + 2) {
+      // const val = view.getUint16(i, true);
+      // const last = this.lastReport2.getUint16(i, true);
+      const val = this.twoBytesToNumber(view.getUint8(i), view.getUint8(i + 1));
+      console.log(
+        `\x1b[37m\x1b[46midx: ${i},${i + 1}, Value: ${val} (${payload[i]}, ${
+          payload[i + 1]
+        })\x1b[0m`
+      );
+      //  const last = this.twoBytesToNumber(this.lastReport2[i], this.lastReport2[i + 1]);
+      //if (val !== last) {
+      //if (changedValsCount++ < 1) {
+      //console.log(`\x1b[37m\x1b[46midx: ${i},${i + 1}, Value: ${val}\x1b[0m`);
+      //} else console.log(`\x1b[37m\x1b[41midx: ${i},${i + 1}, Value: ${val}\x1b[0m`);
+      //}
+    }
+    console.log(`\x1B[${payload.length}A`);
+
+    this.lastReport2 = view;
+    //console.log(`Fader-Position: \x1b[37m\x1b[41m${signal[3]}\x1b[0m`);
+    //const byte = view.getUint8(6);
+    //const byte2 = view.getUint8(7);
+    //console.log(byte2, byte);
+    //console.log(byte2 * 256 + byte);
+  }
+
+  resetLeds() {
+    const x = new Uint8Array([
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ]);
+    controller.sendOutputReport(128, x.buffer);
+    controller.sendOutputReport(129, x.buffer);
+    const mixerOut = new Uint8Array([
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ]);
+    controller.sendOutputReport(130, mixerOut.buffer);
+  }
+
+  testOutputs() {
     if (this.toggler === undefined) this.toggler = false;
-    console.log(data);
-    console.log('\x1b[96m Hello World\x1b[96m');
+    console.log('\x1b[96m Test Output\x1b[96m');
     //const y = new HIDOutputReport(128, 97);
 
     //y.send();
-    const x = new Uint8Array(
-      this.toggler
-        ? [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          ]
-        : [
-            127,
-            0,
-            31, // left pad 1 (color)
-            127,
-            0,
-            31, // left pad 2 (color)
-            127,
-            0,
-            31, // left pad 3 (color)
-            127,
-            0,
-            31, // left pad 4 (rgb color)
-            127,
-            0,
-            31, // left pad 5 (rgb color)
-            127,
-            0,
-            31, // left pad 6 (rgb color)
-            127,
-            0,
-            31, // left pad 7 (rgb color)
-            127,
-            0,
-            31, // left pad 8 (rgb color)
-            127, // left fx button 1
-            127, // left fx button 2
-            127, // left fx button 3
-            127, // left fx button 4
-            127, // left setting button
-            127, // left display button 1
-            127, // left display button 2
-            127, // left performance button
-            127, // left view button
-            127, // left display button 3
-            127, // left display button 4
-            127, // left performance button 2
-            127, // left back button
-            31, // EMPTY
-            14,
-            127, // left deck button (2 bit color (white/blue))
-            127, // left loop LED
-            0, // EMPTY
-            20,
-            127, // left Hotcue button (2 bit color (white/blue))
-            20,
-            127, // left freeze button (2 bit color (white/blue))
-            20,
-            127, // left remix button (2 bit color (white/blue))
-            127, // left flux button
-            127, // left shift button
-            127,
-            127, // left sync button (2 bit color (green/red))
-            127, // left cue button
-            127, // left play button
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96,
-            96, // left touch table 25 LED's (blue)
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100,
-            100, // left touch table 25 LED's (red)
-          ]
-    );
+
+    this.toggler = !this.toggler;
+    if (!this.toggler) {
+      this.resetLeds();
+      return;
+    }
+    const x = new Uint8Array([
+      127,
+      0,
+      31, // left pad 1 (color)
+      127,
+      0,
+      31, // left pad 2 (color)
+      127,
+      0,
+      31, // left pad 3 (color)
+      127,
+      0,
+      31, // left pad 4 (rgb color)
+      127,
+      0,
+      31, // left pad 5 (rgb color)
+      127,
+      0,
+      31, // left pad 6 (rgb color)
+      127,
+      0,
+      31, // left pad 7 (rgb color)
+      127,
+      0,
+      31, // left pad 8 (rgb color)
+      127, // left fx button 1
+      127, // left fx button 2
+      127, // left fx button 3
+      127, // left fx button 4
+      127, // left setting button
+      127, // left display button 1
+      127, // left display button 2
+      127, // left performance button
+      127, // left view button
+      127, // left display button 3
+      127, // left display button 4
+      127, // left performance button 2
+      127, // left back button
+      31, // EMPTY
+      14,
+      127, // left deck button (2 bit color (white/blue))
+      127, // left loop LED
+      0, // EMPTY
+      20,
+      127, // left Hotcue button (2 bit color (white/blue))
+      20,
+      127, // left freeze button (2 bit color (white/blue))
+      20,
+      127, // left remix button (2 bit color (white/blue))
+      127, // left flux button
+      127, // left shift button
+      127,
+      127, // left sync button (2 bit color (green/red))
+      127, // left cue button
+      127, // left play button
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96,
+      96, // left touch table 25 LED's (blue)
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100, // left touch table 25 LED's (red)
+    ]);
     controller.sendOutputReport(128, x.buffer);
     controller.sendOutputReport(129, x.buffer);
 
-    const mixerOut = new Uint8Array(
-      this.toggler
-        ? [
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0,
-          ]
-        : [
-            127, // channel C: fx assign left button
-            127, // channel C: fx assign right button
-            127, // channel A: fx assign left button
-            127, // channel A: fx assign right button
-            127, // snap button
-            127, // quantize button
-            127, // channel B: fx assign left button
-            127, // channel B: fx assign right button
-            127, // channel D: fx assign left button
-            127, // channel D: fx assign right button
-            127, // channel C: filter button
-            127, // channel A: filter button
-            127, // channel B: filter button
-            127, // channel D: filter button
-            127, // channel C: cue button
-            127, // channel A: cue button
-            0, // MAYBE AUX?
-            127, // channel B: cue button
-            127, // channel D: cue button
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127, // channel A: 11 LED's loudness meter
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127, // channel C: 11 LED's loudness meter
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127, // channel B: 11 LED's loudness meter
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127,
-            127, // channel D: 11 LED's loudness meter
-            127, // main gain left: loudness meter top LED
-            127, // main gain right: Loudness meter top LED
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0, // last 8 byte UNKNOWN
-          ]
-    );
+    const mixerOut = new Uint8Array([
+      127, // channel C: fx assign left button
+      127, // channel C: fx assign right button
+      127, // channel A: fx assign left button
+      127, // channel A: fx assign right button
+      127, // snap button
+      127, // quantize button
+      127, // channel B: fx assign left button
+      127, // channel B: fx assign right button
+      127, // channel D: fx assign left button
+      127, // channel D: fx assign right button
+      127, // channel C: filter button
+      127, // channel A: filter button
+      127, // channel B: filter button
+      127, // channel D: filter button
+      127, // channel C: cue button
+      127, // channel A: cue button
+      0, // MAYBE AUX?
+      127, // channel B: cue button
+      127, // channel D: cue button
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127, // channel C: 11 LED's loudness meter
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127, // channel A: 11 LED's loudness meter
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127, // channel B: 11 LED's loudness meter
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127,
+      127, // channel D: 11 LED's loudness meter
+      127, // main gain left: loudness meter top LED
+      127, // main gain right: Loudness meter top LED
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0, // last 8 byte UNKNOWN
+    ]);
     controller.sendOutputReport(130, mixerOut.buffer);
-    this.toggler = !this.toggler;
-    return;
+  }
+
+  incomingData(data) {
+    // console.log(data);
+    //this.testOutputs();
+    //const y = new HIDOutputReport(128, 97);
+
+    //y.send();
     //console.log('\033[33m Hello World \033[39m');
     const reportId = data[0];
     //console.log(typeof data, Object.prototype.toString.call(data), data);
@@ -3935,13 +3692,12 @@ class S5 {
     console.log('Report-ID: ', reportId);
     if (reportId === 1) {
       const signal = parseHidReport(data);
-      console.log(signal);
-      console.log('vendor_ff01_3: ', signal.vendor_ff01_3);
-      console.log('vendor_ff01_2: ', signal.vendor_ff01_2);
-      console.log('vendor_ff01_4_a: ', signal.vendor_ff01_4_a);
-      console.log('vendor_ff01_4_b: ', signal.vendor_ff01_4_b);
-      console.log('vendor_ff01_32: ', signal.vendor_ff01_32);
-      console.log('vendor_ff01_41: ', signal.vendor_ff01_41);
+      //console.log('vendor_ff01_3: ', signal.vendor_ff01_3);
+      //console.log('vendor_ff01_2: ', signal.vendor_ff01_2);
+      //console.log('vendor_ff01_4_a: ', signal.vendor_ff01_4_a);
+      //console.log('vendor_ff01_4_b: ', signal.vendor_ff01_4_b);
+      //console.log('vendor_ff01_32: ', signal.vendor_ff01_32);
+      //console.log('vendor_ff01_41: ', signal.vendor_ff01_41);
       for (const i in signal.vendor_ff01_2)
         if (signal.vendor_ff01_2[i] === true) console.log('Index button: ', i);
     } else if (reportId === 2) {
@@ -3964,18 +3720,10 @@ class S5 {
       if (wheelTimerDelta < 0) {
         wheelTimerDelta += wheelTimerMax;
       }
-      this.leftDeck.wheelRelative.input(
-        view.getUint32(12, true),
-        view.getUint32(8, true)
-      );
-      this.rightDeck.wheelRelative.input(
-        view.getUint32(40, true),
-        view.getUint32(36, true)
-      );
+      this.leftDeck.wheelRelative.input(view.getUint32(12, true), view.getUint32(8, true));
+      this.rightDeck.wheelRelative.input(view.getUint32(40, true), view.getUint32(36, true));
     } else {
-      console.warn(
-        `Unsupported HID repord with ID ${reportId}. Contains: ${data}`
-      );
+      console.warn(`Unsupported HID repord with ID ${reportId}. Contains: ${data}`);
     }
   }
   init() {

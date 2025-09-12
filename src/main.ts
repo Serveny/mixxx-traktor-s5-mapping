@@ -4,26 +4,26 @@ import { S5 } from './s5';
 /* eslint no-unused-vars: "off", no-var: "off" */
 // prettier-ignore
 export var TraktorS5 = new S5({
-    /*
+          /*
    * Left side
    */
   fxUnitLeft: {
     knobs: [
       {
         touch: { inByte: 3, inBit: 3, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+        fade : { inByte: 58 },
       },
       {
         touch: { inByte: 3, inBit: 2, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+        fade : { inByte: 60 },
       },
       {
         touch: { inByte: 3, inBit: 1, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+        fade : { inByte: 62 },
       },
       {
         touch: { inByte: 3, inBit: 0, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+        fade : { inByte: 64 },
       },
     ],
     buttons: [
@@ -48,7 +48,7 @@ export var TraktorS5 = new S5({
       browse: {
         touch: { inByte: 13, inBit: 4, inLengthBit: 1 },
         press: { inByte: 6, inBit: 1, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 4 },
+        fade : { inByte: 0, inBit: 0, inLengthBit: 4  },
       },
       back: { inByte: 6, inBit: 0, inLengthBit: 1, outByte: 36, outLengthByte: 1 },
     },
@@ -67,6 +67,7 @@ export var TraktorS5 = new S5({
       { inByte: 8, inBit: 7, inLengthBit: 1, outByte: 18, outLengthByte: 3 },
       { inByte: 8, inBit: 0, inLengthBit: 1, outByte: 21, outLengthByte: 3 },
     ],
+    phase            : { outByte: 54, outLengthByte: 50, },
     transportControls: {
       shift: { inByte: 8, inBit: 4, inLengthBit: 1, outByte: 49, outLengthByte: 1 },
       sync : { inByte: 8, inBit: 3, inLengthBit: 1, outByte: 50, outLengthByte: 2 },
@@ -77,97 +78,97 @@ export var TraktorS5 = new S5({
     loop: {
       touch: { inByte: 13, inBit: 5, inLengthBit: 1 },
       press: { inByte: 6, inBit: 6, inLengthBit: 1 },
-      fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+      fade : { inByte: 0, inBit: 4, inLengthBit: 4 },
     },
     deck: { inByte: 6, inBit: 7, inLengthBit: 1, outByte: 38, outLengthByte: 2 },
   },
-      /*
+            /*
    * Middle (Mixer)
    */
   mixer: {
     channelC: {
-      gain         : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      fxUnit1Assign: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      fxUnit2Assign: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      eqHigh       : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      eqMid        : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      eqLow        : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      filter       : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      filterBtn    : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      cue          : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      volume       : { inByte: 0, inBit: 0, inLengthBit: 1 },
+      gain             : { inByte: 38 },
+      fxUnitAssignLeft : { inByte: 4, inBit: 3, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
+      fxUnitAssignRight: { inByte: 4, inBit: 2, inLengthBit: 1, outByte: 1, outLengthByte: 1 },
+      volumeLevel      : {                                      outByte: 19, outLengthByte: 11 },
+      eqHigh           : { inByte: 20 },
+      eqMid            : { inByte: 22 },
+      eqLow            : { inByte: 24 },
+      filter           : { inByte: 26 },
+      filterBtn        : { inByte: 4, inBit: 5, inLengthBit: 1, outByte: 10, outLengthByte: 1 },
+      cue              : { inByte: 4, inBit: 4, inLengthBit: 1, outByte: 14, outLengthByte: 1 },
+      volume           : { inByte: 4, },
     },
     channelA: {
-      gain         : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      fxUnit1Assign: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      fxUnit2Assign: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      eqHigh       : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      eqMid        : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      eqLow        : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      filter       : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      filterBtn    : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      cue          : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      volume       : { inByte: 0, inBit: 0, inLengthBit: 1 },
+      gain             : { inByte: 38 },
+      fxUnitAssignLeft : { inByte: 4, inBit: 1, inLengthBit: 1, outByte: 2, outLengthByte: 1 },
+      fxUnitAssignRight: { inByte: 4, inBit: 6, inLengthBit: 1, outByte: 3, outLengthByte: 1 },
+      volumeLevel      : {                                      outByte: 30, outLengthByte: 11 },
+      eqHigh           : { inByte: 20 },
+      eqMid            : { inByte: 22 },
+      eqLow            : { inByte: 24 },
+      filter           : { inByte: 26 },
+      filterBtn        : { inByte: 5, inBit: 1, inLengthBit: 1, outByte: 11, outLengthByte: 1 },
+      cue              : { inByte: 5, inBit: 0, inLengthBit: 1, outByte: 15, outLengthByte: 1 },
+      volume           : { inByte: 0 },
     },
-    mainVol     : { inByte: 0, inBit: 0, inLengthBit: 1 },
-    snap        : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-    quantize    : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-    boothVol    : { inByte: 0, inBit: 0, inLengthBit: 1 },
-    tempoEncoder: {
-      touch: { inByte: 0, inBit: 0, inLengthBit: 1 },
-      press: { inByte: 0, inBit: 0, inLengthBit: 1 },
-      fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
-    },
-    cueMix   : { inByte: 0, inBit: 0, inLengthBit: 1 },
-    cueVol   : { inByte: 0, inBit: 0, inLengthBit: 1 },
-    aux      : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-    auxToggle: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
+    mainGain     : { inByte: 10 },
+    snap        : { inByte: 4, inBit: 0, inLengthBit: 1, outByte: 4, outLengthByte: 1 },
+    quantize    : { inByte: 4, inBit: 7, inLengthBit: 1, outByte: 5, outLengthByte: 1 },
+    boothGain    : { inByte: 12 },
+    tempo: { inByte: 2, inBit: 0, inLengthBit: 4 },
+    cueMix   : { inByte: 14 },
+    cueVol   : { inByte: 16 },
+    aux      : { inByte: 11, inBit: 0, inLengthBit: 1, outByte: 16, outLengthByte: 1 },
+    auxToggle: { inByte: 10, inBit: 3, inLengthBit: 1, outByte: 16, outLengthByte: 1 },
     channelB : {
-      gain         : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      fxUnit1Assign: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      fxUnit2Assign: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      eqHigh       : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      eqMid        : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      eqLow        : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      filter       : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      filterBtn    : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      cue          : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      volume       : { inByte: 0, inBit: 0, inLengthBit: 1 },
+      gain             : { inByte: 28 },
+      fxUnitAssignLeft : { inByte: 12, inBit: 0, inLengthBit: 1, outByte: 6, outLengthByte: 1 },
+      fxUnitAssignRight: { inByte: 12, inBit: 1, inLengthBit: 1, outByte: 7, outLengthByte: 1 },
+      volumeLevel      : {                                      outByte: 41, outLengthByte: 11 },
+      eqHigh           : { inByte: 30 },
+      eqMid            : { inByte: 32 },
+      eqLow            : { inByte: 34 },
+      filter           : { inByte: 36 },
+      filterBtn        : { inByte: 10, inBit: 2, inLengthBit: 1, outByte: 12, outLengthByte: 1 },
+      cue              : { inByte: 10, inBit: 5, inLengthBit: 1, outByte: 17, outLengthByte: 1 },
+      volume           : { inByte: 0 },
     },
     channelD: {
-      gain         : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      fxUnit1Assign: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      fxUnit2Assign: { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      eqHigh       : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      eqMid        : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      eqLow        : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      filter       : { inByte: 0, inBit: 0, inLengthBit: 1 },
-      filterBtn    : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      cue          : { inByte: 0, inBit: 0, inLengthBit: 1, outByte: 0, outLengthByte: 1 },
-      volume       : { inByte: 0, inBit: 0, inLengthBit: 1 },
+      gain             : { inByte: 48 },
+      fxUnitAssignLeft : { inByte: 12, inBit: 2, inLengthBit: 1, outByte: 8, outLengthByte: 1 },
+      fxUnitAssignRight: { inByte: 12, inBit: 3, inLengthBit: 1, outByte: 9, outLengthByte: 1 },
+      volumeLevel      : {                                      outByte: 52, outLengthByte: 11 },
+      eqHigh           : { inByte: 50 },
+      eqMid            : { inByte: 52 },
+      eqLow            : { inByte: 54 },
+      filter           : { inByte: 56 },
+      filterBtn        : { inByte: 10, inBit: 6, inLengthBit: 1, outByte: 13, outLengthByte: 1 },
+      cue              : { inByte: 10, inBit: 4, inLengthBit: 1, outByte: 18, outLengthByte: 1 },
+      volume           : { inByte: 0 },
     },
-    cross: { inByte: 0, inBit: 0, inLengthBit: 1 },
+    cross: { inByte: 8 },
   },
-      /*
+            /*
    * Right side
    */
   fxUnitRight: {
     knobs: [
       {
         touch: { inByte: 3, inBit: 7, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+        fade : { inByte: 66 },
       },
       {
         touch: { inByte: 3, inBit: 6, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+        fade : { inByte: 68 },
       },
       {
         touch: { inByte: 3, inBit: 5, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+        fade : { inByte: 70 },
       },
       {
         touch: { inByte: 3, inBit: 4, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+        fade : { inByte: 72 },
       },
     ],
     buttons: [
@@ -192,7 +193,7 @@ export var TraktorS5 = new S5({
       browse: {
         touch: { inByte: 13, inBit: 6, inLengthBit: 1 },
         press: { inByte: 14, inBit: 0, inLengthBit: 1 },
-        fade : { inByte: 0, inBit: 0, inLengthBit: 4 },
+        fade : { inByte: 1, inBit: 0, inLengthBit: 4 },
       },
       back: { inByte: 14, inBit: 1, inLengthBit: 1, outByte: 36, outLengthByte: 1 },
     },
@@ -211,6 +212,7 @@ export var TraktorS5 = new S5({
       { inByte: 15, inBit: 6, inLengthBit: 1, outByte: 18, outLengthByte: 3 },
       { inByte: 16, inBit: 3, inLengthBit: 1, outByte: 21, outLengthByte: 3 },
     ],
+    phase            : { outByte: 54, outLengthByte: 50, },
     transportControls: {
       shift: { inByte: 11, inBit: 4, inLengthBit: 1, outByte: 49, outLengthByte: 1 },
       sync : { inByte: 11, inBit: 1, inLengthBit: 1, outByte: 50, outLengthByte: 2 },
@@ -221,7 +223,7 @@ export var TraktorS5 = new S5({
     loop: {
       touch: { inByte: 13, inBit: 7, inLengthBit: 1 },
       press: { inByte: 14, inBit: 3, inLengthBit: 1 },
-      fade : { inByte: 0, inBit: 0, inLengthBit: 1 },
+      fade : { inByte: 1, inBit: 4, inLengthBit: 4 },
     },
     deck: { inByte: 14, inBit: 2, inLengthBit: 1, outByte: 38, outLengthByte: 2 },
   },

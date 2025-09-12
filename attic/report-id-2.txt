@@ -1,0 +1,78 @@
+0, /* channel A: volume fader 0, */ channel A: volume fader
+0, // channel B: volume fader
+0, // channel B: volume fader
+0, // channel C: volume fader 
+0, // channel C: volume fader 
+0, // channel D: volume fader
+0, // channel D: volume fader
+0, // crossfader
+0, // crossfader 
+0, // main gain
+0, // main gain
+0, // booth gain
+0, // booth gain
+0, // cue mix
+0, // cue mix
+0, // cue vol
+0, // cue vol
+0, // channel A: gain
+0, // channel A: gain
+0, // channel A: hi eq
+0, // channel A: hi eq
+0, // channel A: mid eq
+0, // channel A: mid eq
+0, // channel A: low eq
+0, // channel A: low eq
+0, // channel A: filter 
+0, // channel A: filter
+0, // channel B: gain
+0, // channel B: gain
+0, // channel B: hi eq
+0, // channel B: hi eq
+0, // channel B: mid eq
+0, // channel B: mid eq
+0, // channel B: low eq
+0, // channel B: low eq
+0, // channel B: filter 
+0, // channel B: filter
+0, // channel C: gain
+0, // channel C: gain
+0, // channel C: hi eq
+0, // channel C: hi eq
+0, // channel C: mid eq
+0, // channel C: mid eq
+0, // channel C: low eq
+0, // channel C: low eq
+0, // channel C: filter 
+0, // channel C: filter
+0, // channel D: gain
+0, // channel D: gain
+0, // channel D: hi eq
+0, // channel D: hi eq
+0, // channel D: mid eq
+0, // channel D: mid eq
+0, // channel D: low eq
+0, // channel D: low eq
+0, // channel D: filter 
+0, // channel D: filter
+0, // left fx1
+0, // left fx1
+0, // left fx2
+0, // left fx2
+0, // left fx3
+0, // left fx3
+0, // left fx4
+0, // left fx4
+0, // right fx1
+0, // right fx1
+0, // right fx2
+0, // right fx2
+0, // right fx3
+0, // right fx3
+0, // right fx4
+0, // right fx4
+0, // unknown
+0, // unknown
+0, // unknown
+0, // unknown
+
