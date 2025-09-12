@@ -1,11 +1,11 @@
-0, /* Left browse fader  & left loop fader */ 0, // right browse fader & right loop fader
-0, // tempo fader & 4bit EMPTY
-0, // left fx4 knob touch & left fx3 knob touch & left fx2 knob touch & left fx1 knob touch & right fx4 knob touch & right fx3 knob touch & right fx2 knob touch & right fx1 knob touch
-0, // snap button & channelA fxUnitAssignLeft & channelA fxUnitAssignRight & channelC fxUnitAssignLeft & channelC cue
-0, // channelA cue & channelA filterBtn & fxUnitLeft button1 & fxUnitLeft button3 & fxUnitLeft button4 
-0,
-0,
-0,
+0, /* Left browse fader, left loop fader */ 0, // right browse fader, right loop fader
+0, // tempo fader, 4bit EMPTY
+0, // left fx4 knob touch, left fx3 knob touch, left fx2 knob touch, left fx1 knob touch, right fx4 knob touch, right fx3 knob touch, right fx2 knob touch, right fx1 knob touch
+0, // snap button, channelA fxUnitAssignLeft, channelA fxUnitAssignRight, channelC fxUnitAssignLeft, channelC cue, channelC filterBtn, channelA fxUnitAssignRight, quantize button
+0, // channelA cue, channelA filterBtn, fxUnitLeft button 1, fxUnitLeft button 3, fxUnitLeft button 4, fxUnitLeft button 2, EMPTY, EMPTY 
+0, // left browse back button, left browse press, left performance mode button 2, left display button 3, left view button, left display button 4, left loop press, left deck button 
+0, // left performance mode button 1, left display button 1, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, left settings button, left display 2 button
+0, // 
 0,
 0,
 0,
