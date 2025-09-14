@@ -2,7 +2,7 @@ import type { S5Mapping } from './types/mapping';
 
 // prettier-ignore
 export const mapping: S5Mapping = {
-      /*
+  /*
    * Left side
    */
   fxUnitLeft: {
@@ -66,8 +66,11 @@ export const mapping: S5Mapping = {
       { inReportId: 1, inByte: 8, inBit: 0, inLengthBit: 1, outReportId: 128, outByte: 21, outLengthByte: 3 },
     ],
     touchStrip: {
-      phase: { outReportId: 128, outByte: 54, outLengthByte: 50, },
-      touch: { inReportId: 1, inByte: 19, inBit: 0, inLengthBit: 16 }
+      phase: { 
+        blue: { outReportId: 128, outByte: 54, outLengthByte: 25 },
+        red : { outReportId: 128, outByte: 79, outLengthByte: 25 },
+      },
+      touch: { inReportId: 1, inByte: 25, inBit: 0, inLengthBit: 16 }
     },
     transportControls: {
       shift: { inReportId: 1, inByte: 8, inBit: 4, inLengthBit: 1, outReportId: 128, outByte: 49, outLengthByte: 1 },
@@ -83,7 +86,7 @@ export const mapping: S5Mapping = {
     },
     deck: { inReportId: 1, inByte: 6, inBit: 7, inLengthBit: 1, outReportId: 128, outByte: 38, outLengthByte: 2 },
   },
-      /*
+  /*
    * Middle (Mixer)
    */
   mixer: {
@@ -150,7 +153,7 @@ export const mapping: S5Mapping = {
     },
     cross: { inReportId: 2, inByte: 8 },
   },
-      /*
+  /*
    * Right side
    */
   fxUnitRight: {
@@ -214,7 +217,10 @@ export const mapping: S5Mapping = {
       { inReportId: 1, inByte: 16, inBit: 3, inLengthBit: 1, outReportId: 129, outByte: 21, outLengthByte: 3 },
     ],
     touchStrip: {
-      phase: { outReportId: 129, outByte: 54, outLengthByte: 50 },
+      phase: { 
+        blue: { outReportId: 129, outByte: 54, outLengthByte: 25 },
+        red : { outReportId: 129, outByte: 79, outLengthByte: 25 },
+      },
       touch: { inReportId: 1, inByte: 25, inBit: 0, inLengthBit: 16 }
     },
     transportControls: {

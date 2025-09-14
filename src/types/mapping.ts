@@ -36,6 +36,11 @@ export interface TouchKnob {
   fade: Fader;
 }
 
+export interface BlueRedLeds {
+  blue: Meter;
+  red: Meter;
+}
+
 /*
  * S% Mapping - Based on the official documentation:
  * https://www.native-instruments.com/fileadmin/ni_media/downloads/manuals/traktor/traktor_kontrol_s5_manual_german.pdf
@@ -105,7 +110,7 @@ export interface S5DeckMapping {
   };
   pads: [Button, Button, Button, Button, Button, Button, Button, Button];
   touchStrip: {
-    phase: Meter;
+    phase: BlueRedLeds;
     touch: BytePosIn;
   };
   transportControls: { shift: Button; sync: Button; cue: Button; play: Button };
