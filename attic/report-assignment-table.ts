@@ -88,7 +88,7 @@ export function generateBitAllocationReport(mapping: S5Mapping) {
 
   function logTableHeader(reportId: number) {
     console.log(`\n--- REPORT ID: ${reportId} ---`);
-    console.log('| Byte | Bit | Length | Element |');
+    console.log('| Byte | Bit | Length (Bit) | Element |');
     console.log('| ---: | ---: | ---: | :--- |');
   }
 
