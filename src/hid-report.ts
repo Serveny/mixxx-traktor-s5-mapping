@@ -1,4 +1,5 @@
 import type { HIDReportField } from './types';
+import type { BytePosIn } from './types/mapping';
 
 /*
  * HID report parsing library
@@ -13,30 +14,30 @@ export class HIDInputReport {
 
   registerCallback(
     callback: (value: number) => void,
-    byteOffset: number,
-    bitOffset = 0,
-    bitLength = 1,
+    io: BytePosIn,
     defaultOldData: number | undefined = undefined
   ): ScriptConnection {
     if (typeof callback !== 'function') {
       throw Error('callback must be a function');
     }
 
-    if (!Number.isInteger(byteOffset)) {
-      throw Error('byteOffset must be 0 or a positive integer');
+    if (!Number.isInteger(io.inByte)) {
+      throw Error('inByte must be 0 or a positive integer');
     }
-    if (!Number.isInteger(bitOffset) || bitOffset < 0) {
-      throw Error('bitOffset must be 0 or a positive integer');
+    if (!Number.isInteger(io.inBit) || io.inBit < 0) {
+      throw Error('inBit must be 0 or a positive integer');
     }
-    if (!Number.isInteger(bitOffset) || bitLength < 1 || bitLength > 32) {
+    if (
+      !Number.isInteger(io.inBit) ||
+      io.inLengthBit < 1 ||
+      io.inLengthBit > 32
+    ) {
       throw Error('bitLength must be an integer between 1 and 32');
     }
 
     const field = {
       callback: callback,
-      byteOffset: byteOffset,
-      bitOffset: bitOffset,
-      bitLength: bitLength,
+      io,
       oldData: defaultOldData,
     };
     this.fields.push(field);
@@ -81,5 +82,32 @@ export class HIDInputReport {
         field.oldData = data;
       }
     }
+  }
+}
+
+export class HIDOutputReport {
+  reportId: number;
+  data: Uint8Array;
+
+  constructor(reportId: number, length: number) {
+    this.reportId = reportId;
+    this.data = new Uint8Array(length).fill(0);
+  }
+  send() {
+    controller.sendOutputReport(this.reportId, this.data.buffer as ArrayBuffer);
+  }
+}
+
+export class HIDReportHodler {
+  in: HIDInputReport[] = [];
+  out: HIDOutputReport[] = [];
+
+  constructor() {
+    this.in[1] = new HIDInputReport(1); // Buttons, encoder, touch strip
+    this.in[2] = new HIDInputReport(2); // Knobs, Fader
+
+    this.out[128] = new HIDOutputReport(128, 104); // LED's left deck
+    this.out[129] = new HIDOutputReport(129, 104); // LED's right deck
+    this.out[130] = new HIDOutputReport(130, 73); // LED's mixer
   }
 }

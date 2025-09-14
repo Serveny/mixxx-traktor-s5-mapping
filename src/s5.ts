@@ -1,14 +1,12 @@
 import { Mixer } from './components/mixer';
 import { S5Deck } from './components/s5-deck';
 import { S5EffectUnit } from './components/s5-effect-unit';
-import { HIDInputReport } from './hid-input-record';
-import { HIDOutputReport } from './hid-output-record';
-import type { S5Mapping } from './mapping';
+import type { S5Mapping } from './types/mapping';
 import { settings } from './settings';
+import { HIDReportHodler } from './hid-report';
 
 export class S5 {
-  inReports: HIDInputReport[] = [];
-  outReports: HIDOutputReport[] = [];
+  reports = new HIDReportHodler();
   fxUnitLeft: S5EffectUnit;
   fxUnitRight: S5EffectUnit;
   deckLeft: S5Deck;
@@ -22,31 +20,20 @@ export class S5 {
       engine.setValue('[App]', 'num_samplers', 16);
     }
 
-    this.inReports[1] = new HIDInputReport(1);
-    this.inReports[2] = new HIDInputReport(2);
-
-    // There are various of other HID report which doesn't seem to have any
-    // immediate use but it is likely that some useful settings may be found
-    // in them such as the wheel tension.
-    this.outReports[128] = new HIDOutputReport(128, 94);
-
     this.fxUnitLeft = new S5EffectUnit(
       1,
-      this.inReports,
-      this.outReports[128],
+      this.reports.in,
+      this.reports.out[128],
       io.fxUnitLeft
     );
     this.fxUnitRight = new S5EffectUnit(
       2,
-      this.inReports,
-      this.outReports[128],
+      this.reports.in,
+      this.reports.out[129],
       io.fxUnitRight
     );
 
-    // The interaction between the FX SELECT buttons and the QuickEffect enable buttons is rather complex.
-    // It is easier to have this separate from the S5MixerColumn dhe FX SELECT buttons are not
-    // really in the mixer columns.
-    this.mixer = new Mixer(this.inReports, this.outReports);
+    this.mixer = new Mixer(this.reports, io.mixer);
 
     // There is no consistent offset between the left and right deck,
     // so every single components' IO needs to be specified individually
@@ -68,7 +55,7 @@ export class S5 {
       this.fxUnitRight,
       this.mixer,
       this.inReports,
-      this.outReports[128],
+      this.outReports[129],
       io.deckRight
     );
 
@@ -120,7 +107,7 @@ export class S5 {
         // There are more bytes in the report which seem like they should be for the main
         // mix meters, but setting those bytes does not do anything, except for lighting
         // the clip lights on the main mix meters.
-        // controller.sendOutputReport(129, deckMeters.buffer);
+        // controller.sendOutputReport(130, deckMeters.buffer);
       }
     );
   }
@@ -138,32 +125,22 @@ export class S5 {
       );
     }
   }
-  init() {
-    // sending these magic reports is required for the jog wheel LEDs to work
-    const wheelLEDinitReport = new Uint8Array(26).fill(0);
-    wheelLEDinitReport[1] = 1;
-    wheelLEDinitReport[2] = 3;
-    controller.sendOutputReport(48, wheelLEDinitReport.buffer, true);
-    wheelLEDinitReport[0] = 1;
-    controller.sendOutputReport(48, wheelLEDinitReport.buffer);
 
+  init() {
     // get state of knobs and faders
     for (const repordId of [0x01, 0x02]) {
       this.inReports[repordId].handleInput(controller.getInputReport(repordId));
     }
   }
+
   shutdown() {
-    // button LEDs
-    controller.sendOutputReport(128, new Uint8Array(94).fill(0).buffer);
+    // left LEDs
+    controller.sendOutputReport(128, new Uint8Array(104).fill(0).buffer);
 
-    // meter LEDs
-    controller.sendOutputReport(129, new Uint8Array(78).fill(0).buffer);
+    // mixer LEDs
+    controller.sendOutputReport(130, new Uint8Array(73).fill(0).buffer);
 
-    const wheelOutput = new Uint8Array(40).fill(0);
-    // left wheel LEDs
-    controller.sendOutputReport(50, wheelOutput.buffer, true);
-    // right wheel LEDs
-    wheelOutput[0] = 1;
-    controller.sendOutputReport(50, wheelOutput.buffer, true);
+    // right LEDs
+    controller.sendOutputReport(129, new Uint8Array(104).fill(0).buffer);
   }
 }

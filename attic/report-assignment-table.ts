@@ -1,9 +1,10 @@
-import { mapping } from '../dist/Traktor-Kontrol-S5.js';
+import { mapping } from '../src/mapping.ts';
+import type { S5Mapping } from '../src/types/mapping.ts';
 /**
  * Analysiert ein S5Mapping-Objekt und gibt die Bit-Belegung für jeden Report in Tabellenform aus.
  * @param {object} mapping Das S5Mapping-Objekt, das analysiert werden soll.
  */
-export function generateBitAllocationReport(mapping) {
+export function generateBitAllocationReport(mapping: S5Mapping) {
   const reports = new Map();
 
   /**
@@ -11,7 +12,7 @@ export function generateBitAllocationReport(mapping) {
    * @param {any} obj Das aktuell zu prüfende Objekt oder Wert.
    * @param {string} path Der Pfad zum aktuellen Objekt (z.B. "mixer.channelA.gain").
    */
-  function traverse(obj, path) {
+  function traverse(obj: any, path: string) {
     // Ignoriere null/undefined Werte
     if (!obj) {
       return;
@@ -44,7 +45,10 @@ export function generateBitAllocationReport(mapping) {
       // müssen diese ebenfalls durchlaufen werden.
     }
 
-    if (typeof obj.outReportId === 'number' && typeof obj.outByte === 'number') {
+    if (
+      typeof obj.outReportId === 'number' &&
+      typeof obj.outByte === 'number'
+    ) {
       let { outReportId, outByte, outLengthByte } = obj;
 
       const controlInfo = {
@@ -63,7 +67,9 @@ export function generateBitAllocationReport(mapping) {
     if (typeof obj === 'object') {
       for (const key in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          const newPath = Array.isArray(obj) ? `${path}[${key}]` : `${path}.${key}`;
+          const newPath = Array.isArray(obj)
+            ? `${path}[${key}]`
+            : `${path}.${key}`;
           traverse(obj[key], newPath);
         }
       }
@@ -74,50 +80,64 @@ export function generateBitAllocationReport(mapping) {
   traverse(mapping, 's5');
 
   // Ausgabe der formatierten Tabellen
-  console.log('=============== MIDI-Controller Bit-Belegungs-Analyse ===============');
+  console.log(
+    '=============== MIDI-Controller Bit-Belegungs-Analyse ==============='
+  );
 
   const sortedReportIds = Array.from(reports.keys()).sort((a, b) => a - b);
+
+  function logTableHeader(reportId: number) {
+    console.log(`\n--- REPORT ID: ${reportId} ---`);
+    console.log('| Byte | Bit | Length | Element |');
+    console.log('| ---: | ---: | ---: | :--- |');
+  }
+
+  function logControl(byte: number, bit: number, lenBit: number, path: string) {
+    const byteStr = String(byte).padStart(4, ' ');
+    const bitStr = String(bit).padStart(3, ' ');
+    const lenStr = String(lenBit).padStart(5, ' ');
+    const pathArr = path.split('.').slice(1);
+    if (pathArr[pathArr.length - 1].startsWith('[')) {
+      pathArr[pathArr.length - 2] = `**${pathArr[pathArr.length - 2]}`;
+      pathArr[pathArr.length - 1] = `${pathArr[pathArr.length - 1]}**`;
+    } else pathArr[pathArr.length - 1] = `**${pathArr[pathArr.length - 1]}**`;
+    console.log(
+      `| ${byteStr} | ${bitStr} | ${lenStr} | ${pathArr.join('.')} |`
+    );
+  }
 
   for (const reportId of sortedReportIds) {
     const controls = reports.get(reportId);
     if (controls[0].data.inReportId !== undefined) {
-      // Sortiere die Controls nach Byte und dann nach Bit für eine logische Reihenfolge
-      controls.sort((a, b) => {
+      // sort by byte and bit
+      controls.sort((a: any, b: any) => {
         if (a.data.inByte !== b.data.inByte) {
           return a.data.inByte - b.data.inByte;
         }
         return a.data.inBit - b.data.inBit;
       });
 
-      console.log(`\n--- REPORT ID: ${reportId} ---`);
-      console.log('Byte | Bit | Länge | Pfad');
-      console.log('----------------------------------------------------------------------');
+      logTableHeader(reportId);
 
       for (const { path, data } of controls) {
-        const byteStr = String(data.inByte).padStart(4, ' ');
-        const bitStr = String(data.inBit).padStart(3, ' ');
-        const lenStr = String(data.inLengthBit).padStart(5, ' ');
-        console.log(`${byteStr} | ${bitStr} | ${lenStr} | ${path}`);
+        logControl(data.inByte, data.inBit, data.inLengthBit, path);
       }
     } else {
-      // Sortiere die Controls nach Byte und dann nach Bit für eine logische Reihenfolge
-      controls.sort((a, b) => {
+      // sort by byte
+      controls.sort((a: any, b: any) => {
         return a.data.outByte - b.data.outByte;
       });
 
-      console.log(`\n--- REPORT ID: ${reportId} ---`);
-      console.log('Byte | Bit | Länge | Pfad');
-      console.log('----------------------------------------------------------------------');
+      logTableHeader(reportId);
 
       for (const { path, data } of controls) {
-        const byteStr = String(data.outByte).padStart(4, ' ');
-        const bitStr = String(0).padStart(3, ' ');
-        const lenStr = String(data.outLengthByte * 8).padStart(5, ' ');
-        console.log(`${byteStr} | ${bitStr} | ${lenStr} | ${path}`);
+        logControl(data.outByte, 0, data.outLengthByte * 8, path);
       }
     }
   }
-  console.log('\n========================= Analyse abgeschlossen =========================');
+  console.log(
+    '\n========================= Analyse abgeschlossen ========================='
+  );
 }
 
 generateBitAllocationReport(mapping);

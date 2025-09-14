@@ -1,294 +1,215 @@
 # Mixxx Traktor S5 Mapping
 
-`mixxx --controller-debug`
+**Work in progress** Traktor S5 mapping for the Mixxx DJ software.
 
-### Report-ID
+Mixxx debug command on linux: `mixxx --controller-debug`
 
-1. Buttons
-2. Fader
-3.
+### HID IN/OUT-PUTS
 
-### JS get type
+Reverse engineered HID mapping. Some bits/byte in the reports are empty between (or I didn't found out the usage).
 
-```JS
-function getType(value) {
-  return Object.prototype.toString.call(value);
-}
-```
+#### Report-ID 1 (IN)
 
-### Controller Outputs
+- Used for button and knob touch data
+- Size: 30 byte (240 bit)
 
-#### Display Area
-
-```JS
-{
-  settingsButton: [
-    [1,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,94,251,0,0,0,0,200,235,0,0,0,0],
-    [1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,33,248,0,0,0,0,139,232,0,0,0,0]
-  ],
-  displayButton1: [
-    [1,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0, 90,178,0,0,0,0,155,162,0,0,0,0],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,189,0,0,0,0,170,180,0,0,0,0]
-  ],
-  displayButton2: [
-    [1,0,0,0,0,0,0,0,128,0,0,0,0,0,0,0,0,0, 51,226,0,0,0,0,44,211,0,0,0,0],
-    [1,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,232, 30,0,0,0,0,14, 15,0,0,0,0]
-  ],
-  performanceModeButton1: [
-    [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,191,252,0,0,0,0, 46,237,0,0,0,0],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 64, 17,0,0,0,0,192,  1,0,0,0,0]
-  ],
-  viewButton: [
-    [1,0,0,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0,111,211,0,0,0,0,107,195,0,0,0,0],
-    [1,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,  7,131,0,0,0,0,161,115,0,0,0,0]
-  ],
-  displayButton3: [
-    [1,0,0,0,0,0,0,8,0,0,0,0,0,0,0,0,0,0,205,214,0,0,0,0,136,199,0,0,0,0],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121, 68,0,0,0,0,146, 52,0,0,0,0]
-  ],
-  displayButton4: [
-    [1,0,0,0,0,0,0,32,0,0,0,0,0,0,0,0,0,0, 88,126,0,0,0,0, 56,110,0,0,0,0],
-    [1,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,127,180,0,0,0,0,119,165,0,0,0,0]
-  ],
-  performanceModeButton2: [
-    [1,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0, 34,102,0,0,0,0, 56,86,0,0,0,0],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,162, 63,0,0,0,0,133,47,0,0,0,0]
-  ],
-}
-```
-
-##### Report-ID 1 (IN)
-
-```
-Unknown[0x0..0xf]: 0x0
-Unknown[0x0..0xf]: 0x0
-Unknown[0x0..0xf]: 0x0
-Unknown[0x0..0xf]: 0x0
-Unknown[0x0..0xf]: 0x0
-Unknown[0x0..0xf]: 0x0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown: 0
-Unknown[0..65535]: 18734
-Unknown[0..1023]: 0
-Unknown[0..1023]: 0
-Unknown[0..65535]: 15038
-Unknown[0..1023]: 0
-Unknown[0..1023]: 0
-
-```
+| Byte | Bit | Length | Element                                               |
+| ---: | --: | -----: | :---------------------------------------------------- |
+|    0 |   0 |      4 | deckLeft.browseControls.browse.**fade**               |
+|    0 |   4 |      4 | deckLeft.loop.**fade**                                |
+|    1 |   0 |      4 | deckRight.browseControls.browse.**fade**              |
+|    1 |   4 |      4 | deckRight.loop.**fade**                               |
+|    2 |   0 |      4 | mixer.**tempo**                                       |
+|    3 |   0 |      1 | fxUnitLeft.knobs[3].**touch**                         |
+|    3 |   1 |      1 | fxUnitLeft.knobs[2].**touch**                         |
+|    3 |   2 |      1 | fxUnitLeft.knobs[1].**touch**                         |
+|    3 |   3 |      1 | fxUnitLeft.knobs[0].**touch**                         |
+|    3 |   4 |      1 | fxUnitRight.knobs[3].**touch**                        |
+|    3 |   5 |      1 | fxUnitRight.knobs[2].**touch**                        |
+|    3 |   6 |      1 | fxUnitRight.knobs[1].**touch**                        |
+|    3 |   7 |      1 | fxUnitRight.knobs[0].**touch**                        |
+|    4 |   0 |      1 | mixer.**snap**                                        |
+|    4 |   1 |      1 | mixer.channelA.**fxUnitAssignLeft**                   |
+|    4 |   2 |      1 | mixer.channelC.**fxUnitAssignRight**                  |
+|    4 |   3 |      1 | mixer.channelC.**fxUnitAssignLeft**                   |
+|    4 |   4 |      1 | mixer.channelC.**cue**                                |
+|    4 |   5 |      1 | mixer.channelC.**filterBtn**                          |
+|    4 |   6 |      1 | mixer.channelA.**fxUnitAssignRight**                  |
+|    4 |   7 |      1 | mixer.**quantize**                                    |
+|    5 |   0 |      1 | mixer.channelA.**cue**                                |
+|    5 |   1 |      1 | mixer.channelA.**filterBtn**                          |
+|    5 |   2 |      1 | fxUnitLeft.**buttons[0]**                             |
+|    5 |   3 |      1 | fxUnitLeft.**buttons[2]**                             |
+|    5 |   4 |      1 | fxUnitLeft.**buttons[3]**                             |
+|    5 |   5 |      1 | fxUnitLeft.**buttons[1]**                             |
+|    6 |   0 |      1 | deckLeft.browseControls.**back**                      |
+|    6 |   1 |      1 | deckLeft.browseControls.browse.**press**              |
+|    6 |   2 |      1 | deckLeft.displayAreaAndControls.**performanceMode2**  |
+|    6 |   3 |      1 | deckLeft.displayAreaAndControls.**display3**          |
+|    6 |   4 |      1 | deckLeft.displayAreaAndControls.**view**              |
+|    6 |   5 |      1 | deckLeft.displayAreaAndControls.**display4**          |
+|    6 |   6 |      1 | deckLeft.loop.**press**                               |
+|    6 |   7 |      1 | deckLeft.**deck**                                     |
+|    7 |   0 |      1 | deckLeft.displayAreaAndControls.**performanceMode1**  |
+|    7 |   1 |      1 | deckLeft.displayAreaAndControls.**display1**          |
+|    7 |   6 |      1 | deckLeft.displayAreaAndControls.**settings**          |
+|    7 |   7 |      1 | deckLeft.displayAreaAndControls.**display2**          |
+|    8 |   0 |      1 | deckLeft.**pads[7]**                                  |
+|    8 |   1 |      1 | deckLeft.**pads[5]**                                  |
+|    8 |   2 |      1 | deckLeft.transportControls.**play**                   |
+|    8 |   3 |      1 | deckLeft.transportControls.**sync**                   |
+|    8 |   4 |      1 | deckLeft.transportControls.**shift**                  |
+|    8 |   5 |      1 | deckLeft.transportControls.**cue**                    |
+|    8 |   6 |      1 | deckLeft.**pads[4]**                                  |
+|    8 |   7 |      1 | deckLeft.**pads[6]**                                  |
+|    9 |   0 |      1 | deckLeft.**flux**                                     |
+|    9 |   1 |      1 | deckLeft.modeSelect.**freeze**                        |
+|    9 |   2 |      1 | deckLeft.**pads[3]**                                  |
+|    9 |   3 |      1 | deckLeft.**pads[1]**                                  |
+|    9 |   4 |      1 | deckLeft.**pads[0]**                                  |
+|    9 |   5 |      1 | deckLeft.**pads[2]**                                  |
+|    9 |   6 |      1 | deckLeft.modeSelect.**hotcue**                        |
+|    9 |   7 |      1 | deckLeft.modeSelect.**remix**                         |
+|   10 |   2 |      1 | mixer.channelB.**filterBtn**                          |
+|   10 |   3 |      1 | mixer.**auxToggle**                                   |
+|   10 |   4 |      1 | mixer.channelD.**cue**                                |
+|   10 |   5 |      1 | mixer.channelB.**cue**                                |
+|   10 |   6 |      1 | mixer.channelD.**filterBtn**                          |
+|   11 |   0 |      1 | mixer.**aux**                                         |
+|   11 |   1 |      1 | deckRight.transportControls.**sync**                  |
+|   11 |   2 |      1 | deckRight.transportControls.**cue**                   |
+|   11 |   4 |      1 | deckRight.transportControls.**shift**                 |
+|   11 |   5 |      1 | deckRight.transportControls.**play**                  |
+|   12 |   0 |      1 | mixer.channelB.**fxUnitAssignLeft**                   |
+|   12 |   1 |      1 | mixer.channelB.**fxUnitAssignRight**                  |
+|   12 |   2 |      1 | mixer.channelD.**fxUnitAssignLeft**                   |
+|   12 |   3 |      1 | mixer.channelD.**fxUnitAssignRight**                  |
+|   12 |   4 |      1 | deckRight.displayAreaAndControls.**settings**         |
+|   12 |   5 |      1 | deckRight.displayAreaAndControls.**display1**         |
+|   12 |   6 |      1 | deckRight.displayAreaAndControls.**display2**         |
+|   12 |   7 |      1 | deckRight.displayAreaAndControls.**performanceMode1** |
+|   13 |   0 |      1 | fxUnitRight.**buttons[0]**                            |
+|   13 |   1 |      1 | fxUnitRight.**buttons[1]**                            |
+|   13 |   2 |      1 | fxUnitRight.**buttons[2]**                            |
+|   13 |   3 |      1 | fxUnitRight.**buttons[3]**                            |
+|   13 |   4 |      1 | deckLeft.browseControls.browse.**touch**              |
+|   13 |   5 |      1 | deckLeft.loop.**touch**                               |
+|   13 |   6 |      1 | deckRight.browseControls.browse.**touch**             |
+|   13 |   7 |      1 | deckRight.loop.**touch**                              |
+|   14 |   0 |      1 | deckRight.browseControls.browse.**press**             |
+|   14 |   1 |      1 | deckRight.browseControls.**back**                     |
+|   14 |   2 |      1 | deckRight.**deck**                                    |
+|   14 |   3 |      1 | deckRight.loop.**press**                              |
+|   15 |   0 |      1 | deckRight.**flux**                                    |
+|   15 |   1 |      1 | deckRight.**pads[2]**                                 |
+|   15 |   2 |      1 | deckRight.**pads[5]**                                 |
+|   15 |   3 |      1 | deckRight.**pads[0]**                                 |
+|   15 |   4 |      1 | deckRight.**pads[4]**                                 |
+|   15 |   5 |      1 | deckRight.**pads[1]**                                 |
+|   15 |   6 |      1 | deckRight.**pads[6]**                                 |
+|   15 |   7 |      1 | deckRight.modeSelect.**remix**                        |
+|   16 |   0 |      1 | deckRight.modeSelect.**hotcue**                       |
+|   16 |   1 |      1 | deckRight.displayAreaAndControls.**performanceMode2** |
+|   16 |   2 |      1 | deckRight.displayAreaAndControls.**display3**         |
+|   16 |   3 |      1 | deckRight.**pads[7]**                                 |
+|   16 |   4 |      1 | deckRight.**pads[3]**                                 |
+|   16 |   5 |      1 | deckRight.displayAreaAndControls.**view**             |
+|   16 |   6 |      1 | deckRight.displayAreaAndControls.**display4**         |
+|   16 |   7 |      1 | deckRight.modeSelect.**freeze**                       |
+|   19 |   0 |     16 | deckLeft.touchStrip.**touch**                         |
+|   25 |   0 |     16 | deckRight.touchStrip.**touch**                        |
 
 ##### Report-ID 2 (IN)
 
 - Used for fader data
+- Size: 79 byte (632 bit)
 - 38 Values of 16 bit (here 0-4095)
 - 1 Number is 2 bytes (1. byte = substep (0-255), 2. byte = step (0-15))
 
-```JS
-[
-  0, 0, // channel A: volume fader
-  0, 0, // channel B: volume fader
-  0, 0, // channel C: volume fader
-  0, 0, // channel D: volume fader
-  0, 0, // crossfader
-  0, 0, // main gain
-  0, 0, // booth gain
-  0, 0, // cue mix
-  0, 0, // cue vol
-  0, 0, // channel A: gain
-  0, 0, // channel A: hi eq
-  0, 0, // channel A: mid eq
-  0, 0, // channel A: low eq
-  0, 0, // channel A: filter
-  0, 0, // channel B: gain
-  0, 0, // channel B: hi eq
-  0, 0, // channel B: mid eq
-  0, 0, // channel B: low eq
-  0, 0, // channel B: filter
-  0, 0, // channel C: gain
-  0, 0, // channel C: hi eq
-  0, 0, // channel C: mid eq
-  0, 0, // channel C: low eq
-  0, 0, // channel C: filter
-  0, 0, // channel D: gain
-  0, 0, // channel D: hi eq
-  0, 0, // channel D: mid eq
-  0, 0, // channel D: low eq
-  0, 0, // channel D: filter
-  0, 0, // left fx1
-  0, 0, // left fx2
-  0, 0, // left fx3
-  0, 0, // left fx4
-  0, 0, // right fx1
-  0, 0, // right fx2
-  0, 0, // right fx3
-  0, 0, // right fx4
-  0, 0, // UNKNOWN
-  0, 0, // UNKNOWN
-]
-```
-
-// TODO
+| Byte | Bit | Length | Element                       |
+| ---: | --: | -----: | :---------------------------- |
+|    0 |   0 |     16 | mixer.channelA.**volume**     |
+|    2 |   0 |     16 | mixer.channelB.**volume**     |
+|    4 |   0 |     16 | mixer.channelC.**volume**     |
+|    6 |   0 |     16 | mixer.channelD.**volume**     |
+|    8 |   0 |     16 | mixer.**cross**               |
+|   10 |   0 |     16 | mixer.**mainGain**            |
+|   12 |   0 |     16 | mixer.**boothGain**           |
+|   14 |   0 |     16 | mixer.**cueMix**              |
+|   16 |   0 |     16 | mixer.**cueGain**             |
+|   20 |   0 |     16 | mixer.channelC.**eqHigh**     |
+|   20 |   0 |     16 | mixer.channelA.**eqHigh**     |
+|   22 |   0 |     16 | mixer.channelC.**eqMid**      |
+|   22 |   0 |     16 | mixer.channelA.**eqMid**      |
+|   24 |   0 |     16 | mixer.channelC.**eqLow**      |
+|   24 |   0 |     16 | mixer.channelA.**eqLow**      |
+|   26 |   0 |     16 | mixer.channelC.**filter**     |
+|   26 |   0 |     16 | mixer.channelA.**filter**     |
+|   28 |   0 |     16 | mixer.channelB.**gain**       |
+|   30 |   0 |     16 | mixer.channelB.**eqHigh**     |
+|   32 |   0 |     16 | mixer.channelB.**eqMid**      |
+|   34 |   0 |     16 | mixer.channelB.**eqLow**      |
+|   36 |   0 |     16 | mixer.channelB.**filter**     |
+|   38 |   0 |     16 | mixer.channelC.**gain**       |
+|   38 |   0 |     16 | mixer.channelA.**gain**       |
+|   48 |   0 |     16 | mixer.channelD.**gain**       |
+|   50 |   0 |     16 | mixer.channelD.**eqHigh**     |
+|   52 |   0 |     16 | mixer.channelD.**eqMid**      |
+|   54 |   0 |     16 | mixer.channelD.**eqLow**      |
+|   56 |   0 |     16 | mixer.channelD.**filter**     |
+|   58 |   0 |     16 | fxUnitLeft.knobs[0].**fade**  |
+|   60 |   0 |     16 | fxUnitLeft.knobs[1].**fade**  |
+|   62 |   0 |     16 | fxUnitLeft.knobs[2].**fade**  |
+|   64 |   0 |     16 | fxUnitLeft.knobs[3].**fade**  |
+|   66 |   0 |     16 | fxUnitRight.knobs[0].**fade** |
+|   68 |   0 |     16 | fxUnitRight.knobs[1].**fade** |
+|   70 |   0 |     16 | fxUnitRight.knobs[2].**fade** |
+|   72 |   0 |     16 | fxUnitRight.knobs[3].**fade** |
 
 #### Report-ID 128, 129 (OUT)
 
 - Used to control the LED's of the left and right fx units, decks, transport buttons and touch bar
+- Size: 104 byte (832 bit)
 - Report-ID 128 for left side
 - Report-ID 129 for right side
-- length: 104 byte (832 bit)
 
-```JS
-[
-  127, 0, 31, // left pad 1 (rgb color)
-  127, 0, 31, // left pad 2 (rgb color)
-  127, 0, 31, // left pad 3 (rgb color)
-  127, 0, 31, // left pad 4 (rgb color)
-  127, 0, 31, // left pad 5 (rgb color)
-  127, 0, 31, // left pad 6 (rgb color)
-  127, 0, 31, // left pad 7 (rgb color)
-  127, 0, 31, // left pad 8 (rgb color)
-  127, // left fx button 1
-  127, // left fx button 2
-  127, // left fx button 3
-  127, // left fx button 4
-  127, // left setting button
-  127, // left display button 1
-  127, // left display button 2
-  127, // left performance button
-  127, // left view button
-  127, // left display button 3
-  127, // left display button 4
-  127, // left performance button 2
-  127, // left back button
-  31, // EMPTY
-  14, 127, // left deck button (2 bit color (white/blue))
-  127, // left loop LED
-  0, // EMPTY
-  20, 127, // left Hotcue button (2 bit color (white/blue))
-  20, 127, // left freeze button (2 bit color (white/blue))
-  20, 127, // left remix button (2 bit color (white/blue))
-  127, // left flux button
-  127, // left shift button
-  127, 127, // left sync button (2 bit color (green/red))
-  127, // left cue button
-  127, // left play button
-  96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, // left touch table 25 LED's (blue)
-  84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, 84, // left touch table 25 LED's (red)
-]
-```
+| Byte | Bit | Length | Element                                              |
+| ---: | --: | -----: | :--------------------------------------------------- |
+|    0 |   0 |     24 | deckLeft.**pads[0]**                                 |
+|    3 |   0 |     24 | deckLeft.**pads[1]**                                 |
+|    6 |   0 |     24 | deckLeft.**pads[2]**                                 |
+|    9 |   0 |     24 | deckLeft.**pads[3]**                                 |
+|   12 |   0 |     24 | deckLeft.**pads[4]**                                 |
+|   15 |   0 |     24 | deckLeft.**pads[5]**                                 |
+|   18 |   0 |     24 | deckLeft.**pads[6]**                                 |
+|   21 |   0 |     24 | deckLeft.**pads[7]**                                 |
+|   24 |   0 |      8 | fxUnitLeft.**buttons[0]**                            |
+|   25 |   0 |      8 | fxUnitLeft.**buttons[1]**                            |
+|   26 |   0 |      8 | fxUnitLeft.**buttons[2]**                            |
+|   27 |   0 |      8 | fxUnitLeft.**buttons[3]**                            |
+|   28 |   0 |      8 | deckLeft.displayAreaAndControls.**settings**         |
+|   29 |   0 |      8 | deckLeft.displayAreaAndControls.**display1**         |
+|   30 |   0 |      8 | deckLeft.displayAreaAndControls.**display2**         |
+|   31 |   0 |      8 | deckLeft.displayAreaAndControls.**performanceMode1** |
+|   32 |   0 |      8 | deckLeft.displayAreaAndControls.**view**             |
+|   33 |   0 |      8 | deckLeft.displayAreaAndControls.**display3**         |
+|   34 |   0 |      8 | deckLeft.displayAreaAndControls.**display4**         |
+|   35 |   0 |      8 | deckLeft.displayAreaAndControls.**performanceMode2** |
+|   36 |   0 |      8 | deckLeft.browseControls.**back**                     |
+|   38 |   0 |     16 | deckLeft.**deck**                                    |
+|   42 |   0 |     16 | deckLeft.modeSelect.**hotcue**                       |
+|   44 |   0 |     16 | deckLeft.modeSelect.**freeze**                       |
+|   46 |   0 |     16 | deckLeft.modeSelect.**remix**                        |
+|   48 |   0 |      8 | deckLeft.**flux**                                    |
+|   49 |   0 |      8 | deckLeft.transportControls.**shift**                 |
+|   50 |   0 |     16 | deckLeft.transportControls.**sync**                  |
+|   52 |   0 |      8 | deckLeft.transportControls.**cue**                   |
+|   53 |   0 |      8 | deckLeft.transportControls.**play**                  |
+|   54 |   0 |    400 | deckLeft.**phase**                                   |
 
 Byte 0-23: 8 Pad-Buttons RGB of 3 byte
 
-Brightness from 0 to 127 ( --> 7 bit?)
+Brightness/color value from 0 to 127
 
 Pad buttons color:
 Byte 1 (0-127): red
@@ -298,38 +219,34 @@ Byte 3 (0-127): blue
 # Report-ID 130 (OUT)
 
 - Used to control the LEDS of the mixer
-- length: 73 byte (584 bit)
+- Size: 73 byte (584 bit)
 
-```JS
-[
-  127, // channel C: fx assign left button
-  127, // channel C: fx assign right button
-  127, // channel A: fx assign left button
-  127, // channel A: fx assign right button
-  127, // snap button
-  127, // quantize button
-  127, // channel B: fx assign left button
-  127, // channel B: fx assign right button
-  127, // channel D: fx assign left button
-  127, // channel D: fx assign right button
-  127, // channel C: filter button
-  127, // channel A: filter button
-  127, // channel B: filter button
-  127, // channel D: filter button
-  127, // channel C: cue button
-  127, // channel A: cue button
-  0, // UNKNOWN: maybe AUX?
-  127, // channel B: cue button
-  127, // channel D: cue button
-  127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, // channel A: 11 LED's loudness meter
-  127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, // channel C: 11 LED's loudness meter
-  127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, // channel B: 11 LED's loudness meter
-  127, 127, 127, 127, 127, 127, 127, 127, 127, 127, 127, // channel D: 11 LED's loudness meter
-  127, // main gain left: loudness meter top LED
-  127, // main gain right: Loudness meter top LED
-  0, 0, 0, 0, 0, 0, 0, 0, // last 8 byte UNKNOWN
-]
-```
+| Byte | Bit | Length | Element                              |
+| ---: | --: | -----: | :----------------------------------- |
+|    0 |   0 |      8 | mixer.channelC.**fxUnitAssignLeft**  |
+|    1 |   0 |      8 | mixer.channelC.**fxUnitAssignRight** |
+|    2 |   0 |      8 | mixer.channelA.**fxUnitAssignLeft**  |
+|    3 |   0 |      8 | mixer.channelA.**fxUnitAssignRight** |
+|    4 |   0 |      8 | mixer.**snap**                       |
+|    5 |   0 |      8 | mixer.**quantize**                   |
+|    6 |   0 |      8 | mixer.channelB.**fxUnitAssignLeft**  |
+|    7 |   0 |      8 | mixer.channelB.**fxUnitAssignRight** |
+|    8 |   0 |      8 | mixer.channelD.**fxUnitAssignLeft**  |
+|    9 |   0 |      8 | mixer.channelD.**fxUnitAssignRight** |
+|   10 |   0 |      8 | mixer.channelC.**filterBtn**         |
+|   11 |   0 |      8 | mixer.channelA.**filterBtn**         |
+|   12 |   0 |      8 | mixer.channelB.**filterBtn**         |
+|   13 |   0 |      8 | mixer.channelD.**filterBtn**         |
+|   14 |   0 |      8 | mixer.channelC.**cue**               |
+|   15 |   0 |      8 | mixer.channelA.**cue**               |
+|   16 |   0 |      8 | mixer.**aux**                        |
+|   16 |   0 |      8 | mixer.**auxToggle**                  |
+|   17 |   0 |      8 | mixer.channelB.**cue**               |
+|   18 |   0 |      8 | mixer.channelD.**cue**               |
+|   19 |   0 |     88 | mixer.channelC.**volumeLevel**       |
+|   30 |   0 |     88 | mixer.channelA.**volumeLevel**       |
+|   41 |   0 |     88 | mixer.channelB.**volumeLevel**       |
+|   52 |   0 |     88 | mixer.channelD.**volumeLevel**       |
 
 #### Displays
 

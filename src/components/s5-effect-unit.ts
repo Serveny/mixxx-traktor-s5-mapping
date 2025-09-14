@@ -4,7 +4,7 @@
 
 import type { HIDInputReport } from '../hid-input-record';
 import type { HIDOutputReport } from '../hid-output-record';
-import type { S5FxUnitMapping } from '../mapping';
+import type { S5FxUnitMapping } from '../types/mapping';
 import { PowerWindowButton } from './buttons/button';
 import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
@@ -51,9 +51,7 @@ export class S5EffectUnit extends ComponentContainer {
       input: function (pressed) {
         if (!this.shifted) {
           for (const index of [0, 1, 2]) {
-            const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${
-              index + 1
-            }]`;
+            const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${index + 1}]`;
             engine.setValue(effectGroup, 'enabled', pressed);
           }
           this.output(pressed);
@@ -71,9 +69,7 @@ export class S5EffectUnit extends ComponentContainer {
     this.knobs = [];
     this.buttons = [];
     for (const index of [0, 1, 2]) {
-      const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${
-        index + 1
-      }]`;
+      const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${index + 1}]`;
       this.knobs[index] = new Pot({
         inKey: 'meta',
         group: effectGroup,
@@ -131,16 +127,11 @@ export class S5EffectUnit extends ComponentContainer {
       this.focusedEffect + 1
     }]`;
     for (const index of [0, 1, 2]) {
-      const unfocusGroup = `[EffectRack1_EffectUnit${this.unitNumber}_Effect${
-        index + 1
-      }]`;
+      const unfocusGroup = `[EffectRack1_EffectUnit${this.unitNumber}_Effect${index + 1}]`;
       this.buttons[index].outDisconnect();
-      this.buttons[index].group =
-        this.focusedEffect === null ? unfocusGroup : effectGroup;
+      this.buttons[index].group = this.focusedEffect === null ? unfocusGroup : effectGroup;
       this.buttons[index].inKey =
-        this.focusedEffect === null
-          ? 'enabled'
-          : 'button_parameter' + (index + 1);
+        this.focusedEffect === null ? 'enabled' : 'button_parameter' + (index + 1);
       this.buttons[index].shift =
         this.focusedEffect === null
           ? undefined
@@ -157,8 +148,7 @@ export class S5EffectUnit extends ComponentContainer {
             };
       this.buttons[index].outKey = this.buttons[index].inKey;
       this.knobs[index].group = this.buttons[index].group;
-      this.knobs[index].inKey =
-        this.focusedEffect === null ? 'meta' : 'parameter' + (index + 1);
+      this.knobs[index].inKey = this.focusedEffect === null ? 'meta' : 'parameter' + (index + 1);
       this.knobs[index].shift =
         this.focusedEffect === null
           ? undefined

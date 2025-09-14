@@ -1,23 +1,16 @@
-import type { HIDInputReport } from '../hid-input-record';
+import type { Knob } from '../types/mapping';
 import { Component } from './component';
 import type { Mixer } from './mixer';
 
 export class Pot extends Component {
   max = 2 ** 12 - 1;
-  inBit = 0;
-  inBitLength = 16;
   hardwarePosition: number | null;
   shiftedHardwarePosition: number | null;
   mixer?: Mixer;
 
-  constructor(
-    group: string,
-    inKey: string,
-    inByte: number,
-    bitLength: number,
-    inReport: HIDInputReport
-  ) {
-    super(undefined, inKey, undefined, undefined);
+  constructor(public group: string, public inKey: string, io: Knob) {
+    super();
+    this.inByte = io.inByte;
     this.hardwarePosition = null;
     this.shiftedHardwarePosition = null;
 

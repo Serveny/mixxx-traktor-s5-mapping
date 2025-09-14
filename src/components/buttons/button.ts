@@ -1,8 +1,9 @@
 import { LedColors } from '../../color';
-import { HIDInputReport } from '../../hid-input-record';
-import { Component } from '../component';
+import { Component, ComponentInOut } from '../component';
+import type { Button as ButtonMapping } from '../../types/mapping';
+import { HIDInputReport } from '../../hid-report';
 
-export class Button extends Component {
+export class Button extends ComponentInOut {
   // valid range 0 - 3, but 3 makes some colors appear whitish
   brightnessOff = 0;
   brightnessOn = 2;
@@ -16,29 +17,6 @@ export class Button extends Component {
         : LedColors.off;
     this.send(color);
   }
-  colorMap = new ColorMapper({
-    0xcc0000: LedColors.red,
-    0xcc5e00: LedColors.carrot,
-    0xcc7800: LedColors.orange,
-    0xcc9200: LedColors.honey,
-
-    0xcccc00: LedColors.yellow,
-    0x81cc00: LedColors.lime,
-    0x00cc00: LedColors.green,
-    0x00cc49: LedColors.aqua,
-
-    0x00cccc: LedColors.celeste,
-    0x0091cc: LedColors.sky,
-    0x0000cc: LedColors.blue,
-    0xcc00cc: LedColors.purple,
-
-    0xcc0091: LedColors.fuscia,
-    0xcc0079: LedColors.magenta,
-    0xcc477e: LedColors.azalea,
-    0xcc4761: LedColors.salmon,
-
-    0xcccccc: LedColors.white,
-  });
 
   longPressTimeOutMillis: number;
   indicatorIntervalMillis: number;
@@ -53,10 +31,10 @@ export class Button extends Component {
   onLongPress(button: Button) {}
   onLongRelease() {}
   globalQuantizeOn?: boolean;
-  constructor(options: Partial<Button>) {
+  constructor(options: Partial<Button>, io: ButtonMapping) {
     options.oldDataDefault = 0;
 
-    super(options);
+    super(options, io);
 
     if (this.input === undefined) {
       this.input = this.defaultInput;
@@ -81,8 +59,6 @@ export class Button extends Component {
     this.indicatorTimer = 0;
     this.indicatorState = false;
     this.isLongPress = false;
-    if (this.inBitLength === undefined) {
-      this.inBitLength = 1;
     }
   }
   setKey(key: string) {
@@ -227,5 +203,26 @@ export class PowerWindowButton extends Button {
   }
   onLongRelease() {
     script.toggleControl(this.group, this.inKey);
+  }
+}
+
+export class QuantizeButton extends Button {
+  globalQuantizeOn: boolean = false;
+  constructor(io: ButtonMapping) {
+    super(io);
+  }
+
+  input(pressed: boolean) {
+    if (pressed) {
+      this.globalQuantizeOn = !this.globalQuantizeOn;
+      for (let deckIdx = 1; deckIdx <= 4; deckIdx++) {
+        engine.setValue(
+          `[Channel${deckIdx}]`,
+          'quantize',
+          this.globalQuantizeOn ? 1 : 0
+        );
+      }
+      this.send(this.globalQuantizeOn ? 127 : 0);
+    }
   }
 }

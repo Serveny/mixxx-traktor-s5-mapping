@@ -2,39 +2,12 @@
  * Components library
  */
 
-import { HIDInputReport } from '../hid-input-record';
-import type { HIDOutputReport } from '../hid-output-record';
-import type { ComponentOptions } from '../types';
+import { HIDInputReport } from '../hid-report';
+import type { BytePosIn, BytePosInOut, BytePosOut } from '../types/mapping';
 
-export class Component implements ComponentOptions {
-  constructor(
-    public key: string,
-    public inKey: string,
-    public outKey: string,
-    public inConnection: ScriptConnection,
-    public outConnections: ScriptConnection[],
-    public shift: () => void,
-    public unshift: () => void,
-    public shifted: boolean,
-    public inReport: HIDInputReport,
-    public outReport: HIDOutputReport,
-    public input: (value: number) => void,
-    public inByte: number,
-    public inBit: number,
-    public inBitLength: number,
-    public oldDataDefault: number,
-    public outByte: number,
-    public group: string
-  ) //public bitLength: number
-  {
-    //if (options) {
-    //Object.entries(options).forEach(function ([key, value]) {
-    //if (value === undefined) {
-    //delete (options as any)[key];
-    //}
-    //});
-    //Object.assign(this, options);
-    //}
+export abstract class Component {
+  shifted = false;
+  constructor(public group: string) {
     this.outConnections = [];
     if (typeof key === 'string') {
       this.inKey = key;
@@ -53,21 +26,41 @@ export class Component implements ComponentOptions {
     }
     this.outConnect();
   }
-  inConnect(callback?: Function) {
-    if (
-      this.inByte === undefined ||
-      this.inBit === undefined ||
-      this.inBitLength === undefined ||
-      this.inReport === undefined
-    ) {
-      return;
+
+  send(value: number) {
+    if (this.outReport !== undefined && this.outByte !== undefined) {
+      this.outReport.data[this.outByte] = value;
+      this.outReport.send();
     }
-    if (typeof callback === 'function') {
-      this.input = callback as any;
+  }
+  output(value: number) {
+    this.send(value);
+  }
+
+  outTrigger() {
+    for (const connection of this.outConnections) {
+      connection.trigger();
     }
-    this.inConnection = this.inReport.registerCallback(
-      this.input?.bind(this)!,
-      this.inByte,
+  }
+}
+
+export abstract class ComponentIn extends Component {
+  inConnection: ScriptConnection;
+  constructor(
+    public group: string,
+    public inKey: string,
+    public inReport: HIDInputReport,
+    public io: BytePosIn
+  ) {
+    super(group);
+
+    this.inConnect();
+  }
+
+  inConnect(): ScriptConnection {
+    return this.inReport.registerCallback(
+      this.input.bind(this)!,
+      this.io.inByte,
       this.inBit,
       this.inBitLength,
       this.oldDataDefault
@@ -78,41 +71,43 @@ export class Component implements ComponentOptions {
       this.inConnection.disconnect();
     }
   }
-  send(value: number) {
-    if (this.outReport !== undefined && this.outByte !== undefined) {
-      this.outReport.data[this.outByte] = value;
-      this.outReport.send();
-    }
+
+  abstract input(): void;
+}
+
+export abstract class ComponentOut extends Component {
+  outConnection: ScriptConnection;
+  constructor(
+    public group: string,
+    public outKey: string,
+    public io: BytePosOut
+  ) {
+    super(group);
+    this.outConnection = this.outConnect();
   }
-  output(value: number) {
-    this.send(value);
-  }
-  outConnect() {
-    if (this.outKey !== undefined && this.group !== undefined) {
-      const connection = engine.makeConnection(
-        this.group,
-        this.outKey,
-        this.output.bind(this)
+
+  outConnect(): ScriptConnection {
+    const outCon = engine.makeConnection(
+      this.group,
+      this.outKey,
+      this.output.bind(this)
+    );
+    if (outCon == null)
+      throw Error(
+        `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
       );
-      // This is useful for case where effect would have been fully disabled in Mixxx. This appears to be the case during unit tests.
-      if (connection) {
-        this.outConnections[0] = connection;
-      } else {
-        console.warn(
-          `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
-        );
-      }
-    }
+    return outCon;
   }
+
   outDisconnect() {
-    for (const connection of this.outConnections) {
-      connection.disconnect();
-    }
-    this.outConnections = [];
+    this.outConnection.disconnect();
   }
-  outTrigger() {
-    for (const connection of this.outConnections) {
-      connection.trigger();
-    }
+
+  abstract output(): void;
+}
+
+export abstract class ComponentInOut extends Component {
+  constructor(public group: string, public io: BytePosInOut) {
+    super(group);
   }
 }

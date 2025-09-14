@@ -71,3 +71,27 @@ export const QuickEffectPresetColors = [
   LedColors.salmon + 1,
   LedColors.fuscia + 1,
 ];
+
+export const colorMap = new ColorMapper({
+  0xcc0000: LedColors.red,
+  0xcc5e00: LedColors.carrot,
+  0xcc7800: LedColors.orange,
+  0xcc9200: LedColors.honey,
+
+  0xcccc00: LedColors.yellow,
+  0x81cc00: LedColors.lime,
+  0x00cc00: LedColors.green,
+  0x00cc49: LedColors.aqua,
+
+  0x00cccc: LedColors.celeste,
+  0x0091cc: LedColors.sky,
+  0x0000cc: LedColors.blue,
+  0xcc00cc: LedColors.purple,
+
+  0xcc0091: LedColors.fuscia,
+  0xcc0079: LedColors.magenta,
+  0xcc477e: LedColors.azalea,
+  0xcc4761: LedColors.salmon,
+
+  0xcccccc: LedColors.white,
+});
