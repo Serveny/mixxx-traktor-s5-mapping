@@ -11,13 +11,13 @@ import type {
 import type { BytePosIn, BytePosInOut, BytePosOut } from '../types/mapping';
 
 export abstract class Component {
-  shifted = false;
+  isShifted = false;
   constructor(public group: string) {}
 }
 
 export abstract class ComponentIn extends Component {
   private inConnection: ScriptConnection;
-  protected inKey: string;
+  public inKey: string;
   private inReport: HIDInputReport;
   protected io: BytePosIn;
   private oldDataDefault?: number;

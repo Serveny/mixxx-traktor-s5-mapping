@@ -15,7 +15,7 @@ export class SyncButton extends Button {
     });
   }
   onLongPress() {
-    if (this.shifted) {
+    if (this.isShifted) {
       engine.setValue(this.group, 'sync_key', 1);
       engine.setValue(this.group, 'sync_key', 0);
     } else {
@@ -25,7 +25,7 @@ export class SyncButton extends Button {
 
   onShortRelease() {
     script.toggleControl(this.group, this.inKey);
-    if (!this.shifted) {
+    if (!this.isShifted) {
       engine.softTakeover(this.group, 'rate', true);
     }
   }

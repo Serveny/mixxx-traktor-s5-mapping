@@ -1,24 +1,17 @@
-import type { HIDReportHodler } from '../../hid-report';
 import { moveModes } from '../../settings';
 import type { BytePosInOut } from '../../types/mapping';
 import type { S5Deck } from '../s5-deck';
 import { PushButton } from './button';
 
 export class CueButton extends PushButton {
-  constructor(
-    private deck: S5Deck,
-    reports: HIDReportHodler,
-    io: BytePosInOut
-  ) {
+  constructor(private deck: S5Deck, io: BytePosInOut) {
     super({
       group: deck.group,
       inKey: 'cue_default',
       outKey: 'cue_indicator',
-      reports,
+      reports: deck.reports,
       io,
     });
-
-    this.outConnect();
   }
 
   unshift() {

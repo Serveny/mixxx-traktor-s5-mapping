@@ -21,7 +21,7 @@ export class SamplerButton extends Button {
     this.outConnect();
   }
   onShortPress() {
-    if (!this.shifted) {
+    if (!this.isShifted) {
       if (engine.getValue(this.group, 'track_loaded') === 0) {
         engine.setValue(this.group, 'LoadSelectedTrack', 1);
       } else {
@@ -36,7 +36,7 @@ export class SamplerButton extends Button {
     }
   }
   onShortRelease() {
-    if (this.shifted) {
+    if (this.isShifted) {
       if (engine.getValue(this.group, 'play') === 0) {
         engine.setValue(this.group, 'eject', 0);
       }

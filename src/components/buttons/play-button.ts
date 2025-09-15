@@ -25,7 +25,7 @@ export class PlayButton extends Button {
   }
 
   onLongPress() {
-    if (this.shifted) {
+    if (this.isShifted) {
       engine.setValue(this.group, this.inKey, 0);
       script.triggerControl(this.group, 'eject', 0);
     } else if (!engine.getValue(this.group, this.inKey)) {

@@ -25,7 +25,7 @@ export class LoudnessMeter extends ComponentOut {
   output() {
     const deckMeter = new Uint8Array(11).fill(0);
     let deckGroup = this.group;
-    if (this.s5.deckLeft.shifted || this.s5.deckRight.shifted) {
+    if (this.s5.deckLeft.isShifted || this.s5.deckRight.isShifted) {
       if (engine.getValue(this.auxGroup, 'input_configured')) {
         deckGroup = this.auxGroup;
       } else if (engine.getValue(this.micGroup, 'input_configured')) {

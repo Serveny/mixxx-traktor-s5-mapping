@@ -56,9 +56,9 @@ export abstract class ComponentContainer extends Component {
       ) {
         component.unshift();
       }
-      component.shifted = false;
+      component.isShifted = false;
     }
-    this.shifted = false;
+    this.isShifted = false;
   }
   shift() {
     for (const component of this) {
@@ -68,8 +68,8 @@ export abstract class ComponentContainer extends Component {
       ) {
         component.shift();
       }
-      component.shifted = true;
+      component.isShifted = true;
     }
-    this.shifted = true;
+    this.isShifted = true;
   }
 }

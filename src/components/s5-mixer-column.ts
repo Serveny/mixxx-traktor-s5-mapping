@@ -53,7 +53,7 @@ export class S5MixerColumn extends ComponentContainer {
       mixer: this,
       input: settings.mixerControlsMixAuxOnShift
         ? function (this: S5, value) {
-            if (this.mixer.shifted && this.group !== `[Channel${idx}]`) {
+            if (this.mixer.isShifted && this.group !== `[Channel${idx}]`) {
               // FIXME only if group != [ChannelX]
               const controlKey =
                 this.group === `[Microphone${idx}]` ||

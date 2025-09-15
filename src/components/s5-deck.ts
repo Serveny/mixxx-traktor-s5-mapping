@@ -1,10 +1,14 @@
 import type { HIDReportHodler } from '../hid-report';
 import { settings } from '../settings';
 import type { S5DeckMapping } from '../types/mapping';
+import { BrowserEncoder } from './browser-encoder';
+import { BrowserBackButton } from './buttons/browser-back-button';
 import { Button, PushButton } from './buttons/button';
 import { CueButton } from './buttons/cue-button';
+import { DeckButton } from './buttons/deck-button';
 import { FluxButton } from './buttons/flux-button';
 import { PlayButton } from './buttons/play-button';
+import { ShiftButton } from './buttons/shift-button';
 import { SyncButton } from './buttons/sync-button';
 import { Deck } from './deck';
 import { Encoder } from './encoder';
@@ -12,13 +16,18 @@ import type { Mixer } from './mixer';
 import type { S5EffectUnit } from './s5-effect-unit';
 
 export class S5Deck extends Deck {
-  playButton: PlayButton;
-  cueButton: CueButton;
+  shiftButton: ShiftButton;
   syncButton: SyncButton;
+  cueButton: CueButton;
+  playButton: PlayButton;
   fluxButton: Button;
+  deckButton: DeckButton;
+  browserEncoder: BrowserEncoder;
+  browserBackButton: BrowserBackButton;
+
   constructor(
     decks: number | number[],
-    colors: string[],
+    public colors: number[],
     public effectUnit: S5EffectUnit,
     public mixer: Mixer,
     public reports: HIDReportHodler,
@@ -27,122 +36,20 @@ export class S5Deck extends Deck {
     super(decks, colors, settings);
 
     const transCltr = io.transportControls;
-    this.playButton = new PlayButton(this.group, reports, transCltr.play);
-    this.cueButton = new CueButton(this, reports, transCltr.cue);
+    this.shiftButton = new ShiftButton(this, transCltr.shift);
     this.syncButton = new SyncButton(this.group, reports, transCltr.sync);
+    this.cueButton = new CueButton(this, transCltr.cue);
+    this.playButton = new PlayButton(this.group, reports, transCltr.play);
 
     this.fluxButton = new FluxButton(this, io.flux);
+    this.deckButton = new DeckButton(this, io.deck);
 
-    this.deckButtonLeft = new Button({
-      deck: this,
-      input: function (value) {
-        if (value) {
-          this.deck.switchDeck(Deck.groupForNumber(decks[0]));
-          this.outReport.data[io.deckButtonOutputByteOffset] =
-            colors[0] + this.brightnessOn;
-          // turn off the other deck selection button's LED
-          this.outReport.data[io.deckButtonOutputByteOffset + 1] =
-            DeckSelectAlwaysBacklit ? colors[1] + this.brightnessOff : 0;
-          this.outReport.send();
-        }
-      },
-    });
-    this.deckButtonRight = new Button({
-      deck: this,
-      input: function (value) {
-        if (value) {
-          this.deck.switchDeck(Deck.groupForNumber(decks[1]));
-          // turn off the other deck selection button's LED
-          this.outReport.data[io.deckButtonOutputByteOffset] =
-            DeckSelectAlwaysBacklit ? colors[0] + this.brightnessOff : 0;
-          this.outReport.data[io.deckButtonOutputByteOffset + 1] =
-            colors[1] + this.brightnessOn;
-          this.outReport.send();
-        }
-      },
-    });
-
-    // set deck selection button LEDs
-    outReport.data[io.deckButtonOutputByteOffset] =
-      colors[0] + Button.prototype.brightnessOn;
-    outReport.data[io.deckButtonOutputByteOffset + 1] = DeckSelectAlwaysBacklit
-      ? colors[1] + Button.prototype.brightnessOff
-      : 0;
-    outReport.send();
-
-    this.shiftButton = new PushButton({
-      deck: this,
-      output: InactiveLightsAlwaysBacklit
-        ? undefined
-        : Button.prototype.uncoloredOutput,
-      unshift: function () {
-        this.output(false);
-      },
-      shift: function () {
-        this.output(true);
-      },
-      input: function (pressed) {
-        if (pressed) {
-          this.deck.shift();
-        } else {
-          this.deck.unshift();
-        }
-      },
-    });
-
-    this.leftEncoder = new Encoder({
-      deck: this,
-      onChange: function (right) {
-        switch (this.deck.moveMode) {
-          case moveModes.grid:
-            script.triggerControl(
-              this.group,
-              right ? 'beats_adjust_faster' : 'beats_adjust_slower'
-            );
-            break;
-          case moveModes.keyboard:
-            if (this.deck.keyboard[0].offset === (right ? 16 : 0)) {
-              return;
-            }
-            this.deck.keyboardOffset += right ? 1 : -1;
-            this.deck.keyboard.forEach(function (pad) {
-              pad.outTrigger();
-            });
-            break;
-          case moveModes.bpm:
-            script.triggerControl(
-              this.group,
-              right ? 'beats_translate_later' : 'beats_translate_earlier'
-            );
-            break;
-          default:
-            if (!this.shifted) {
-              if (!this.deck.leftEncoderPress.pressed) {
-                if (right) {
-                  script.triggerControl(this.group, 'beatjump_forward');
-                } else {
-                  script.triggerControl(this.group, 'beatjump_backward');
-                }
-              } else {
-                let beatjumpSize = engine.getValue(this.group, 'beatjump_size');
-                if (right) {
-                  beatjumpSize *= 2;
-                } else {
-                  beatjumpSize /= 2;
-                }
-                engine.setValue(this.group, 'beatjump_size', beatjumpSize);
-              }
-            } else {
-              if (right) {
-                script.triggerControl(this.group, 'pitch_up_small');
-              } else {
-                script.triggerControl(this.group, 'pitch_down_small');
-              }
-            }
-            break;
-        }
-      },
-    });
+    this.browserEncoder = new BrowserEncoder(this, io.browseControls.browse);
+    this.browserBackButton = new BrowserBackButton(
+      this.group,
+      reports,
+      io.browseControls.back
+    );
     this.leftEncoderPress = new PushButton({
       input: function (pressed) {
         this.pressed = pressed;
@@ -221,23 +128,27 @@ export class S5Deck extends Deck {
             // FIXME doesn't exist, feature request needed
             script.triggerControl(
               this.group,
-              right ? 'track_color_prev' : 'track_color_next'
+              right ? 'track_color_prev' : 'track_color_next',
+              0
             );
           } else {
             script.triggerControl(
               this.group,
-              right ? 'stars_up' : 'stars_down'
+              right ? 'stars_up' : 'stars_down',
+              0
             );
           }
         } else if (this.gridButtonPressed) {
           script.triggerControl(
             this.group,
-            right ? 'waveform_zoom_up' : 'waveform_zoom_down'
+            right ? 'waveform_zoom_up' : 'waveform_zoom_down',
+            0
           );
         } else if (this.libraryPlayButtonPressed) {
           script.triggerControl(
             '[PreviewDeck1]',
-            right ? 'beatjump_16_forward' : 'beatjump_16_backward'
+            right ? 'beatjump_16_forward' : 'beatjump_16_backward',
+            0
           );
         } else {
           // FIXME there is a bug where this action has no effect when the Mixxx window has no focused. https://github.com/mixxxdj/mixxx/issues/11285
@@ -250,12 +161,14 @@ export class S5Deck extends Deck {
             if (this.shifted) {
               script.triggerControl(
                 '[Playlist]',
-                right ? 'SelectNextPlaylist' : 'SelectPrevPlaylist'
+                right ? 'SelectNextPlaylist' : 'SelectPrevPlaylist',
+                0
               );
             } else {
               script.triggerControl(
                 '[Playlist]',
-                right ? 'SelectNextTrack' : 'SelectPrevTrack'
+                right ? 'SelectNextTrack' : 'SelectPrevTrack',
+                0
               );
             }
           } else {

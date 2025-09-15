@@ -29,7 +29,7 @@ export class FluxButton extends Button {
   }
 
   onShortRelease() {
-    if (!this.shifted) {
+    if (!this.isShifted) {
       engine.setValue(this.group, this.inKey, 0);
       engine.setValue(this.group, 'scratch2_enable', 0);
     }
@@ -61,7 +61,7 @@ export class FluxButton extends Button {
 
   onShortPress() {
     this.indicator(false);
-    if (this.shifted) {
+    if (this.isShifted) {
       const loopEnabled = engine.getValue(this.group, 'loop_enabled');
       // If there is currently no loop, we set the loop in of a new loop
       if (!loopEnabled) {

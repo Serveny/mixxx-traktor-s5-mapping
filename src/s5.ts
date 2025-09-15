@@ -20,20 +20,10 @@ export class S5 {
       engine.setValue('[App]', 'num_samplers', 16);
     }
 
-    this.fxUnitLeft = new S5EffectUnit(
-      1,
-      this.reports.in,
-      this.reports.out[128],
-      io.fxUnitLeft
-    );
-    this.fxUnitRight = new S5EffectUnit(
-      2,
-      this.reports.in,
-      this.reports.out[129],
-      io.fxUnitRight
-    );
+    this.fxUnitLeft = new S5EffectUnit(1, this.reports, io.fxUnitLeft);
+    this.fxUnitRight = new S5EffectUnit(2, this.reports, io.fxUnitRight);
 
-    this.mixer = new Mixer(this.reports, io.mixer);
+    this.mixer = new Mixer(this, io.mixer);
 
     // There is no consistent offset between the left and right deck,
     // so every single components' IO needs to be specified individually
@@ -68,7 +58,7 @@ export class S5 {
         const deckSegments = 10;
         for (let deckNum = 1; deckNum <= 4; deckNum++) {
           let deckGroup = `[Channel${deckNum}]`;
-          if (that.deckLeft.shifted || that.deckRight.shifted) {
+          if (that.deckLeft.isShifted || that.deckRight.isShifted) {
             if (engine.getValue(`[Auxiliary${deckNum}]`, 'input_configured')) {
               deckGroup = `[Auxiliary${deckNum}]`;
             } else if (
@@ -112,11 +102,8 @@ export class S5 {
   incomingData(data: Uint8Array) {
     const reportId = data[0];
 
-    if (reportId === 1) {
+    if (reportId in this.reports.in) {
       this.reports.in[reportId].handleInput(data.buffer.slice(1));
-    } else if (reportId === 2) {
-      const view = new DataView(data.buffer);
-      // TODO
     } else {
       console.warn(
         `Unsupported HID repord with ID ${reportId}. Contains: ${data}`

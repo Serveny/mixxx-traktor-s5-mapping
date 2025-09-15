@@ -1,22 +1,22 @@
 import type { DeckModes } from '../types/component';
 import { ComponentContainer } from './component-container';
 
-/* eslint no-redeclare: "off" */
 export class Deck extends ComponentContainer {
   decks?: number[];
-  currentDeckNumber: number = 0;
-  color?: string;
+  currentDeckIdx: number = 0;
+  color?: number;
   settings?: object;
-  groupsToColors: { [key: string]: string } = {};
+  groupsToColors: { [key: string]: number } = {};
   wheelMode: number = 0;
   moveMode: number = 0;
   secondDeckModes: DeckModes | null = null;
   keyboardPlayMode: number = 0;
-  constructor(decks: number | number[], colors: string[], settings: object) {
+
+  constructor(decks: number | number[], colors: number[], settings: object) {
     super(Deck.groupForNumber(typeof decks === 'number' ? decks : decks[0]));
     if (Array.isArray(decks)) {
       this.decks = decks;
-      this.currentDeckNumber = decks[0];
+      this.currentDeckIdx = 0;
     }
     if (this.decks) {
       for (const i in this.decks) {
@@ -27,6 +27,7 @@ export class Deck extends ComponentContainer {
     this.settings = settings;
     this.secondDeckModes = null;
   }
+
   toggleDeck() {
     if (this.decks === undefined) {
       throw Error(
@@ -34,14 +35,11 @@ export class Deck extends ComponentContainer {
       );
     }
 
-    const currentDeckIndex = this.decks.indexOf(this.currentDeckNumber);
-    let newDeckIndex = currentDeckIndex + 1;
-    if (currentDeckIndex >= this.decks.length) {
-      newDeckIndex = 0;
-    }
+    this.currentDeckIdx = this.currentDeckIdx === 1 ? 0 : 1;
 
-    this.switchDeck(Deck.groupForNumber(this.decks[newDeckIndex]));
+    this.switchDeck(Deck.groupForNumber(this.decks[this.currentDeckIdx]));
   }
+
   switchDeck(newGroup: string) {
     const currentModes: DeckModes = {
       moveMode: this.moveMode,
@@ -72,6 +70,7 @@ export class Deck extends ComponentContainer {
     });
     this.secondDeckModes = currentModes;
   }
+
   static groupForNumber(deckNumber: number) {
     return `[Channel${deckNumber}]`;
   }

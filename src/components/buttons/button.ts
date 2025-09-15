@@ -138,6 +138,7 @@ export abstract class TriggerButton extends Button {
     }
   }
 }
+
 //input(pressed: number) {
 //if (pressed) {
 //this.isLongPress = false;
