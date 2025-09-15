@@ -1,66 +1,27 @@
 import { LedColors } from '../../color';
-import { Component, ComponentInOut } from '../component';
-import type { Button as ButtonMapping } from '../../types/mapping';
-import { HIDInputReport } from '../../hid-report';
+import { ComponentInOut } from '../component';
+import type { ButtonOptions } from '../../types/component';
 
-export class Button extends ComponentInOut {
+export abstract class Button extends ComponentInOut {
   // valid range 0 - 3, but 3 makes some colors appear whitish
   brightnessOff = 0;
   brightnessOn = 2;
-  uncoloredOutput(value: number) {
-    if (this.indicatorTimer !== 0) {
-      return;
-    }
-    const color =
-      value > 0
-        ? (this.color || LedColors.white) + this.brightnessOn
-        : LedColors.off;
-    this.send(color);
-  }
 
-  longPressTimeOutMillis: number;
-  indicatorIntervalMillis: number;
-  longPressTimer: number;
-  indicatorTimer: number;
-  indicatorState: boolean;
-  isLongPress: boolean;
+  longPressTimeOutMillis: number = 225;
+  indicatorIntervalMillis: number = 350;
+  longPressTimer: number = 0;
+  indicatorTimer: number = 0;
+  indicatorState: boolean = false;
+  isLongPress: boolean = false;
   color?: number;
   indicatorColor?: number;
-  onShortPress() {}
-  onShortRelease() {}
-  onLongPress(button: Button) {}
-  onLongRelease() {}
+
   globalQuantizeOn?: boolean;
-  constructor(options: Partial<Button>, io: ButtonMapping) {
-    options.oldDataDefault = 0;
 
-    super(options, io);
-
-    if (this.input === undefined) {
-      this.input = this.defaultInput;
-      if (
-        typeof this.input === 'function' &&
-        this.inReport instanceof HIDInputReport &&
-        this.input.length === 0
-      ) {
-        this.inConnect();
-      }
-    }
-
-    this.longPressTimeOutMillis =
-      options.longPressTimeOutMillis === undefined
-        ? 225
-        : options.longPressTimeOutMillis;
-    this.indicatorIntervalMillis =
-      options.indicatorIntervalMillis === undefined
-        ? 350
-        : options.indicatorIntervalMillis;
-    this.longPressTimer = 0;
-    this.indicatorTimer = 0;
-    this.indicatorState = false;
-    this.isLongPress = false;
-    }
+  constructor(opts: ButtonOptions) {
+    super(opts);
   }
+
   setKey(key: string) {
     this.inKey = key;
     if (key === this.outKey) {
@@ -71,15 +32,15 @@ export class Button extends ComponentInOut {
     this.outConnect();
     this.outTrigger();
   }
-  setGroup(group: string) {
-    if (group === this.group) {
-      return;
-    }
-    this.outDisconnect();
-    this.group = group;
-    this.outConnect();
-    this.outTrigger();
+  uncoloredOutput(value: number) {
+    if (this.indicatorTimer !== 0) return;
+    const color =
+      value > 0
+        ? (this.color || LedColors.white) + this.brightnessOn
+        : LedColors.off;
+    this.send(color);
   }
+
   output(value: number) {
     if (this.indicatorTimer !== 0) {
       return;
@@ -88,6 +49,7 @@ export class Button extends ComponentInOut {
       (value > 0 ? this.brightnessOn : this.brightnessOff) ?? 0;
     this.send((this.color || LedColors.white) + brightness);
   }
+
   indicatorCallback() {
     this.indicatorState = !this.indicatorState;
     this.send(
@@ -95,6 +57,7 @@ export class Button extends ComponentInOut {
         ((this.indicatorState ? this.brightnessOn : this.brightnessOff) ?? 0)
     );
   }
+
   indicator(on: boolean) {
     if (on && this.indicatorTimer === 0) {
       this.outDisconnect();
@@ -110,119 +73,116 @@ export class Button extends ComponentInOut {
       this.outTrigger();
     }
   }
-  defaultInput(pressed: number) {
+
+  input(pressed: number) {
     if (pressed) {
       this.isLongPress = false;
-      if (
-        typeof this.onShortPress === 'function' &&
-        this.onShortPress.length === 0
-      ) {
-        this.onShortPress();
-      }
-      if (
-        (typeof this.onLongPress === 'function' &&
-          this.onLongPress.length === 0) ||
-        (typeof this.onLongRelease === 'function' &&
-          this.onLongRelease.length === 0)
-      ) {
-        this.longPressTimer = engine.beginTimer(
-          this.longPressTimeOutMillis,
-          () => {
-            this.isLongPress = true;
-            this.longPressTimer = 0;
-            if (typeof this.onLongPress !== 'function') {
-              return;
-            }
-            this.onLongPress(this);
-          },
-          true
-        );
-      }
-    } else if (this.isLongPress) {
-      if (
-        typeof this.onLongRelease === 'function' &&
-        this.onLongRelease.length === 0
-      ) {
-        this.onLongRelease();
-      }
-    } else {
-      if (this.longPressTimer !== 0) {
-        engine.stopTimer(this.longPressTimer);
-        this.longPressTimer = 0;
-      }
-      if (
-        typeof this.onShortRelease === 'function' &&
-        this.onShortRelease.length === 0
-      ) {
-        this.onShortRelease();
-      }
+    } else if (!this.isLongPress && this.longPressTimer !== 0) {
+      engine.stopTimer(this.longPressTimer);
+      this.longPressTimer = 0;
     }
   }
 }
 
-export class PushButton extends Button {
-  constructor(options: Partial<PushButton>) {
-    super(options);
+export abstract class PushButton extends Button {
+  constructor(opts: ButtonOptions) {
+    super(opts);
   }
+
   input(pressed: number) {
     engine.setValue(this.group, this.inKey, pressed);
   }
 }
 
-export class ToggleButton extends Button {
-  constructor(options: Partial<ToggleButton>) {
-    super(options);
+export abstract class ToggleButton extends Button {
+  constructor(opts: ButtonOptions) {
+    super(opts);
   }
+
   onShortPress() {
     script.toggleControl(this.group, this.inKey);
   }
-}
 
-export class TriggerButton extends Button {
-  constructor(options: Partial<TriggerButton>) {
-    super(options);
-  }
-  onShortPress() {
-    engine.setValue(this.group, this.inKey, 1);
-  }
-  onShortRelease() {
-    engine.setValue(this.group, this.inKey, 0);
-  }
-}
-
-export class PowerWindowButton extends Button {
-  isLongPressed: boolean;
-  unit!: Component;
-  constructor(options: Partial<PowerWindowButton>) {
-    super(options);
-    this.isLongPressed = false;
-    this.longPressTimer = 0;
-  }
-  onShortPress() {
-    script.toggleControl(this.group, this.inKey);
-  }
-  onLongRelease() {
-    script.toggleControl(this.group, this.inKey);
-  }
-}
-
-export class QuantizeButton extends Button {
-  globalQuantizeOn: boolean = false;
-  constructor(io: ButtonMapping) {
-    super(io);
-  }
-
-  input(pressed: boolean) {
+  input(pressed: number) {
     if (pressed) {
-      this.globalQuantizeOn = !this.globalQuantizeOn;
-      for (let deckIdx = 1; deckIdx <= 4; deckIdx++) {
-        engine.setValue(
-          `[Channel${deckIdx}]`,
-          'quantize',
-          this.globalQuantizeOn ? 1 : 0
-        );
-      }
-      this.send(this.globalQuantizeOn ? 127 : 0);
+      this.isLongPress = false;
+      this.onShortPress();
+    } else if (!this.isLongPress && this.longPressTimer !== 0) {
+      engine.stopTimer(this.longPressTimer);
+      this.longPressTimer = 0;
     }
   }
 }
+
+export abstract class TriggerButton extends Button {
+  constructor(opts: ButtonOptions) {
+    super(opts);
+  }
+
+  onShortPress() {
+    engine.setValue(this.group, this.inKey, 1);
+  }
+
+  onShortRelease() {
+    engine.setValue(this.group, this.inKey, 0);
+  }
+
+  input(pressed: number) {
+    if (pressed) {
+      this.isLongPress = false;
+      this.onShortPress();
+    } else if (!this.isLongPress && this.longPressTimer !== 0) {
+      engine.stopTimer(this.longPressTimer);
+      this.longPressTimer = 0;
+      this.onShortRelease();
+    }
+  }
+}
+//input(pressed: number) {
+//if (pressed) {
+//this.isLongPress = false;
+//if (
+//typeof this.onShortPress === 'function' &&
+//this.onShortPress.length === 0
+//) {
+//this.onShortPress();
+//}
+//if (
+//(typeof this.onLongPress === 'function' &&
+//this.onLongPress.length === 0) ||
+//(typeof this.onLongRelease === 'function' &&
+//this.onLongRelease.length === 0)
+//) {
+//this.longPressTimer = engine.beginTimer(
+//this.longPressTimeOutMillis,
+//() => {
+//this.isLongPress = true;
+//this.longPressTimer = 0;
+//if (typeof this.onLongPress !== 'function') {
+//return;
+//}
+//this.onLongPress();
+//},
+//true
+//);
+//}
+//} else if (this.isLongPress) {
+//if (
+//typeof this.onLongRelease === 'function' &&
+//this.onLongRelease.length === 0
+//) {
+//this.onLongRelease();
+//}
+//} else {
+//if (this.longPressTimer !== 0) {
+//engine.stopTimer(this.longPressTimer);
+//this.longPressTimer = 0;
+//}
+//if (
+//typeof this.onShortRelease === 'function' &&
+//this.onShortRelease.length === 0
+//) {
+//this.onShortRelease();
+//}
+//}
+//}

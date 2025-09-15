@@ -4,11 +4,11 @@
 
 Mixxx debug command on linux: `mixxx --controller-debug`
 
-### HID IN/OUT-PUTS
+## HID IN/OUT-PUTS
 
 Reverse engineered HID mapping. Some bits/byte in the reports are empty between (or I didn't found out the usage).
 
-#### Report-ID 1 (IN)
+### Report-ID 1 (IN)
 
 - Used for button and knob touch data
 - Size: 30 byte (240 bit)
@@ -119,7 +119,7 @@ Reverse engineered HID mapping. Some bits/byte in the reports are empty between 
 |   19 |   0 |           16 | deckLeft.touchStrip.**touch**                         |
 |   25 |   0 |           16 | deckRight.touchStrip.**touch**                        |
 
-##### Report-ID 2 (IN)
+### Report-ID 2 (IN)
 
 - Used for fader data
 - Size: 79 byte (632 bit)
@@ -166,7 +166,7 @@ Reverse engineered HID mapping. Some bits/byte in the reports are empty between 
 |   70 |   0 |           16 | fxUnitRight.knobs[2].**fade** |
 |   72 |   0 |           16 | fxUnitRight.knobs[3].**fade** |
 
-#### Report-ID 128, 129 (OUT)
+### Report-ID 128, 129 (OUT)
 
 - Used to control the LED's of the left and right fx units, decks, transport buttons and touch bar
 - Size: 104 byte (832 bit)
@@ -216,7 +216,7 @@ Byte 1 (0-127): red
 Byte 2 (0-127): green
 Byte 3 (0-127): blue
 
-# Report-ID 130 (OUT)
+### Report-ID 130 (OUT)
 
 - Used to control the LEDS of the mixer
 - Size: 73 byte (584 bit)
@@ -248,7 +248,7 @@ Byte 3 (0-127): blue
 |   41 |   0 |           88 | mixer.channelB.**volumeLevel**       |
 |   52 |   0 |           88 | mixer.channelD.**volumeLevel**       |
 
-#### Displays
+## Displays
 
 - prop. Bulk/Isochronous endpoint
 - layout with QML

@@ -1,10 +1,8 @@
-import type { HIDInputReport } from '../hid-input-record';
-import type { HIDOutputReport } from '../hid-output-record';
-import type { HIDReportHodler } from '../hid-report';
+import type { S5 } from '../s5';
 import { settings } from '../settings';
 import type { S5MixerMapping } from '../types/mapping';
-import { Button, QuantizeButton } from './buttons/button';
 import { FXSelect } from './buttons/fx-select-button';
+import { QuantizeButton } from './buttons/quantize-button';
 import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
 import { S5MixerColumn } from './s5-mixer-column';
@@ -15,44 +13,46 @@ export class Mixer extends ComponentContainer {
   channelB: S5MixerColumn;
   channelD: S5MixerColumn;
   fxSelects: FXSelect[] = [];
-  quantizeButton: Button;
+  quantizeButton: QuantizeButton;
   crossfader: Pot;
   master?: Pot;
   booth?: Pot;
   cue?: Pot;
   cueGain?: Pot;
 
-  constructor(reports: HIDReportHodler, io: S5MixerMapping) {
-    super();
-
-    this.outReport = reports.out[130];
+  constructor(s5: S5, io: S5MixerMapping) {
+    super('[Mixer]');
 
     this.channelC = new S5MixerColumn(
       1,
-      reports.in,
-      this.outReport,
+      s5.reports.in,
+      s5.reports.out[130],
+      s5,
       io.channelC
     );
     this.channelA = new S5MixerColumn(
       2,
-      reports.in,
-      this.outReport,
+      s5.reports.in,
+      s5.reports.out[130],
+      s5,
       io.channelA
     );
     this.channelB = new S5MixerColumn(
       3,
-      reports.in,
-      this.outReport,
+      s5.reports.in,
+      s5.reports.out[130],
+      s5,
       io.channelB
     );
     this.channelD = new S5MixerColumn(
       4,
-      reports.in,
-      this.outReport,
+      s5.reports.in,
+      s5.reports.out[130],
+      s5,
       io.channelD
     );
 
-    this.quantizeButton = new QuantizeButton({}, io.quantize);
+    this.quantizeButton = new QuantizeButton(s5.reports, io.quantize);
 
     this.crossfader = new Pot('[Master]', 'crossfader', io.cross);
 
@@ -68,15 +68,16 @@ export class Mixer extends ComponentContainer {
       this.cueGain = new Pot('[Master]', 'headGain', io.cueGain);
     }
 
-    for (const component of this) {
-      if (component.inReport === undefined) {
-        component.inReport = inReports[1];
-      }
-      component.outReport = this.outReport;
-      component.inConnect();
-      component.outConnect();
-      component.outTrigger();
-    }
+    // TODO: Find out why?
+    //for (const component of this) {
+    //if (component.inReport === undefined) {
+    //component.inReport = inReports[1];
+    //}
+    //component.outReport = this.outReport;
+    //component.inConnect();
+    //component.outConnect();
+    //component.outTrigger();
+    //}
 
     let lightQuantizeButton = true;
     for (let deckIdx = 1; deckIdx <= 4; deckIdx++) {

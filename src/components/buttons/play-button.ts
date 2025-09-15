@@ -1,17 +1,29 @@
+import type { HIDReportHodler } from '../../hid-report';
+import { settings } from '../../settings';
+import type { Btn } from '../../types/mapping';
 import { Button } from './button';
 
 export class PlayButton extends Button {
-  constructor(options: Partial<PlayButton>) {
+  constructor(group: string, reports: HIDReportHodler, io: Btn) {
+    super({
+      group,
+      inKey: 'play',
+      outKey: 'play_indicator',
+      reports,
+      io,
+    });
+
     // Prevent accidental ejection/duplication accident
-    options.longPressTimeOutMillis = 800;
-    super(options);
-    this.inKey = 'play';
-    this.outKey = 'play_indicator';
-    this.outConnect();
+    this.longPressTimeOutMillis = 800;
+
+    if (settings.inactiveLightsAlwaysBacklit)
+      this.output = this.uncoloredOutput;
   }
+
   onShortPress() {
     script.toggleControl(this.group, this.inKey);
   }
+
   onLongPress() {
     if (this.shifted) {
       engine.setValue(this.group, this.inKey, 0);

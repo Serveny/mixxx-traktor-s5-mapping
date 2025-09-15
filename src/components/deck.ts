@@ -1,3 +1,4 @@
+import type { DeckModes } from '../types/component';
 import { ComponentContainer } from './component-container';
 
 /* eslint no-redeclare: "off" */
@@ -7,17 +8,15 @@ export class Deck extends ComponentContainer {
   color?: string;
   settings?: object;
   groupsToColors: { [key: string]: string } = {};
-  secondDeckModes: null;
+  wheelMode: number = 0;
   moveMode: number = 0;
+  secondDeckModes: DeckModes | null = null;
   keyboardPlayMode: number = 0;
   constructor(decks: number | number[], colors: string[], settings: object) {
-    super();
-    if (typeof decks === 'number') {
-      this.group = Deck.groupForNumber(decks);
-    } else if (Array.isArray(decks)) {
+    super(Deck.groupForNumber(typeof decks === 'number' ? decks : decks[0]));
+    if (Array.isArray(decks)) {
       this.decks = decks;
       this.currentDeckNumber = decks[0];
-      this.group = Deck.groupForNumber(decks[0]);
     }
     if (this.decks) {
       for (const i in this.decks) {
@@ -44,8 +43,9 @@ export class Deck extends ComponentContainer {
     this.switchDeck(Deck.groupForNumber(this.decks[newDeckIndex]));
   }
   switchDeck(newGroup: string) {
-    const currentModes = {
+    const currentModes: DeckModes = {
       moveMode: this.moveMode,
+      wheelMode: this.wheelMode,
     };
 
     engine.setValue(this.group, 'scratch2_enable', 0);

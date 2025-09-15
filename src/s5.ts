@@ -44,8 +44,7 @@ export class S5 {
 
       this.fxUnitLeft,
       this.mixer,
-      this.inReports,
-      this.outReports[128],
+      this.reports,
       io.deckLeft
     );
 
@@ -54,8 +53,7 @@ export class S5 {
       [settings.deckColors[1], settings.deckColors[3]],
       this.fxUnitRight,
       this.mixer,
-      this.inReports,
-      this.outReports[129],
+      this.reports,
       io.deckRight
     );
 
@@ -66,8 +64,8 @@ export class S5 {
       'gui_tick_50ms_period_s',
       function (_value) {
         const deckMeters = new Uint8Array(78).fill(0);
-        // Each column has 14 segments, but treat the top one specially for the clip indicator.
-        const deckSegments = 13;
+        // Each column has 11 segments, but treat the top one specially for the clip indicator.
+        const deckSegments = 10;
         for (let deckNum = 1; deckNum <= 4; deckNum++) {
           let deckGroup = `[Channel${deckNum}]`;
           if (that.deckLeft.shifted || that.deckRight.shifted) {
@@ -115,7 +113,7 @@ export class S5 {
     const reportId = data[0];
 
     if (reportId === 1) {
-      this.inReports[reportId].handleInput(data.buffer.slice(1));
+      this.reports.in[reportId].handleInput(data.buffer.slice(1));
     } else if (reportId === 2) {
       const view = new DataView(data.buffer);
       // TODO
@@ -129,7 +127,9 @@ export class S5 {
   init() {
     // get state of knobs and faders
     for (const repordId of [0x01, 0x02]) {
-      this.inReports[repordId].handleInput(controller.getInputReport(repordId));
+      this.reports.in[repordId].handleInput(
+        controller.getInputReport(repordId)
+      );
     }
   }
 

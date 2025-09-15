@@ -18,7 +18,7 @@ export interface BytePosOut {
 
 export interface BytePosInOut extends BytePosIn, BytePosOut {}
 
-export type Button = BytePosInOut;
+export type Btn = BytePosInOut;
 export type Meter = BytePosOut;
 
 // Fader and Knobs (Report-ID 2) are always a 16bit int (in other words: inLengthBit is always 16)
@@ -54,83 +54,83 @@ export interface S5Mapping {
 }
 
 export interface S5MixerMapping {
-  channelC: S5MixerChannelMapping;
-  channelA: S5MixerChannelMapping;
+  channelC: S5MixerColumnMapping;
+  channelA: S5MixerColumnMapping;
 
   // Middle column
   mainGain: Knob;
-  snap: Button;
-  quantize: Button;
+  snap: Btn;
+  quantize: Btn;
   boothGain: Knob;
   tempo: BytePosIn;
   cueMix: Knob;
   cueGain: Knob;
-  aux: Button;
-  auxToggle: Button;
+  aux: Btn;
+  auxToggle: Btn;
 
-  channelB: S5MixerChannelMapping;
-  channelD: S5MixerChannelMapping;
+  channelB: S5MixerColumnMapping;
+  channelD: S5MixerColumnMapping;
 
   cross: Fader;
 }
 
-export interface S5MixerChannelMapping {
+export interface S5MixerColumnMapping {
   gain: Knob;
-  fxUnitAssignLeft: Button;
-  fxUnitAssignRight: Button;
+  fxUnitAssignLeft: Btn;
+  fxUnitAssignRight: Btn;
   volumeLevel: Meter;
   eqHigh: Knob;
   eqMid: Knob;
   eqLow: Knob;
   filter: Knob;
-  filterBtn: Button;
-  cue: Button;
+  filterBtn: Btn;
+  cue: Btn;
   volume: Fader;
 }
 
 export interface S5DeckMapping {
   displayAreaAndControls: {
-    settings: Button;
-    display1: Button;
-    display2: Button;
-    performanceMode1: Button;
-    view: Button;
-    display3: Button;
-    display4: Button;
-    performanceMode2: Button;
+    settings: Btn;
+    display1: Btn;
+    display2: Btn;
+    performanceMode1: Btn;
+    view: Btn;
+    display3: Btn;
+    display4: Btn;
+    performanceMode2: Btn;
   };
   browseControls: {
     browse: Encoder;
-    back: Button;
+    back: Btn;
   };
   modeSelect: {
-    hotcue: Button;
-    freeze: Button;
-    remix: Button;
+    hotcue: Btn;
+    freeze: Btn;
+    remix: Btn;
   };
-  pads: [Button, Button, Button, Button, Button, Button, Button, Button];
+  pads: [Btn, Btn, Btn, Btn, Btn, Btn, Btn, Btn];
   touchStrip: {
     phase: BlueRedLeds;
     touch: BytePosIn;
   };
-  transportControls: { shift: Button; sync: Button; cue: Button; play: Button };
-  flux: Button;
+  transportControls: { shift: Btn; sync: Btn; cue: Btn; play: Btn };
+  flux: Btn;
   loop: Encoder;
-  deck: Button;
+  deck: Btn;
 }
 
 export interface S5DisplayArea {
-  settings: Button;
-  display1: Button;
-  display2: Button;
-  performanceMode1: Button;
-  view: Button;
-  display3: Button;
-  display4: Button;
-  performanceMode2: Button;
+  settings: Btn;
+  display1: Btn;
+  display2: Btn;
+  performanceMode1: Btn;
+  view: Btn;
+  display3: Btn;
+  display4: Btn;
+  performanceMode2: Btn;
 }
 
 export interface S5FxUnitMapping {
   knobs: [TouchKnob, TouchKnob, TouchKnob, TouchKnob];
-  buttons: [Button, Button, Button, Button];
+  buttons: [Btn, Btn, Btn, Btn];
 }

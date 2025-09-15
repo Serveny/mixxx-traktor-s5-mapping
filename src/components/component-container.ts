@@ -1,18 +1,20 @@
-import { Component } from './component';
-export class ComponentContainer extends Component {
-  constructor() {
-    super({});
+import { Button } from './buttons/button';
+import { Component, ComponentInOut } from './component';
+
+export abstract class ComponentContainer extends Component {
+  constructor(group: string) {
+    super(group);
   }
   *[Symbol.iterator]() {
     // can't use for...of here because it would create an infinite loop
     for (const property in this) {
       if (Object.prototype.hasOwnProperty.call(this, property)) {
         const obj = this[property];
-        if (obj instanceof Component) {
+        if (obj instanceof Button) {
           yield obj;
         } else if (Array.isArray(obj)) {
           for (const objectInArray of obj) {
-            if (objectInArray instanceof Component) {
+            if (objectInArray instanceof Button) {
               yield objectInArray;
             }
           }
@@ -20,7 +22,7 @@ export class ComponentContainer extends Component {
       }
     }
   }
-  reconnectComponents(callback: (component: Component) => void) {
+  reconnectComponents(callback: (component: Button) => void) {
     for (const component of this) {
       if (
         typeof component.outDisconnect === 'function' &&

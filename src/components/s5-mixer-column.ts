@@ -5,20 +5,23 @@ import { settings } from '../settings';
 import { PowerWindowButton, PushButton, ToggleButton } from './buttons/button';
 import { Component } from './component';
 import { ComponentContainer } from './component-container';
+import { LoudnessMeter } from './loudness-meter';
 import { Pot } from './pot';
+import type { S5MixerColumnMapping } from '../types/mapping';
 
 export class S5MixerColumn extends ComponentContainer {
-  idx: number;
   gain: Pot;
   eqHigh: Pot;
   eqMid: Pot;
   eqLow: Pot;
   quickEffectKnob: Pot;
   volume: Pot;
+  loudnessMeter: LoudnessMeter;
   constructor(
-    idx: number,
-    inReports: HIDInputReport[],
-    outReport: HIDOutputReport,
+    private idx: number,
+    private inReports: HIDInputReport[],
+    private outReport: HIDOutputReport,
+    private s5: S5,
     io: S5MixerColumnMapping
   ) {
     super();
@@ -134,6 +137,14 @@ export class S5MixerColumn extends ComponentContainer {
         this.updateGroup(false);
       };
     }
+
+    this.loudnessMeter = new LoudnessMeter(
+      this.idx,
+      `loudness_meter_${this.idx}`,
+      this.outReport,
+      s5,
+      io.volumeLevel
+    );
   }
 
   updateGroup(shifted: boolean) {

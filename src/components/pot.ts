@@ -1,34 +1,31 @@
+import type { HIDReportHodler } from '../hid-report';
 import type { Knob } from '../types/mapping';
-import { Component } from './component';
+import { ComponentIn } from './component';
 import type { Mixer } from './mixer';
 
-export class Pot extends Component {
+export class Pot extends ComponentIn {
   max = 2 ** 12 - 1;
   hardwarePosition: number | null;
   shiftedHardwarePosition: number | null;
   mixer?: Mixer;
 
-  constructor(public group: string, public inKey: string, io: Knob) {
-    super();
-    this.inByte = io.inByte;
+  constructor(
+    group: string,
+    inKey: string,
+    reports: HIDReportHodler,
+    io: Knob
+  ) {
+    super({
+      group,
+      inKey,
+      reports,
+      io: { inBit: 0, inLengthBit: 16, ...io },
+    });
     this.hardwarePosition = null;
     this.shiftedHardwarePosition = null;
+  }
 
-    if (this.input === undefined) {
-      this.input = this.defaultInput;
-    }
-  }
-  setGroupKey(group: string, key: string) {
-    this.inKey = key;
-    if (key === this.outKey && group === this.group) {
-      return;
-    }
-    this.outDisconnect();
-    this.group = group;
-    this.outKey = key;
-    this.outConnect();
-  }
-  defaultInput(value: number) {
+  input(value: number) {
     const receivingFirstValue = this.hardwarePosition === null;
     this.hardwarePosition = value / this.max;
     engine.setParameter(this.group, this.inKey, this.hardwarePosition);
@@ -36,11 +33,12 @@ export class Pot extends Component {
       engine.softTakeover(this.group, this.inKey, true);
     }
   }
-  outDisconnect() {
-    if (this.hardwarePosition !== null) {
-      engine.softTakeover(this.group, this.inKey, true);
-    }
-    engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
-    super.outDisconnect();
-  }
+
+  //outDisconnect() {
+  //if (this.hardwarePosition !== null) {
+  //engine.softTakeover(this.group, this.inKey, true);
+  //}
+  //engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
+  //super.outDisconnect();
+  //}
 }

@@ -2,87 +2,59 @@
  * Components library
  */
 
-import { HIDInputReport } from '../hid-report';
+import { HIDInputReport, HIDOutputReport } from '../hid-report';
+import type {
+  ComponentInOptions,
+  ComponentInOutOptions,
+  ComponentOutOptions,
+} from '../types/component';
 import type { BytePosIn, BytePosInOut, BytePosOut } from '../types/mapping';
 
 export abstract class Component {
   shifted = false;
-  constructor(public group: string) {
-    this.outConnections = [];
-    if (typeof key === 'string') {
-      this.inKey = key;
-      this.outKey = key;
-    }
-    if (typeof this.unshift === 'function' && this.unshift.length === 0) {
-      this.unshift();
-    }
-    this.shifted = false;
-    if (
-      typeof this.input === 'function' &&
-      this.inReport instanceof HIDInputReport &&
-      (this.inReport as any).length === 0
-    ) {
-      this.inConnect();
-    }
-    this.outConnect();
-  }
-
-  send(value: number) {
-    if (this.outReport !== undefined && this.outByte !== undefined) {
-      this.outReport.data[this.outByte] = value;
-      this.outReport.send();
-    }
-  }
-  output(value: number) {
-    this.send(value);
-  }
-
-  outTrigger() {
-    for (const connection of this.outConnections) {
-      connection.trigger();
-    }
-  }
+  constructor(public group: string) {}
 }
 
 export abstract class ComponentIn extends Component {
-  inConnection: ScriptConnection;
-  constructor(
-    public group: string,
-    public inKey: string,
-    public inReport: HIDInputReport,
-    public io: BytePosIn
-  ) {
-    super(group);
+  private inConnection: ScriptConnection;
+  protected inKey: string;
+  private inReport: HIDInputReport;
+  protected io: BytePosIn;
+  private oldDataDefault?: number;
 
-    this.inConnect();
+  constructor(opts: ComponentInOptions) {
+    super(opts.group);
+    this.inKey = opts.inKey;
+    this.inReport = opts.reports.in[opts.io.inReportId];
+    this.io = opts.io;
+
+    this.inConnection = this.inConnect();
   }
 
   inConnect(): ScriptConnection {
     return this.inReport.registerCallback(
       this.input.bind(this)!,
-      this.io.inByte,
-      this.inBit,
-      this.inBitLength,
+      this.io,
       this.oldDataDefault
     );
   }
   inDisconnect() {
-    if (this.inConnection !== undefined) {
-      this.inConnection.disconnect();
-    }
+    this.inConnection.disconnect();
   }
 
-  abstract input(): void;
+  abstract input(value: number): void;
 }
 
 export abstract class ComponentOut extends Component {
   outConnection: ScriptConnection;
-  constructor(
-    public group: string,
-    public outKey: string,
-    public io: BytePosOut
-  ) {
-    super(group);
+  outKey: string;
+  outReport: HIDOutputReport;
+  io: BytePosOut;
+  constructor(opts: ComponentOutOptions) {
+    super(opts.group);
+    this.outKey = opts.outKey;
+    this.outReport = opts.reports.out[opts.io.outReportId];
+    this.io = opts.io;
     this.outConnection = this.outConnect();
   }
 
@@ -99,6 +71,17 @@ export abstract class ComponentOut extends Component {
     return outCon;
   }
 
+  send(value: number) {
+    this.outReport.data[this.io.outByte] = value;
+    this.outReport.send();
+  }
+
+  sendArr(data: Uint8Array) {
+    for (let i = 0; i < data.length; i++) {
+      this.outReport.data[this.io.outByte + i] = data[i];
+    }
+  }
+
   outDisconnect() {
     this.outConnection.disconnect();
   }
@@ -106,8 +89,43 @@ export abstract class ComponentOut extends Component {
   abstract output(): void;
 }
 
-export abstract class ComponentInOut extends Component {
-  constructor(public group: string, public io: BytePosInOut) {
-    super(group);
+export abstract class ComponentInOut extends ComponentIn {
+  private outConnection: ScriptConnection;
+  outKey: string;
+  outReport: HIDOutputReport;
+  protected declare io: BytePosInOut;
+  constructor(opts: ComponentInOutOptions) {
+    super(opts);
+    this.outKey = opts.outKey;
+    this.outReport = opts.reports.out[this.io.outReportId];
+    this.outConnection = this.outConnect();
   }
+
+  outConnect(): ScriptConnection {
+    const outCon = engine.makeConnection(
+      this.group,
+      this.outKey,
+      this.output.bind(this)
+    );
+    if (outCon == null)
+      throw Error(
+        `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
+      );
+    return outCon;
+  }
+
+  outTrigger() {
+    this.outConnection.trigger();
+  }
+
+  send(value: number) {
+    this.outReport.data[this.io.outByte] = value;
+    this.outReport.send();
+  }
+
+  outDisconnect() {
+    this.outConnection.disconnect();
+  }
+
+  abstract output(value: number): void;
 }
