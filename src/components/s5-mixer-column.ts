@@ -1,53 +1,53 @@
-import type { HIDInputReport } from '../hid-input-record';
-import type { HIDOutputReport } from '../hid-output-record';
 import type { S5 } from '../s5';
 import { settings } from '../settings';
-import { PowerWindowButton, PushButton, ToggleButton } from './buttons/button';
+import { PushButton, ToggleButton } from './buttons/button';
 import { Component } from './component';
 import { ComponentContainer } from './component-container';
 import { LoudnessMeter } from './loudness-meter';
 import { Pot } from './pot';
 import type { S5MixerColumnMapping } from '../types/mapping';
+import type { HIDReportHodler } from '../hid-report';
 
 export class S5MixerColumn extends ComponentContainer {
   gain: Pot;
   eqHigh: Pot;
   eqMid: Pot;
   eqLow: Pot;
-  quickEffectKnob: Pot;
+  // quickEffectKnob: Pot;
   volume: Pot;
   loudnessMeter: LoudnessMeter;
   constructor(
     private idx: number,
-    private inReports: HIDInputReport[],
-    private outReport: HIDOutputReport,
-    private s5: S5,
+    reports: HIDReportHodler,
     io: S5MixerColumnMapping
   ) {
-    super();
+    super(`[Channel${idx}]`);
 
     this.idx = idx;
-    this.group = `[Channel${idx}]`;
 
-    this.gain = new Pot({
-      inKey: 'pregain',
-    });
-    this.eqHigh = new Pot({
-      group: `[EqualizerRack1_${this.group}_Effect1]`,
-      inKey: 'parameter3',
-    });
-    this.eqMid = new Pot({
-      group: `[EqualizerRack1_${this.group}_Effect1]`,
-      inKey: 'parameter2',
-    });
-    this.eqLow = new Pot({
-      group: `[EqualizerRack1_${this.group}_Effect1]`,
-      inKey: 'parameter1',
-    });
-    this.quickEffectKnob = new Pot({
-      group: `[QuickEffectRack1_${this.group}]`,
-      inKey: 'super1',
-    });
+    this.gain = new Pot(this.group, 'pregain', reports, io.gain);
+    this.eqHigh = new Pot(
+      `[EqualizerRack1_${this.group}_Effect1]`,
+      'parameter3',
+      reports,
+      io.eqHigh
+    );
+    this.eqMid = new Pot(
+      `[EqualizerRack1_${this.group}_Effect1]`,
+      'parameter2',
+      reports,
+      io.eqMid
+    );
+    this.eqLow = new Pot(
+      `[EqualizerRack1_${this.group}_Effect1]`,
+      'parameter1',
+      reports,
+      io.eqLow
+    );
+    //this.quickEffectKnob = new Pot(
+    //`[QuickEffectRack1_${this.group}]`,
+    //'super1', s5.reports, io.q
+    //);
     this.volume = new Pot({
       inKey: 'volume',
       mixer: this,

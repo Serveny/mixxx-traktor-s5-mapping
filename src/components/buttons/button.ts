@@ -82,6 +82,14 @@ export abstract class Button extends ComponentInOut {
       this.longPressTimer = 0;
     }
   }
+
+  shift() {
+    this.isShifted = true;
+  }
+
+  unshift() {
+    this.isShifted = false;
+  }
 }
 
 export abstract class PushButton extends Button {

@@ -1,4 +1,4 @@
-import type { HIDOutputReport } from '../hid-report';
+import type { HIDReportHodler } from '../hid-report';
 import type { S5 } from '../s5';
 import type { Meter } from '../types/mapping';
 import { ComponentOut } from './component';
@@ -12,11 +12,16 @@ export class LoudnessMeter extends ComponentOut {
   constructor(
     private channelIdx: number,
     outKey: string,
-    outReport: HIDOutputReport,
+    reports: HIDReportHodler,
     private s5: S5,
     io: Meter
   ) {
-    super(`[Channel${channelIdx}]`, outKey, outReport, io);
+    super({
+      group: `[Channel${channelIdx}]`,
+      outKey,
+      reports,
+      io,
+    });
     this.auxGroup = `[Auxiliary${channelIdx}]`;
     this.micGroup =
       this.channelIdx !== 1 ? `[Microphone${channelIdx}]` : '[Microphone]';

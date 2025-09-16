@@ -54,18 +54,18 @@ export class Mixer extends ComponentContainer {
 
     this.quantizeButton = new QuantizeButton(s5.reports, io.quantize);
 
-    this.crossfader = new Pot('[Master]', 'crossfader', io.cross);
+    this.crossfader = new Pot('[Master]', 'crossfader', s5.reports, io.cross);
 
     if (settings.softwareMixerMain) {
-      this.master = new Pot('[Master]', 'gain', io.mainGain);
+      this.master = new Pot('[Master]', 'gain', s5.reports, io.mainGain);
     }
     if (settings.softwareMixerBooth) {
-      this.booth = new Pot('[Master]', 'booth_gain', io.boothGain);
+      this.booth = new Pot('[Master]', 'booth_gain', s5.reports, io.boothGain);
     }
     if (settings.softwareMixerHeadphone) {
-      this.cue = new Pot('[Master]', 'headMix', io.cueMix);
+      this.cue = new Pot('[Master]', 'headMix', s5.reports, io.cueMix);
 
-      this.cueGain = new Pot('[Master]', 'headGain', io.cueGain);
+      this.cueGain = new Pot('[Master]', 'headGain', s5.reports, io.cueGain);
     }
 
     // TODO: Find out why?

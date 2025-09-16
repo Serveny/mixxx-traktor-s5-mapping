@@ -1,6 +1,7 @@
-import type { HIDReportHodler } from '../hid-report';
-import { ComponentIn } from './component';
-import type { Encoder as EncoderMapping } from '../types/mapping';
+import type { HIDReportHodler } from '../../hid-report';
+import { ComponentIn } from '../component';
+import type { Encoder as EncoderMapping } from '../../types/mapping';
+import type { ComponentInOptions } from '../../types/component';
 
 export abstract class Encoder extends ComponentIn {
   inBitLength = 4;
@@ -24,14 +25,14 @@ export abstract class Encoder extends ComponentIn {
       io: io.fade,
     });
 
-    this.touch = new EncoderTouch({
+    this.touch = new EncoderTouch(this, {
       group,
       inKey: `${inKey}_touch`,
       reports,
       io: io.touch,
     });
 
-    this.press = new EncoderPress({
+    this.press = new EncoderPress(this, {
       group,
       inKey: `${inKey}_press`,
       reports,
@@ -40,6 +41,8 @@ export abstract class Encoder extends ComponentIn {
   }
 
   abstract onChange(isRight: boolean): void;
+  abstract onTouch(value: number): void;
+  abstract onPress(value: number): void;
 
   input(value: number) {
     const oldValue = this.lastValue;
@@ -62,9 +65,19 @@ export abstract class Encoder extends ComponentIn {
 }
 
 class EncoderTouch extends ComponentIn {
-  input() {}
+  constructor(private encoder: Encoder, opts: ComponentInOptions) {
+    super(opts);
+  }
+  input(value: number) {
+    this.encoder.onTouch(value);
+  }
 }
 
 class EncoderPress extends ComponentIn {
-  input() {}
+  constructor(private encoder: Encoder, opts: ComponentInOptions) {
+    super(opts);
+  }
+  input(value: number) {
+    this.encoder.onPress(value);
+  }
 }

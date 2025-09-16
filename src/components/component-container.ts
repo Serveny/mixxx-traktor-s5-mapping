@@ -1,5 +1,5 @@
 import { Button } from './buttons/button';
-import { Component, ComponentInOut } from './component';
+import { Component } from './component';
 
 export abstract class ComponentContainer extends Component {
   constructor(group: string) {
@@ -24,50 +24,25 @@ export abstract class ComponentContainer extends Component {
   }
   reconnectComponents(callback: (component: Button) => void) {
     for (const component of this) {
-      if (
-        typeof component.outDisconnect === 'function' &&
-        component.outDisconnect.length === 0
-      ) {
-        component.outDisconnect();
-      }
-      if (typeof callback === 'function' && callback.length === 1) {
-        callback.call(this, component);
-      }
-      if (
-        typeof component.outConnect === 'function' &&
-        component.outConnect.length === 0
-      ) {
-        component.outConnect();
-      }
+      component.outDisconnect();
+      callback.call(this, component);
+
+      component.outConnect();
       component.outTrigger();
-      if (
-        typeof component.unshift === 'function' &&
-        component.unshift.length === 0
-      ) {
-        component.unshift();
-      }
+      component.unshift();
     }
   }
+
   unshift() {
     for (const component of this) {
-      if (
-        typeof component.unshift === 'function' &&
-        component.unshift.length === 0
-      ) {
-        component.unshift();
-      }
+      component.unshift();
       component.isShifted = false;
     }
     this.isShifted = false;
   }
   shift() {
     for (const component of this) {
-      if (
-        typeof component.shift === 'function' &&
-        component.shift.length === 0
-      ) {
-        component.shift();
-      }
+      component.shift();
       component.isShifted = true;
     }
     this.isShifted = true;

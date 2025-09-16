@@ -5,7 +5,11 @@ import { PushButton } from './button';
 
 export class ShiftButton extends PushButton {
   constructor(private deck: S5Deck, io: Btn) {
+    const key = 'shift';
     super({
+      group: deck.group,
+      inKey: key,
+      outKey: key,
       reports: deck.reports,
       io,
     });
@@ -23,10 +27,7 @@ export class ShiftButton extends PushButton {
   }
 
   input(pressed: number) {
-    if (pressed) {
-      this.deck.shift();
-    } else {
-      this.deck.unshift();
-    }
+    if (pressed) this.deck.shift();
+    else this.deck.unshift();
   }
 }
