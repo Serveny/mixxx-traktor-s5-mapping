@@ -7,7 +7,7 @@ export class QuantizeButton extends Button {
   constructor(reports: HIDReportHodler, io: Btn) {
     const key = 'quantize';
     super({
-      group: '',
+      group: `[Channel0]`,
       inKey: key,
       outKey: key,
       reports,

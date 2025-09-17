@@ -35,7 +35,7 @@ export class HIDInputReport {
       throw Error('bitLength must be an integer between 1 and 32');
     }
 
-    const field = {
+    const field: HIDReportField = {
       callback: callback,
       io,
       oldData: defaultOldData,
@@ -55,27 +55,27 @@ export class HIDInputReport {
     const view = new DataView(reportData);
 
     for (const field of this.fields) {
-      const numBytes = Math.ceil(field.bitLength / 8);
+      const numBytes = Math.ceil(field.io.inLengthBit / 8);
       let data;
 
       // Little endianness is specified by the HID standard.
       // The HID standard allows signed integers as well, but I am not aware
       // of any HID DJ controllers which use signed integers.
       if (numBytes === 1) {
-        data = view.getUint8(field.byteOffset);
+        data = view.getUint8(field.io.inByte);
       } else if (numBytes === 2) {
-        data = view.getUint16(field.byteOffset, true);
+        data = view.getUint16(field.io.inByte, true);
       } else if (numBytes === 3) {
-        data = view.getUint32(field.byteOffset, true) >>> 8;
+        data = view.getUint32(field.io.inByte, true) >>> 8;
       } else if (numBytes === 4) {
-        data = view.getUint32(field.byteOffset, true);
+        data = view.getUint32(field.io.inByte, true);
       } else {
         throw Error('field bitLength must be between 1 and 32');
       }
 
       // The >>> 0 is required for 32 bit unsigned ints to not magically turn negative
       // because all Numbers are really 32 bit signed floats. Because JavaScript.
-      data = ((data >> field.bitOffset) & (2 ** field.bitLength - 1)) >>> 0;
+      data = ((data >> field.io.inBit) & (2 ** field.io.inLengthBit - 1)) >>> 0;
 
       if (field.oldData !== data) {
         field.callback(data);

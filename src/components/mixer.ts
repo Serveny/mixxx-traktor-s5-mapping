@@ -1,7 +1,7 @@
 import type { S5 } from '../s5';
 import { settings } from '../settings';
 import type { S5MixerMapping } from '../types/mapping';
-import { FXSelect } from './buttons/fx-select-button';
+// import { FXSelect } from './buttons/fx-select-button';
 import { QuantizeButton } from './buttons/quantize-button';
 import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
@@ -12,7 +12,7 @@ export class Mixer extends ComponentContainer {
   channelA: S5MixerColumn;
   channelB: S5MixerColumn;
   channelD: S5MixerColumn;
-  fxSelects: FXSelect[] = [];
+  // fxSelects: FXSelect[] = [];
   quantizeButton: QuantizeButton;
   crossfader: Pot;
   master?: Pot;
@@ -23,34 +23,10 @@ export class Mixer extends ComponentContainer {
   constructor(s5: S5, io: S5MixerMapping) {
     super('[Mixer]');
 
-    this.channelC = new S5MixerColumn(
-      1,
-      s5.reports.in,
-      s5.reports.out[130],
-      s5,
-      io.channelC
-    );
-    this.channelA = new S5MixerColumn(
-      2,
-      s5.reports.in,
-      s5.reports.out[130],
-      s5,
-      io.channelA
-    );
-    this.channelB = new S5MixerColumn(
-      3,
-      s5.reports.in,
-      s5.reports.out[130],
-      s5,
-      io.channelB
-    );
-    this.channelD = new S5MixerColumn(
-      4,
-      s5.reports.in,
-      s5.reports.out[130],
-      s5,
-      io.channelD
-    );
+    this.channelC = new S5MixerColumn(1, s5, io.channelC);
+    this.channelA = new S5MixerColumn(2, s5, io.channelA);
+    this.channelB = new S5MixerColumn(3, s5, io.channelB);
+    this.channelD = new S5MixerColumn(4, s5, io.channelD);
 
     this.quantizeButton = new QuantizeButton(s5.reports, io.quantize);
 

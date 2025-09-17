@@ -5,7 +5,7 @@ import { Button } from './button';
 
 export class PowerWindowButton extends Button {
   constructor(private unit: S5EffectUnit, reports: HIDReportHodler, io: Btn) {
-    const key = 'powerWindowButton';
+    const key = `group_${unit.group}_enable`;
     super({
       inKey: key,
       outKey: key,

@@ -1,8 +1,9 @@
-import type { DeckModes } from '../types/component';
+import type { DeckModes, DeckNumber } from '../types/component';
+import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { ComponentContainer } from './component-container';
 
-export class Deck extends ComponentContainer {
-  decks?: number[];
+export class Deck extends ComponentContainer<MixxxChannelGroup> {
+  decks?: DeckNumber[];
   currentDeckIdx: number = 0;
   color?: number;
   settings?: object;
@@ -12,8 +13,8 @@ export class Deck extends ComponentContainer {
   secondDeckModes: DeckModes | null = null;
   keyboardPlayMode: number = 0;
 
-  constructor(decks: number | number[], colors: number[], settings: object) {
-    super(Deck.groupForNumber(typeof decks === 'number' ? decks : decks[0]));
+  constructor(decks: DeckNumber[], colors: number[], settings: object) {
+    super(Deck.groupForNumber(decks[0] ?? 1));
     if (Array.isArray(decks)) {
       this.decks = decks;
       this.currentDeckIdx = 0;
@@ -40,7 +41,7 @@ export class Deck extends ComponentContainer {
     this.switchDeck(Deck.groupForNumber(this.decks[this.currentDeckIdx]));
   }
 
-  switchDeck(newGroup: string) {
+  switchDeck(newGroup: MixxxChannelGroup) {
     const currentModes: DeckModes = {
       moveMode: this.moveMode,
       wheelMode: this.wheelMode,
@@ -71,7 +72,7 @@ export class Deck extends ComponentContainer {
     this.secondDeckModes = currentModes;
   }
 
-  static groupForNumber(deckNumber: number) {
+  static groupForNumber(deckNumber: 1 | 2 | 3 | 4): MixxxChannelGroup {
     return `[Channel${deckNumber}]`;
   }
 }

@@ -19,7 +19,12 @@ export class Pot extends ComponentIn {
       group,
       inKey,
       reports,
-      io: { inBit: 0, inLengthBit: 16, ...io },
+      io: {
+        inReportId: io.inReportId,
+        inByte: io.inByte,
+        inBit: 0,
+        inLengthBit: 16,
+      },
     });
     this.hardwarePosition = null;
     this.shiftedHardwarePosition = null;

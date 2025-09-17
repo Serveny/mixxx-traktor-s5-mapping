@@ -1,8 +1,11 @@
 import { LedColors } from '../../color';
 import { ComponentInOut } from '../component';
 import type { ButtonOptions } from '../../types/component';
+import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
 
-export abstract class Button extends ComponentInOut {
+export abstract class Button<
+  TGroup extends MixxxGroup
+> extends ComponentInOut<TGroup> {
   // valid range 0 - 3, but 3 makes some colors appear whitish
   brightnessOff = 0;
   brightnessOn = 2;
@@ -18,11 +21,11 @@ export abstract class Button extends ComponentInOut {
 
   globalQuantizeOn?: boolean;
 
-  constructor(opts: ButtonOptions) {
+  constructor(opts: ButtonOptions<TGroup>) {
     super(opts);
   }
 
-  setKey(key: string) {
+  setKey(key: MixxxKey[TGroup]) {
     this.inKey = key;
     if (key === this.outKey) {
       return;
@@ -92,8 +95,10 @@ export abstract class Button extends ComponentInOut {
   }
 }
 
-export abstract class PushButton extends Button {
-  constructor(opts: ButtonOptions) {
+export abstract class PushButton<
+  TGroup extends MixxxGroup
+> extends Button<TGroup> {
+  constructor(opts: ButtonOptions<TGroup>) {
     super(opts);
   }
 
@@ -102,8 +107,10 @@ export abstract class PushButton extends Button {
   }
 }
 
-export abstract class ToggleButton extends Button {
-  constructor(opts: ButtonOptions) {
+export abstract class ToggleButton<
+  TGroup extends MixxxGroup
+> extends Button<TGroup> {
+  constructor(opts: ButtonOptions<TGroup>) {
     super(opts);
   }
 
@@ -122,8 +129,10 @@ export abstract class ToggleButton extends Button {
   }
 }
 
-export abstract class TriggerButton extends Button {
-  constructor(opts: ButtonOptions) {
+export abstract class TriggerButton<
+  TGroup extends MixxxGroup
+> extends Button<TGroup> {
+  constructor(opts: ButtonOptions<TGroup>) {
     super(opts);
   }
 

@@ -80,36 +80,36 @@ export class S5EffectUnit extends ComponentContainer {
         this.focusedEffect === null
           ? 'enabled'
           : 'button_parameter' + (index + 1);
-      this.buttons[index].shift =
-        this.focusedEffect === null
-          ? undefined
-          : function () {
-              this.setGroup(unfocusGroup);
-              this.setKey('enabled');
-            };
-      this.buttons[index].unshift =
-        this.focusedEffect === null
-          ? undefined
-          : function () {
-              this.setGroup(effectGroup);
-              this.setKey('button_parameter' + (index + 1));
-            };
-      this.buttons[index].outKey = this.buttons[index].inKey;
-      this.knobs[index].group = this.buttons[index].group;
-      this.knobs[index].inKey =
-        this.focusedEffect === null ? 'meta' : 'parameter' + (index + 1);
-      this.knobs[index].shift =
-        this.focusedEffect === null
-          ? undefined
-          : function () {
-              this.setGroupKey(unfocusGroup, 'meta');
-            };
-      this.knobs[index].unshift =
-        this.focusedEffect === null
-          ? undefined
-          : function () {
-              this.setGroupKey(effectGroup, 'parameter' + (index + 1));
-            };
+      // this.buttons[index].shift =
+      //this.focusedEffect === null
+      //? undefined
+      //: function () {
+      //this.setGroup(unfocusGroup);
+      //this.setKey('enabled');
+      //};
+      //this.buttons[index].unshift =
+      //this.focusedEffect === null
+      //? undefined
+      //: function () {
+      //this.setGroup(effectGroup);
+      //this.setKey('button_parameter' + (index + 1));
+      //};
+      //this.buttons[index].outKey = this.buttons[index].inKey;
+      //this.knobs[index].group = this.buttons[index].group;
+      //this.knobs[index].inKey =
+      //this.focusedEffect === null ? 'meta' : 'parameter' + (index + 1);
+      //this.knobs[index].shift =
+      //this.focusedEffect === null
+      //? undefined
+      //: function () {
+      //this.setGroupKey(unfocusGroup, 'meta');
+      //};
+      //this.knobs[index].unshift =
+      //this.focusedEffect === null
+      //? undefined
+      //: function () {
+      //this.setGroupKey(effectGroup, 'parameter' + (index + 1));
+      //};
       this.buttons[index].outConnect();
     }
   }

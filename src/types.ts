@@ -1,7 +1,7 @@
+import type { BytePosIn } from './types/mapping';
+
 export interface HIDReportField {
   callback: CallableFunction;
-  byteOffset: number;
-  bitOffset: number;
-  bitLength: number;
+  io: BytePosIn;
   oldData?: number;
 }

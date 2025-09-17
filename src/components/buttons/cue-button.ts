@@ -1,9 +1,10 @@
 import { moveModes } from '../../settings';
 import type { BytePosInOut } from '../../types/mapping';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import type { S5Deck } from '../s5-deck';
 import { PushButton } from './button';
 
-export class CueButton extends PushButton {
+export class CueButton extends PushButton<MixxxChannelGroup> {
   constructor(private deck: S5Deck, io: BytePosInOut) {
     super({
       group: deck.group,
@@ -27,7 +28,7 @@ export class CueButton extends PushButton {
       this.deck.moveMode === moveModes.keyboard &&
       !this.deck.keyboardPlayMode
     ) {
-      this.deck.assignKeyboardPlayMode(this.group, this.inKey);
+      // this.deck.assignKeyboardPlayMode(this.group, this.inKey);
     } else {
       engine.setValue(this.group, this.inKey, pressed);
     }

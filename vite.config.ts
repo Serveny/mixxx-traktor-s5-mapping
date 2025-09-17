@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+const fileName = 'Traktor-Kontrol-S5';
 
 export default defineConfig({
   build: {
@@ -9,8 +12,8 @@ export default defineConfig({
     // Generiert eine einzelne Ausgabedatei.
     lib: {
       entry: 'src/main.ts', // Passe dies an den Einstiegspunkt deines Projekts an.
-      name: 'Traktor-Kontrol-S5', // Der globale Variablenname, falls das Skript in einem <script>-Tag verwendet wird.
-      fileName: 'Traktor-Kontrol-S5',
+      name: 'MixxxTraktorKontrolS5Mapping', // Der globale Variablenname, falls das Skript in einem <script>-Tag verwendet wird.
+      fileName,
       formats: ['es'], // 'es' für ES-Module, 'umd' für maximale Kompatibilität.
     },
 
@@ -32,6 +35,14 @@ export default defineConfig({
     // In Kombination mit den tsconfig-Einstellungen werden die Typen als JSDoc in die JS-Datei geschrieben.
     dts({
       insertTypesEntry: true,
+    }),
+    viteStaticCopy({
+      targets: [
+        {
+          src: `dist/${fileName}.js`,
+          dest: `../attic/mappings/controllers/`,
+        },
+      ],
     }),
   ],
 });

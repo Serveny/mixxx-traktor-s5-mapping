@@ -1,8 +1,11 @@
+import type { MixxxGroup } from '../types/mixxx-controls';
 import { Button } from './buttons/button';
 import { Component } from './component';
 
-export abstract class ComponentContainer extends Component {
-  constructor(group: string) {
+export abstract class ComponentContainer<
+  TGroup extends MixxxGroup
+> extends Component<TGroup> {
+  constructor(group: TGroup) {
     super(group);
   }
   *[Symbol.iterator]() {
@@ -22,7 +25,7 @@ export abstract class ComponentContainer extends Component {
       }
     }
   }
-  reconnectComponents(callback: (component: Button) => void) {
+  reconnectComponents(callback: (component: Button<MixxxGroup>) => void) {
     for (const component of this) {
       component.outDisconnect();
       callback.call(this, component);
