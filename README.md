@@ -1,6 +1,18 @@
 # Mixxx Traktor S5 Mapping
 
-**Work in progress** Traktor S5 mapping for the Mixxx DJ software.
+Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeScript. At the moment only
+
+## Current status
+
+- ✅ Reverse engineered Traktor S5 HID mapping
+- ✅ Created basic TypeScript code foundation & types
+- ✅ Working components: Loop encoder
+
+## How to use
+
+1. Install dev dependencies: `npm install`
+2. Add symlink from `../attic/mappings/controllers/`to your mixxx controllers folder (f.e: `/home/[user]/software/mixxx/res/controllers`)
+3. Build JS: `vite build` (The buildscript will copy the builded JS into the controllers folder)
 
 Mixxx debug command on linux: `mixxx --controller-debug`
 
