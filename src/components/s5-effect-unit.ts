@@ -4,19 +4,21 @@
 
 import type { HIDReportHodler } from '../hid-report';
 import type { S5FxUnitMapping } from '../types/mapping';
-import type { Button } from './buttons/button';
 import { FxButton } from './buttons/fx-button';
 import { PowerWindowButton } from './buttons/power-window-button';
 import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
 
-export class S5EffectUnit extends ComponentContainer {
+type Group = `[EffectRack1_EffectUnit${number}]`;
+type EffectGroup = `[EffectRack1_EffectUnit${number}_Effect${number}]`;
+
+export class S5EffectUnit extends ComponentContainer<Group> {
   focusedEffect: number | null = null;
   isFocusedEffectIndicator: boolean = false;
-  mixKnob: Pot;
+  mixKnob: Pot<Group>;
   mainButton: PowerWindowButton;
-  knobs: Pot[] = [];
-  buttons: Button[] = [];
+  knobs: Pot<EffectGroup>[] = [];
+  buttons: FxButton[] = [];
   constructor(
     public unitNumber: number,
     reports: HIDReportHodler,
@@ -28,7 +30,7 @@ export class S5EffectUnit extends ComponentContainer {
     this.mainButton = new PowerWindowButton(this, reports, io.buttons[0]);
 
     for (const index of [0, 1, 2]) {
-      const effectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${
+      const effectGroup: EffectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${
         index + 1
       }]`;
       this.knobs[index] = new Pot(
@@ -66,20 +68,20 @@ export class S5EffectUnit extends ComponentContainer {
       this.focusedEffect !== null ? 1 : 0
     );
 
-    const effectGroup = `[EffectRack1_EffectUnit${this.unitNumber}_Effect${
-      this.focusedEffect ?? 0 + 1
-    }]`;
+    const effectGroup: EffectGroup = `[EffectRack1_EffectUnit${
+      this.unitNumber
+    }_Effect${this.focusedEffect ?? 0 + 1}]`;
     for (const index of [0, 1, 2]) {
-      const unfocusGroup = `[EffectRack1_EffectUnit${this.unitNumber}_Effect${
-        index + 1
-      }]`;
+      const unfocusGroup: EffectGroup = `[EffectRack1_EffectUnit${
+        this.unitNumber
+      }_Effect${index + 1}]`;
       this.buttons[index].outDisconnect();
       this.buttons[index].group =
         this.focusedEffect === null ? unfocusGroup : effectGroup;
       this.buttons[index].inKey =
         this.focusedEffect === null
           ? 'enabled'
-          : 'button_parameter' + (index + 1);
+          : `button_parameter${index + 1}`;
       // this.buttons[index].shift =
       //this.focusedEffect === null
       //? undefined

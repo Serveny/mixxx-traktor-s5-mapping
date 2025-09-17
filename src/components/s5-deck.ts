@@ -3,7 +3,6 @@ import { settings } from '../settings';
 import type { S5DeckMapping } from '../types/mapping';
 import { BrowserEncoder } from './encoders/browser-encoder';
 import { BrowserBackButton } from './buttons/browser-back-button';
-import { Button } from './buttons/button';
 import { CueButton } from './buttons/cue-button';
 import { DeckButton } from './buttons/deck-button';
 import { FluxButton } from './buttons/flux-button';
@@ -12,7 +11,6 @@ import { ShiftButton } from './buttons/shift-button';
 import { SyncButton } from './buttons/sync-button';
 import { Deck } from './deck';
 import type { Mixer } from './mixer';
-import type { S5EffectUnit } from './s5-effect-unit';
 import { loopEncoder } from './encoders/loop-encoder';
 import { PerformanceRightButton } from './buttons/performance-right-button';
 
@@ -21,7 +19,7 @@ export class S5Deck extends Deck {
   syncButton: SyncButton;
   cueButton: CueButton;
   playButton: PlayButton;
-  fluxButton: Button;
+  fluxButton: FluxButton;
   deckButton: DeckButton;
   browserEncoder: BrowserEncoder;
   browserBackButton: BrowserBackButton;
@@ -29,7 +27,7 @@ export class S5Deck extends Deck {
   perfModeRightButton: PerformanceRightButton;
 
   constructor(
-    decks: number | number[],
+    decks: number[],
     public colors: number[],
     // public effectUnit: S5EffectUnit,
     public mixer: Mixer,
@@ -49,7 +47,6 @@ export class S5Deck extends Deck {
 
     this.browserEncoder = new BrowserEncoder(this, io.browseControls.browse);
     this.browserBackButton = new BrowserBackButton(
-      this.group,
       reports,
       io.browseControls.back
     );

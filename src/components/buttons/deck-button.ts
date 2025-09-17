@@ -3,10 +3,10 @@ import type { Btn } from '../../types/mapping';
 import type { S5Deck } from '../s5-deck';
 import { Button } from './button';
 
-export class DeckButton extends Button {
+export class DeckButton extends Button<''> {
   constructor(private deck: S5Deck, io: Btn) {
     super({
-      group: deck.group,
+      group: '',
       inKey: '',
       outKey: '',
       reports: deck.reports,

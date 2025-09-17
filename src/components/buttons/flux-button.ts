@@ -1,9 +1,10 @@
 import { settings, wheelModes } from '../../settings';
 import type { Btn } from '../../types/mapping';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import type { S5Deck } from '../s5-deck';
 import { Button } from './button';
 
-export class FluxButton extends Button {
+export class FluxButton extends Button<MixxxChannelGroup> {
   private previousWheelMode: number | null = null;
   private loopModeConnection: ScriptConnection | null = null;
 

@@ -2,10 +2,11 @@ import { Encoder } from './encoder';
 import type { Encoder as EncoderMapping } from '../../types/mapping';
 import { S5Deck } from '../s5-deck';
 import { settings, wheelModes } from '../../settings';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 
-export class loopEncoder extends Encoder {
+export class loopEncoder extends Encoder<MixxxChannelGroup> {
   constructor(private deck: S5Deck, io: EncoderMapping) {
-    super(deck.group, 'browser_encoder', deck.reports, io);
+    super(deck.group, 'loop_in', deck.reports, io);
   }
 
   onChange(isRight: boolean) {

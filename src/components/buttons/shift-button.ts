@@ -3,11 +3,11 @@ import type { Btn } from '../../types/mapping';
 import type { S5Deck } from '../s5-deck';
 import { PushButton } from './button';
 
-export class ShiftButton extends PushButton {
+export class ShiftButton extends PushButton<''> {
   constructor(private deck: S5Deck, io: Btn) {
-    const key = 'shift';
+    const key = '';
     super({
-      group: deck.group,
+      group: '',
       inKey: key,
       outKey: key,
       reports: deck.reports,

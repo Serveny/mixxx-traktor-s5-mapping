@@ -7,21 +7,21 @@ import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
 import { S5MixerColumn } from './s5-mixer-column';
 
-export class Mixer extends ComponentContainer {
+export class Mixer extends ComponentContainer<'[Master]'> {
   channelC: S5MixerColumn;
   channelA: S5MixerColumn;
   channelB: S5MixerColumn;
   channelD: S5MixerColumn;
   // fxSelects: FXSelect[] = [];
   quantizeButton: QuantizeButton;
-  crossfader: Pot;
-  master?: Pot;
-  booth?: Pot;
-  cue?: Pot;
-  cueGain?: Pot;
+  crossfader: Pot<'[Master]'>;
+  master?: Pot<'[Master]'>;
+  booth?: Pot<'[Master]'>;
+  cue?: Pot<'[Master]'>;
+  cueGain?: Pot<'[Master]'>;
 
   constructor(s5: S5, io: S5MixerMapping) {
-    super('[Mixer]');
+    super('[Master]');
 
     this.channelC = new S5MixerColumn(1, s5, io.channelC);
     this.channelA = new S5MixerColumn(2, s5, io.channelA);

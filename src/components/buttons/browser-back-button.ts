@@ -1,17 +1,12 @@
 import type { HIDReportHodler } from '../../hid-report';
 import type { BytePosInOut } from '../../types/mapping';
-import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import { PushButton } from './button';
 
-export class BrowserBackButton extends PushButton<MixxxChannelGroup> {
-  constructor(
-    group: MixxxChannelGroup,
-    reports: HIDReportHodler,
-    io: BytePosInOut
-  ) {
-    const key = 'browse_back';
+export class BrowserBackButton extends PushButton<'[Skin]'> {
+  constructor(reports: HIDReportHodler, io: BytePosInOut) {
+    const key = 'show_maximized_library';
     super({
-      group,
+      group: '[Skin]',
       inKey: key,
       outKey: key,
       reports,

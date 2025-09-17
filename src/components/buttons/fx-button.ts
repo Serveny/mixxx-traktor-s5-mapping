@@ -3,9 +3,9 @@ import type { Btn } from '../../types/mapping';
 import type { S5EffectUnit } from '../s5-effect-unit';
 import { Button } from './button';
 
-export class FxButton extends Button {
+export class FxButton extends Button<`[EffectRack1_EffectUnit${number}_Effect${number}]`> {
   constructor(
-    group: string,
+    group: `[EffectRack1_EffectUnit${number}_Effect${number}]`,
     private unit: S5EffectUnit,
     reports: HIDReportHodler,
     index: number,

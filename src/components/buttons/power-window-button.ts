@@ -3,9 +3,10 @@ import type { Btn } from '../../types/mapping';
 import type { S5EffectUnit } from '../s5-effect-unit';
 import { Button } from './button';
 
-export class PowerWindowButton extends Button {
+export class PowerWindowButton extends Button<`[EffectRack1_EffectUnit${number}]`> {
   constructor(private unit: S5EffectUnit, reports: HIDReportHodler, io: Btn) {
-    const key = `group_${unit.group}_enable`;
+    const key =
+      `group_${unit.group}_enable` as `group_[Channel${number}]_enable`;
     super({
       inKey: key,
       outKey: key,
@@ -34,8 +35,10 @@ export class PowerWindowButton extends Button {
 
   unshift() {
     this.outDisconnect();
-    this.outKey = '';
-    this.group = '';
+    this.group = this.unit.group;
+    const key =
+      `group_${this.unit.group}_enable` as `group_[Channel${number}]_enable`;
+    this.outKey = key;
     this.output(0);
   }
 

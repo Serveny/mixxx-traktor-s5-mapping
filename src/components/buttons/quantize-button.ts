@@ -1,13 +1,14 @@
 import type { HIDReportHodler } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import { Button } from './button';
 
-export class QuantizeButton extends Button {
+export class QuantizeButton extends Button<MixxxChannelGroup> {
   globalQuantizeOn: boolean = false;
   constructor(reports: HIDReportHodler, io: Btn) {
     const key = 'quantize';
     super({
-      group: `[Channel0]`,
+      group: `[Channel1]`,
       inKey: key,
       outKey: key,
       reports,

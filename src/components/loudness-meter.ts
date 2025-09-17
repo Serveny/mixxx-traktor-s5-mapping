@@ -1,17 +1,24 @@
 import type { HIDReportHodler } from '../hid-report';
 import type { S5 } from '../s5';
 import type { Meter } from '../types/mapping';
+import type { MixxxChannelGroup, MixxxKey } from '../types/mixxx-controls';
 import { ComponentOut } from './component';
 
-export class LoudnessMeter extends ComponentOut {
+type Group =
+  | MixxxChannelGroup
+  | `[Auxiliary${number}]`
+  | `[Microphone${number}]`
+  | `[Microphone]`;
+
+export class LoudnessMeter extends ComponentOut<Group> {
   // Each column has 11 segments, but treat the top one specially for the clip indicator.
   private deckSegments = 10;
-  private auxGroup: string;
-  private micGroup: string;
+  private auxGroup: `[Auxiliary${number}]`;
+  private micGroup: `[Microphone${number}]` | `[Microphone]`;
 
   constructor(
     private channelIdx: number,
-    outKey: string,
+    outKey: MixxxKey[Group],
     reports: HIDReportHodler,
     private s5: S5,
     io: Meter

@@ -1,10 +1,11 @@
 import type { HIDReportHodler } from '../../hid-report';
 import { settings } from '../../settings';
 import type { Btn } from '../../types/mapping';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import { Button } from './button';
 
-export class PlayButton extends Button {
-  constructor(group: string, reports: HIDReportHodler, io: Btn) {
+export class PlayButton extends Button<MixxxChannelGroup> {
+  constructor(group: MixxxChannelGroup, reports: HIDReportHodler, io: Btn) {
     super({
       group,
       inKey: 'play',

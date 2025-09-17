@@ -2,12 +2,12 @@ import { Button } from './button';
 import type { Btn as ButtonMapping } from '../../types/mapping';
 import type { S5Deck } from '../s5-deck';
 
-export class PerformanceRightButton extends Button {
+export class PerformanceRightButton extends Button<`[PreviewDeck${number}]`> {
   constructor(private deck: S5Deck, io: ButtonMapping) {
     super({
       group: '[PreviewDeck1]',
-      inKey: 'performance_right',
-      outKey: 'play',
+      inKey: 'play',
+      outKey: 'play_indicator',
       reports: deck.reports,
       io,
     });

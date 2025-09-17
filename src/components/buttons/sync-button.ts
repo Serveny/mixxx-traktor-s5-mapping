@@ -2,9 +2,14 @@ import type { HIDReportHodler } from '../../hid-report';
 import { Button } from './button';
 import type { Btn as ButtonMapping } from '../../types/mapping';
 import { settings } from '../../settings';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 
-export class SyncButton extends Button {
-  constructor(group: string, reports: HIDReportHodler, io: ButtonMapping) {
+export class SyncButton extends Button<MixxxChannelGroup> {
+  constructor(
+    group: MixxxChannelGroup,
+    reports: HIDReportHodler,
+    io: ButtonMapping
+  ) {
     const key = 'sync_enabled';
     super({
       group,

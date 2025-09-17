@@ -34,5 +34,3 @@ export interface DeckModes {
   wheelMode: number;
   moveMode: number;
 }
-
-export type DeckNumber = 1 | 2 | 3 | 4;

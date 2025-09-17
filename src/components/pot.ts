@@ -1,17 +1,18 @@
 import type { HIDReportHodler } from '../hid-report';
 import type { Knob } from '../types/mapping';
+import type { MixxxGroup, MixxxKey } from '../types/mixxx-controls';
 import { ComponentIn } from './component';
 import type { Mixer } from './mixer';
 
-export class Pot extends ComponentIn {
+export class Pot<TGroup extends MixxxGroup> extends ComponentIn<TGroup> {
   max = 2 ** 12 - 1;
   hardwarePosition: number | null;
   shiftedHardwarePosition: number | null;
   mixer?: Mixer;
 
   constructor(
-    group: string,
-    inKey: string,
+    group: TGroup,
+    inKey: MixxxKey[TGroup],
     reports: HIDReportHodler,
     io: Knob
   ) {

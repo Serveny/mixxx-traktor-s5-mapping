@@ -3,7 +3,7 @@ import { Encoder } from './encoder';
 import type { S5Deck } from '../s5-deck';
 import type { Encoder as EncoderMapping } from '../../types/mapping';
 
-export class BrowserEncoder extends Encoder {
+export class BrowserEncoder extends Encoder<'[Library]'> {
   libraryPlayButtonPressed = false;
   gridButtonPressed = false;
   starButtonPressed = false;
@@ -11,7 +11,7 @@ export class BrowserEncoder extends Encoder {
   libraryPlaylistButtonPressed = false;
   currentSortedColumnIdx = -1;
   constructor(deck: S5Deck, io: EncoderMapping) {
-    super(deck.group, 'browser_encoder', deck.reports, io);
+    super('[Library]', 'MoveFocus', deck.reports, io);
   }
 
   onChange(isRight: boolean) {

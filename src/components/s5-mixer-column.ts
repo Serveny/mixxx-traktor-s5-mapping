@@ -3,12 +3,20 @@ import { ComponentInOut } from './component';
 import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
 import type { S5MixerColumnMapping } from '../types/mapping';
+import type { MixxxChannelGroup } from '../types/mixxx-controls';
 
-export class S5MixerColumn extends ComponentContainer {
-  gain: Pot;
-  eqHigh: Pot;
-  eqMid: Pot;
-  eqLow: Pot;
+type Group =
+  | MixxxChannelGroup
+  | `[Auxiliary${number}]`
+  | `[Microphone${number}]`
+  | `[Microphone]`;
+
+type PotGroup = `[EqualizerRack1_[Channel${number}]_Effect1]`;
+export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
+  gain: Pot<MixxxChannelGroup>;
+  eqHigh: Pot<PotGroup>;
+  eqMid: Pot<PotGroup>;
+  eqLow: Pot<PotGroup>;
   // quickEffectKnob: Pot;
   // volume: Pot;
   // loudnessMeter: LoudnessMeter;
@@ -155,7 +163,7 @@ export class S5MixerColumn extends ComponentContainer {
     if (!alternativeInput) {
       return;
     }
-    this.group = shifted ? alternativeInput : `[Channel${this.idx}]`;
+    this.group = shifted ? (alternativeInput as any) : `[Channel${this.idx}]`;
     for (const property of ['gain', 'volume', 'pfl', 'crossfaderSwitch']) {
       const component = (this as any)[property];
       if (component instanceof ComponentInOut) {
@@ -168,11 +176,13 @@ export class S5MixerColumn extends ComponentContainer {
       }
     }
     for (const property of ['effectUnit1Assign', 'effectUnit2Assign']) {
-      const component = (this as any)[property];
+      const component: ComponentInOut<`[EffectRack1_EffectUnit${number}]`> = (
+        this as any
+      )[property];
       if (component instanceof ComponentInOut) {
         component.outDisconnect();
         component.inDisconnect();
-        component.inKey = `group_${this.group}_enable`;
+        component.inKey = `group_${this.group}_enable` as any;
         component.outKey = `group_${this.group}_enable`;
         component.inConnect();
         component.outConnect();

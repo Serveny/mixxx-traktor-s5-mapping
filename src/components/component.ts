@@ -41,6 +41,7 @@ export abstract class ComponentIn<
       this.oldDataDefault
     );
   }
+
   inDisconnect() {
     this.inConnection.disconnect();
   }
@@ -51,7 +52,7 @@ export abstract class ComponentIn<
 export abstract class ComponentOut<
   TGroup extends MixxxGroup
 > extends Component<TGroup> {
-  outConnection: ScriptConnection;
+  outConnection?: ScriptConnection;
   outKey: MixxxKey[TGroup];
   outReport: HIDOutputReport;
   io: BytePosOut;
@@ -63,7 +64,8 @@ export abstract class ComponentOut<
     this.outConnection = this.outConnect();
   }
 
-  outConnect(): ScriptConnection {
+  outConnect(): ScriptConnection | undefined {
+    if (this.group === '') return;
     const outCon = engine.makeConnection(
       this.group,
       this.outKey,
@@ -88,7 +90,7 @@ export abstract class ComponentOut<
   }
 
   outDisconnect() {
-    this.outConnection.disconnect();
+    this.outConnection?.disconnect();
   }
 
   abstract output(): void;
@@ -97,7 +99,7 @@ export abstract class ComponentOut<
 export abstract class ComponentInOut<
   TGroup extends MixxxGroup
 > extends ComponentIn<TGroup> {
-  private outConnection: ScriptConnection;
+  private outConnection?: ScriptConnection;
   outKey: MixxxKey[TGroup];
   outReport: HIDOutputReport;
   protected declare io: BytePosInOut;
@@ -108,7 +110,8 @@ export abstract class ComponentInOut<
     this.outConnection = this.outConnect();
   }
 
-  outConnect(): ScriptConnection {
+  outConnect(): ScriptConnection | undefined {
+    if (this.group === '') return;
     const outCon = engine.makeConnection(
       this.group,
       this.outKey,
@@ -122,7 +125,7 @@ export abstract class ComponentInOut<
   }
 
   outTrigger() {
-    this.outConnection.trigger();
+    this.outConnection?.trigger();
   }
 
   send(value: number) {
@@ -131,7 +134,7 @@ export abstract class ComponentInOut<
   }
 
   outDisconnect() {
-    this.outConnection.disconnect();
+    this.outConnection?.disconnect();
   }
 
   abstract output(value: number): void;

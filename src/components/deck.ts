@@ -1,9 +1,9 @@
-import type { DeckModes, DeckNumber } from '../types/component';
+import type { DeckModes } from '../types/component';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { ComponentContainer } from './component-container';
 
 export class Deck extends ComponentContainer<MixxxChannelGroup> {
-  decks?: DeckNumber[];
+  decks?: number[];
   currentDeckIdx: number = 0;
   color?: number;
   settings?: object;
@@ -13,7 +13,7 @@ export class Deck extends ComponentContainer<MixxxChannelGroup> {
   secondDeckModes: DeckModes | null = null;
   keyboardPlayMode: number = 0;
 
-  constructor(decks: DeckNumber[], colors: number[], settings: object) {
+  constructor(decks: number[], colors: number[], settings: object) {
     super(Deck.groupForNumber(decks[0] ?? 1));
     if (Array.isArray(decks)) {
       this.decks = decks;
@@ -72,7 +72,7 @@ export class Deck extends ComponentContainer<MixxxChannelGroup> {
     this.secondDeckModes = currentModes;
   }
 
-  static groupForNumber(deckNumber: 1 | 2 | 3 | 4): MixxxChannelGroup {
+  static groupForNumber(deckNumber: number): MixxxChannelGroup {
     return `[Channel${deckNumber}]`;
   }
 }

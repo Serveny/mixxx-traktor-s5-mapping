@@ -1,8 +1,12 @@
 export type MixxxKey = {
+  '': '';
   '[App]': MixxxAppControl;
   '[Master]': MixxxMasterControl;
+  '[Microphone]': MixxxMicrophoneControl;
   '[VinylControl]': MixxxVinylControl;
   '[Recording]': MixxxRecordingControl;
+  '[AutoDJ]': MixxxAutoDJControl;
+  '[Library]': MixxxLibraryControl;
   '[Shoutcast]': MixxxShoutcastControl;
   '[Playlist]': MixxxPlaylistControl;
   '[Controls]': MixxxControlsControl;
@@ -329,7 +333,7 @@ export type MixxxVinylControl = 'Toggle' | 'gain';
 
 export type MixxxRecordingControl = 'toggle_recording' | 'status';
 
-export type MixxxAutoDjControl =
+export type MixxxAutoDJControl =
   | 'enabled'
   | 'shuffle_playlist'
   | 'skip_next'
@@ -418,14 +422,14 @@ export type MixxxEffectEqualizerQuickEffectRack1EffectControl =
   | 'num_button_parameterslots'
   | 'meta'
   | 'prev_effect'
-  | 'parameterK'
-  | 'parameterK_link_inverse'
-  | 'parameterK_link_type'
-  | 'parameterK_loaded'
-  | 'parameterK_type'
-  | 'button_parameterK'
-  | 'button_parameterK_loaded'
-  | 'button_parameterK_type';
+  | `parameter${number}`
+  | `parameter${number}_link_inverse`
+  | `parameter${number}_link_type`
+  | `parameter${number}_loaded`
+  | `parameter${number}_type`
+  | `button_parameter${number}`
+  | `button_parameter${number}_loaded`
+  | `button_parameter${number}_type`;
 
 export type MixxxSkinControl =
   | 'show_effectrack'
