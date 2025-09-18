@@ -11,14 +11,14 @@ type Group =
   | `[Microphone${number}]`
   | `[Microphone]`;
 
-type PotGroup = `[EqualizerRack1_[Channel${number}]_Effect1]`;
+type EqualizerGroup = `[EqualizerRack1_[Channel${number}]_Effect1]`;
 export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
   gain: Pot<MixxxChannelGroup>;
-  eqHigh: Pot<PotGroup>;
-  eqMid: Pot<PotGroup>;
-  eqLow: Pot<PotGroup>;
-  // quickEffectKnob: Pot;
-  // volume: Pot;
+  eqHigh: Pot<EqualizerGroup>;
+  eqMid: Pot<EqualizerGroup>;
+  eqLow: Pot<EqualizerGroup>;
+  quickEffectKnob: Pot<`[QuickEffectRack1_[Channel${number}]]`>;
+  volume: Pot<MixxxChannelGroup>;
   // loudnessMeter: LoudnessMeter;
   constructor(private idx: number, s5: S5, io: S5MixerColumnMapping) {
     super(`[Channel${idx}]`);
@@ -44,12 +44,13 @@ export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
       s5.reports,
       io.eqLow
     );
-    //this.quickEffectKnob = new Pot(
-    //`[QuickEffectRack1_${this.group}]`,
-    //'super1', s5.reports, io.q
-    //);
-    //this.volume = new Pot(this.group,'volume',
-    //mixer: this,
+    this.quickEffectKnob = new Pot(
+      `[QuickEffectRack1_${this.group}]`,
+      'super1',
+      s5.reports,
+      io.filter
+    );
+    this.volume = new Pot(this.group, 'volume', s5.reports, io.volume);
     //input: settings.mixerControlsMixAuxOnShift
     //? function (this: S5, value) {
     //if (this.mixer.isShifted && this.group !== `[Channel${idx}]`) {

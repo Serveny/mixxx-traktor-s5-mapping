@@ -77,12 +77,33 @@ export abstract class Button<
     }
   }
 
+  onShortPress(): void {}
+  onShortRelease(): void {}
+  onLongPress(): void {}
+  onLongRelease(): void {}
+
   input(pressed: number) {
     if (pressed) {
       this.isLongPress = false;
-    } else if (!this.isLongPress && this.longPressTimer !== 0) {
-      engine.stopTimer(this.longPressTimer);
-      this.longPressTimer = 0;
+      this.onShortPress();
+
+      this.longPressTimer = engine.beginTimer(
+        this.longPressTimeOutMillis,
+        () => {
+          this.isLongPress = true;
+          this.longPressTimer = 0;
+          this.onLongPress();
+        },
+        true
+      );
+    } else if (this.isLongPress) {
+      this.onLongRelease();
+    } else {
+      if (this.longPressTimer !== 0) {
+        engine.stopTimer(this.longPressTimer);
+        this.longPressTimer = 0;
+      }
+      this.onShortRelease();
     }
   }
 

@@ -8,7 +8,7 @@ export class FxButton extends Button<`[EffectRack1_EffectUnit${number}_Effect${n
     group: `[EffectRack1_EffectUnit${number}_Effect${number}]`,
     private unit: S5EffectUnit,
     reports: HIDReportHodler,
-    index: number,
+    private index: number,
     io: Btn[]
   ) {
     const key = 'enabled';

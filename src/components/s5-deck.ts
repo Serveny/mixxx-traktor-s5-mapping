@@ -13,6 +13,7 @@ import { Deck } from './deck';
 import type { Mixer } from './mixer';
 import { loopEncoder } from './encoders/loop-encoder';
 import { PerformanceRightButton } from './buttons/performance-right-button';
+import type { S5EffectUnit } from './s5-effect-unit';
 
 export class S5Deck extends Deck {
   shiftButton: ShiftButton;
@@ -29,7 +30,7 @@ export class S5Deck extends Deck {
   constructor(
     decks: number[],
     public colors: number[],
-    // public effectUnit: S5EffectUnit,
+    public effectUnit: S5EffectUnit,
     public mixer: Mixer,
     public reports: HIDReportHodler,
     io: S5DeckMapping

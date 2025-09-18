@@ -68,51 +68,51 @@ export class S5EffectUnit extends ComponentContainer<Group> {
       this.focusedEffect !== null ? 1 : 0
     );
 
-    const effectGroup: EffectGroup = `[EffectRack1_EffectUnit${
-      this.unitNumber
-    }_Effect${this.focusedEffect ?? 0 + 1}]`;
-    for (const index of [0, 1, 2]) {
-      const unfocusGroup: EffectGroup = `[EffectRack1_EffectUnit${
-        this.unitNumber
-      }_Effect${index + 1}]`;
-      this.buttons[index].outDisconnect();
-      this.buttons[index].group =
-        this.focusedEffect === null ? unfocusGroup : effectGroup;
-      this.buttons[index].inKey =
-        this.focusedEffect === null
-          ? 'enabled'
-          : `button_parameter${index + 1}`;
-      // this.buttons[index].shift =
-      //this.focusedEffect === null
-      //? undefined
-      //: function () {
-      //this.setGroup(unfocusGroup);
-      //this.setKey('enabled');
-      //};
-      //this.buttons[index].unshift =
-      //this.focusedEffect === null
-      //? undefined
-      //: function () {
-      //this.setGroup(effectGroup);
-      //this.setKey('button_parameter' + (index + 1));
-      //};
-      //this.buttons[index].outKey = this.buttons[index].inKey;
-      //this.knobs[index].group = this.buttons[index].group;
-      //this.knobs[index].inKey =
-      //this.focusedEffect === null ? 'meta' : 'parameter' + (index + 1);
-      //this.knobs[index].shift =
-      //this.focusedEffect === null
-      //? undefined
-      //: function () {
-      //this.setGroupKey(unfocusGroup, 'meta');
-      //};
-      //this.knobs[index].unshift =
-      //this.focusedEffect === null
-      //? undefined
-      //: function () {
-      //this.setGroupKey(effectGroup, 'parameter' + (index + 1));
-      //};
-      this.buttons[index].outConnect();
-    }
+    //const effectGroup: EffectGroup = `[EffectRack1_EffectUnit${
+    //this.unitNumber
+    //}_Effect${this.focusedEffect ?? 0 + 1}]`;
+    //for (const index of [0, 1, 2]) {
+    //const unfocusGroup: EffectGroup = `[EffectRack1_EffectUnit${
+    //this.unitNumber
+    //}_Effect${index + 1}]`;
+    //this.buttons[index].outDisconnect();
+    //this.buttons[index].group =
+    //this.focusedEffect === null ? unfocusGroup : effectGroup;
+    //this.buttons[index].inKey =
+    //this.focusedEffect === null
+    //? 'enabled'
+    //: `button_parameter${index + 1}`;
+    //this.buttons[index].shift =
+    //this.focusedEffect === null
+    //? undefined
+    //: function () {
+    //this.setGroup(unfocusGroup);
+    //this.setKey('enabled');
+    //};
+    //this.buttons[index].unshift =
+    //this.focusedEffect === null
+    //? undefined
+    //: function () {
+    //this.setGroup(effectGroup);
+    //this.setKey('button_parameter' + (index + 1));
+    //};
+    //this.buttons[index].outKey = this.buttons[index].inKey;
+    //this.knobs[index].group = this.buttons[index].group;
+    //this.knobs[index].inKey =
+    //this.focusedEffect === null ? 'meta' : 'parameter' + (index + 1);
+    //this.knobs[index].shift =
+    //this.focusedEffect === null
+    //? undefined
+    //: function () {
+    //this.setGroupKey(unfocusGroup, 'meta');
+    //};
+    //this.knobs[index].unshift =
+    //this.focusedEffect === null
+    //? undefined
+    //: function () {
+    //this.setGroupKey(effectGroup, 'parameter' + (index + 1));
+    //};
+    //this.buttons[index].outConnect();
+    //}
   }
 }

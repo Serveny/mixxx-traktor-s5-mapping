@@ -23,9 +23,9 @@ export class Mixer extends ComponentContainer<'[Master]'> {
   constructor(s5: S5, io: S5MixerMapping) {
     super('[Master]');
 
-    this.channelC = new S5MixerColumn(1, s5, io.channelC);
-    this.channelA = new S5MixerColumn(2, s5, io.channelA);
-    this.channelB = new S5MixerColumn(3, s5, io.channelB);
+    this.channelC = new S5MixerColumn(3, s5, io.channelC);
+    this.channelA = new S5MixerColumn(1, s5, io.channelA);
+    this.channelB = new S5MixerColumn(2, s5, io.channelB);
     this.channelD = new S5MixerColumn(4, s5, io.channelD);
 
     this.quantizeButton = new QuantizeButton(s5.reports, io.quantize);

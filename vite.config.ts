@@ -33,9 +33,9 @@ export default defineConfig({
   plugins: [
     // Dieses Plugin extrahiert die TypeScript-Typen und wandelt sie in .d.ts-Dateien um.
     // In Kombination mit den tsconfig-Einstellungen werden die Typen als JSDoc in die JS-Datei geschrieben.
-    dts({
-      insertTypesEntry: true,
-    }),
+    //dts({
+    //insertTypesEntry: true,
+    //}),
     viteStaticCopy({
       targets: [
         {

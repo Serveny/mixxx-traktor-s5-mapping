@@ -72,7 +72,7 @@ export abstract class ComponentOut<
       this.output.bind(this)
     );
     if (outCon == null)
-      throw Error(
+      console.warn(
         `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
       );
     return outCon;
@@ -118,7 +118,7 @@ export abstract class ComponentInOut<
       this.output.bind(this)
     );
     if (outCon == null)
-      throw Error(
+      console.warn(
         `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
       );
     return outCon;

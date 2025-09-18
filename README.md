@@ -6,13 +6,14 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 
 - ✅ Reverse engineered Traktor S5 HID mapping
 - ✅ Created basic TypeScript code foundation & types
-- ✅ Working components: Loop encoder
+- ✅ Working components: Loop encoder, crossfader, cue button, play button
 
 ## How to use
 
 1. Install dev dependencies: `npm install`
-2. Add symlink from `../attic/mappings/controllers/`to your mixxx controllers folder (f.e: `/home/[user]/software/mixxx/res/controllers`)
-3. Build JS: `vite build` (The buildscript will copy the builded JS into the controllers folder)
+2. Check if the files referenced to in tsconfig.json exits or change paths to your mixxx files folder
+3. Add symlink from `../attic/mappings/controllers/`to your mixxx controllers folder (f.e: `/home/[user]/software/mixxx/res/controllers`)
+4. Build JS: `vite build` (The buildscript will copy the builded JS into the controllers folder)
 
 Mixxx debug command on linux: `mixxx --controller-debug`
 
@@ -149,13 +150,10 @@ Reverse engineered HID mapping. Some bits/byte in the reports are empty between 
 |   12 |   0 |           16 | mixer.**boothGain**           |
 |   14 |   0 |           16 | mixer.**cueMix**              |
 |   16 |   0 |           16 | mixer.**cueGain**             |
-|   20 |   0 |           16 | mixer.channelC.**eqHigh**     |
+|   18 |   0 |           16 | mixer.channelA.**gain**       |
 |   20 |   0 |           16 | mixer.channelA.**eqHigh**     |
-|   22 |   0 |           16 | mixer.channelC.**eqMid**      |
 |   22 |   0 |           16 | mixer.channelA.**eqMid**      |
-|   24 |   0 |           16 | mixer.channelC.**eqLow**      |
 |   24 |   0 |           16 | mixer.channelA.**eqLow**      |
-|   26 |   0 |           16 | mixer.channelC.**filter**     |
 |   26 |   0 |           16 | mixer.channelA.**filter**     |
 |   28 |   0 |           16 | mixer.channelB.**gain**       |
 |   30 |   0 |           16 | mixer.channelB.**eqHigh**     |
@@ -163,7 +161,10 @@ Reverse engineered HID mapping. Some bits/byte in the reports are empty between 
 |   34 |   0 |           16 | mixer.channelB.**eqLow**      |
 |   36 |   0 |           16 | mixer.channelB.**filter**     |
 |   38 |   0 |           16 | mixer.channelC.**gain**       |
-|   38 |   0 |           16 | mixer.channelA.**gain**       |
+|   40 |   0 |           16 | mixer.channelC.**eqHigh**     |
+|   42 |   0 |           16 | mixer.channelC.**eqMid**      |
+|   44 |   0 |           16 | mixer.channelC.**eqLow**      |
+|   46 |   0 |           16 | mixer.channelC.**filter**     |
 |   48 |   0 |           16 | mixer.channelD.**gain**       |
 |   50 |   0 |           16 | mixer.channelD.**eqHigh**     |
 |   52 |   0 |           16 | mixer.channelD.**eqMid**      |

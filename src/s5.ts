@@ -3,11 +3,12 @@ import { S5Deck } from './components/s5-deck';
 import type { S5Mapping } from './types/mapping';
 import { settings } from './settings';
 import { HIDReportHodler } from './hid-report';
+import { S5EffectUnit } from './components/s5-effect-unit';
 
 export class S5 {
   reports = new HIDReportHodler();
-  // fxUnitLeft: S5EffectUnit;
-  // fxUnitRight: S5EffectUnit;
+  fxUnitLeft: S5EffectUnit;
+  fxUnitRight: S5EffectUnit;
   deckLeft: S5Deck;
   deckRight: S5Deck;
   mixer: Mixer;
@@ -19,8 +20,8 @@ export class S5 {
       engine.setValue('[App]', 'num_samplers', 16);
     }
 
-    // this.fxUnitLeft = new S5EffectUnit(1, this.reports, io.fxUnitLeft);
-    // this.fxUnitRight = new S5EffectUnit(2, this.reports, io.fxUnitRight);
+    this.fxUnitLeft = new S5EffectUnit(1, this.reports, io.fxUnitLeft);
+    this.fxUnitRight = new S5EffectUnit(2, this.reports, io.fxUnitRight);
 
     this.mixer = new Mixer(this, io.mixer);
 
@@ -31,7 +32,7 @@ export class S5 {
       [1, 3],
       [settings.deckColors[0], settings.deckColors[2]],
 
-      // this.fxUnitLeft,
+      this.fxUnitLeft,
       this.mixer,
       this.reports,
       io.deckLeft
@@ -40,7 +41,7 @@ export class S5 {
     this.deckRight = new S5Deck(
       [2, 4],
       [settings.deckColors[1], settings.deckColors[3]],
-      // this.fxUnitRight,
+      this.fxUnitRight,
       this.mixer,
       this.reports,
       io.deckRight
@@ -94,6 +95,7 @@ export class S5 {
       // controller.sendOutputReport(130, deckMeters.buffer);
     });
   }
+
   incomingData(data: Uint8Array) {
     const reportId = data[0];
 
@@ -108,7 +110,7 @@ export class S5 {
 
   init() {
     // get state of knobs and faders
-    for (const repordId of [0x01, 0x02]) {
+    for (const repordId of [1, 2]) {
       this.reports.in[repordId].handleInput(
         controller.getInputReport(repordId)
       );
