@@ -47,15 +47,21 @@ export class S5 {
       io.deckRight
     );
 
-    const that = this;
+    const channels = [
+      io.mixer.channelA.volumeLevel.outByte,
+      io.mixer.channelB.volumeLevel.outByte,
+      io.mixer.channelC.volumeLevel.outByte,
+      io.mixer.channelD.volumeLevel.outByte,
+    ];
+
     /* eslint no-unused-vars: "off" */
-    engine.makeConnection('[App]', 'gui_tick_50ms_period_s', function (_value) {
-      const deckMeters = new Uint8Array(78).fill(0);
+    engine.makeConnection('[App]', 'gui_tick_50ms_period_s', (_value) => {
+      const outReport = this.reports.out[130];
       // Each column has 11 segments, but treat the top one specially for the clip indicator.
       const deckSegments = 10;
-      for (let deckNum = 1; deckNum <= 4; deckNum++) {
+      for (let deckNum = 1; deckNum <= channels.length; deckNum++) {
         let deckGroup = `[Channel${deckNum}]`;
-        if (that.deckLeft.isShifted || that.deckRight.isShifted) {
+        if (this.deckLeft.isShifted || this.deckRight.isShifted) {
           if (engine.getValue(`[Auxiliary${deckNum}]`, 'input_configured')) {
             deckGroup = `[Auxiliary${deckNum}]`;
           } else if (
@@ -69,30 +75,34 @@ export class S5 {
           }
         }
         const deckLevel = engine.getValue(deckGroup, 'vu_meter');
-        const columnBaseIndex = (deckNum - 1) * (deckSegments + 2);
+        const columnBaseIndex = channels[deckNum - 1];
         const scaledLevel = deckLevel * deckSegments;
         const segmentsToLightFully = Math.floor(scaledLevel);
         const partialSegmentValue = scaledLevel - segmentsToLightFully;
         if (segmentsToLightFully > 0) {
           // There are 3 brightness levels per segment: off, dim, and full.
           for (let i = 0; i <= segmentsToLightFully; i++) {
-            deckMeters[columnBaseIndex + i] = 127;
+            outReport.data[columnBaseIndex + i] = 127;
           }
           if (
             partialSegmentValue > 0.5 &&
             segmentsToLightFully < deckSegments
           ) {
-            deckMeters[columnBaseIndex + segmentsToLightFully + 1] = 125;
+            outReport.data[columnBaseIndex + segmentsToLightFully + 1] = 125;
           }
         }
-        if (engine.getValue(deckGroup, 'peak_indicator')) {
-          deckMeters[columnBaseIndex + deckSegments + 1] = 127;
-        }
+
+        for (let i = segmentsToLightFully; i < deckSegments; i++)
+          outReport.data[columnBaseIndex + i] = 0;
+
+        const peak = engine.getValue(deckGroup, 'PeakIndicator') * 127;
+        outReport.data[columnBaseIndex + deckSegments] = peak;
       }
       // There are more bytes in the report which seem like they should be for the main
       // mix meters, but setting those bytes does not do anything, except for lighting
       // the clip lights on the main mix meters.
       // controller.sendOutputReport(130, deckMeters.buffer);
+      outReport.send();
     });
   }
 
