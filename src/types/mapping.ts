@@ -134,3 +134,9 @@ export interface S5FxUnitMapping {
   knobs: [TouchKnob, TouchKnob, TouchKnob, TouchKnob];
   buttons: [Btn, Btn, Btn, Btn];
 }
+
+export interface HidInReportField {
+  callback: CallableFunction;
+  io: BytePosIn;
+  oldData?: number;
+}

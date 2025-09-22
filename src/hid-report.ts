@@ -1,12 +1,11 @@
-import type { HIDReportField } from './types';
-import type { BytePosIn } from './types/mapping';
+import type { BytePosIn, HidInReportField } from './types/mapping';
 
 /*
  * HID report parsing library
  */
 export class HIDInputReport {
   reportId: number;
-  fields: HIDReportField[];
+  fields: HidInReportField[];
   constructor(reportId: number) {
     this.reportId = reportId;
     this.fields = [];
@@ -35,7 +34,7 @@ export class HIDInputReport {
       throw Error('bitLength must be an integer between 1 and 32');
     }
 
-    const field: HIDReportField = {
+    const field: HidInReportField = {
       callback: callback,
       io,
       oldData: defaultOldData,

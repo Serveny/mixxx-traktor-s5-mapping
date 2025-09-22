@@ -56,7 +56,7 @@ export class S5 {
 
     engine.makeConnection('[App]', 'gui_tick_50ms_period_s', (_value) => {
       for (const meter of volumeMeter) meter.output();
-      this.reports.out[130].send();
+      if (volumeMeter.some((vm) => vm.isChange)) this.reports.out[130].send();
     });
   }
 

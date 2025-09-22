@@ -15,6 +15,9 @@ export class VolumeMeter extends ComponentOut<Group> {
   private channelGroup: MixxxChannelGroup;
   private auxGroup: `[Auxiliary${number}]`;
   private micGroup: `[Microphone${number}]` | `[Microphone]`;
+  private oldDeckLevel = 0;
+  isChange = false;
+
   constructor(
     private deckNum: number,
     outKey: MixxxKey[Group],
@@ -48,6 +51,10 @@ export class VolumeMeter extends ComponentOut<Group> {
       }
     }
     const deckLevel = engine.getValue(deckGroup, 'vu_meter');
+    this.isChange = deckLevel !== this.oldDeckLevel;
+    if (!this.isChange) return;
+    this.oldDeckLevel = deckLevel;
+
     const columnBaseIndex = this.io.outByte;
     const scaledLevel = deckLevel * this.deckSegments;
     const segmentsToLightFully = Math.floor(scaledLevel);
