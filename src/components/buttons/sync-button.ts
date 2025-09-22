@@ -24,7 +24,7 @@ export class SyncButton extends Button<MixxxChannelGroup> {
       engine.setValue(this.group, 'sync_key', 1);
       engine.setValue(this.group, 'sync_key', 0);
     } else {
-      script.triggerControl(this.group, 'beatsync_tempo', 0);
+      script.triggerControl(this.group, 'beatsync_tempo', 50);
     }
   }
 

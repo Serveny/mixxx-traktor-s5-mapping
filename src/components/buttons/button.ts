@@ -35,6 +35,7 @@ export abstract class Button<
     this.outConnect();
     this.outTrigger();
   }
+
   uncoloredOutput(value: number) {
     if (this.indicatorTimer !== 0) return;
     const color =
@@ -50,7 +51,7 @@ export abstract class Button<
     }
     const brightness =
       (value > 0 ? this.brightnessOn : this.brightnessOff) ?? 0;
-    this.send((this.color || LedColors.white) + brightness);
+    this.send((this.color || LedColors.white) * brightness);
   }
 
   indicatorCallback() {

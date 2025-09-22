@@ -15,10 +15,10 @@ export class PerformanceRightButton extends Button<`[PreviewDeck${number}]`> {
 
   input(pressed: number) {
     if (pressed) {
-      script.triggerControl(this.group, 'LoadSelectedTrackAndPlay', 0);
+      script.triggerControl(this.group, 'LoadSelectedTrackAndPlay', 50);
     } else {
       engine.setValue(this.group, 'play', 0);
-      script.triggerControl(this.group, 'eject', 0);
+      script.triggerControl(this.group, 'eject', 50);
     }
 
     this.deck.browserEncoder.libraryPlayButtonPressed = pressed > 0;

@@ -10,7 +10,7 @@ export class BrowserEncoder extends Encoder<'[Library]'> {
   libraryViewButtonPressed = false;
   libraryPlaylistButtonPressed = false;
   currentSortedColumnIdx = -1;
-  constructor(deck: S5Deck, io: EncoderMapping) {
+  constructor(private deck: S5Deck, io: EncoderMapping) {
     super('[Library]', 'MoveFocus', deck.reports, io);
   }
 
@@ -95,11 +95,11 @@ export class BrowserEncoder extends Encoder<'[Library]'> {
       );
       // 3 == Tracks table or root views of library features
       if (this.isShifted && currentlyFocusWidget === 0) {
-        script.triggerControl('[Playlist]', 'ToggleSelectedSidebarItem', 0);
+        script.triggerControl('[Playlist]', 'ToggleSelectedSidebarItem', 50);
       } else if (currentlyFocusWidget === 3 || currentlyFocusWidget === 0) {
-        script.triggerControl(this.group, 'LoadSelectedTrack', 0);
+        script.triggerControl(this.deck.group, 'LoadSelectedTrack', 50);
       } else {
-        script.triggerControl('[Library]', 'GoToItem', 0);
+        script.triggerControl('[Library]', 'GoToItem', 50);
       }
     }
   }

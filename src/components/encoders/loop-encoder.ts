@@ -51,9 +51,9 @@ export class loopEncoder extends Encoder<MixxxChannelGroup> {
     }
     // const loopEnabled = engine.getValue(this.group, 'loop_enabled');
     if (!this.isShifted) {
-      script.triggerControl(this.group, 'beatloop_activate', 0);
+      script.triggerControl(this.group, 'beatloop_activate', 50);
     } else {
-      script.triggerControl(this.group, 'reloop_toggle', 0);
+      script.triggerControl(this.group, 'reloop_toggle', 50);
     }
   }
 

@@ -3,7 +3,6 @@ import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { ComponentContainer } from './component-container';
 
 export class Deck extends ComponentContainer<MixxxChannelGroup> {
-  decks?: number[];
   currentDeckIdx: number = 0;
   color?: number;
   settings?: object;
@@ -13,16 +12,10 @@ export class Deck extends ComponentContainer<MixxxChannelGroup> {
   secondDeckModes: DeckModes | null = null;
   keyboardPlayMode: number = 0;
 
-  constructor(decks: number[], colors: number[], settings: object) {
+  constructor(private decks: number[], colors: number[], settings: object) {
     super(Deck.groupForNumber(decks[0] ?? 1));
-    if (Array.isArray(decks)) {
-      this.decks = decks;
-      this.currentDeckIdx = 0;
-    }
-    if (this.decks) {
-      for (const i in this.decks) {
-        this.groupsToColors[Deck.groupForNumber(this.decks[i])] = colors[i];
-      }
+    for (const i in this.decks) {
+      this.groupsToColors[Deck.groupForNumber(this.decks[i])] = colors[i];
     }
     this.color = colors[0];
     this.settings = settings;
@@ -30,14 +23,7 @@ export class Deck extends ComponentContainer<MixxxChannelGroup> {
   }
 
   toggleDeck() {
-    if (this.decks === undefined) {
-      throw Error(
-        'toggleDeck can only be used with Decks constructed with an Array of deck numbers, for example [1, 3]'
-      );
-    }
-
     this.currentDeckIdx = this.currentDeckIdx === 1 ? 0 : 1;
-
     this.switchDeck(Deck.groupForNumber(this.decks[this.currentDeckIdx]));
   }
 

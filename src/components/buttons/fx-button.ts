@@ -35,7 +35,7 @@ export class FxButton extends Button<`[EffectRack1_EffectUnit${number}_Effect${n
 
   onShortRelease() {
     if (this.isShifted && this.unit.focusedEffect === null) {
-      script.triggerControl(this.group, 'next_effect', 0);
+      script.triggerControl(this.group, 'next_effect', 50);
     }
   }
 

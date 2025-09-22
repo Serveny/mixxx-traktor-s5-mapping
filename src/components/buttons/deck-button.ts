@@ -17,14 +17,14 @@ export class DeckButton extends Button<''> {
   input(value: number) {
     if (value) {
       this.deck.toggleDeck();
-      this.outReport.data[this.io.outByte] =
-        this.deck.colors[0] + this.brightnessOn;
-      // turn off the other deck selection button's LED
-      this.outReport.data[this.io.outByte + 1] =
-        settings.deckSelectAlwaysBacklit
-          ? this.deck.colors[1] + this.brightnessOff
-          : 0;
-      this.outReport.send();
+      //this.outReport.data[this.io.outByte] =
+      //this.deck.colors[0] * this.brightnessOn;
+      //// turn off the other deck selection button's LED
+      //this.outReport.data[this.io.outByte + 1] =
+      //settings.deckSelectAlwaysBacklit
+      //? this.deck.colors[1] * this.brightnessOff
+      //: 0;
+      //this.outReport.send();
     }
   }
 }

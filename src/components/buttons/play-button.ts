@@ -28,9 +28,9 @@ export class PlayButton extends Button<MixxxChannelGroup> {
   onLongPress() {
     if (this.isShifted) {
       engine.setValue(this.group, this.inKey, 0);
-      script.triggerControl(this.group, 'eject', 0);
+      script.triggerControl(this.group, 'eject', 50);
     } else if (!engine.getValue(this.group, this.inKey)) {
-      script.triggerControl(this.group, 'CloneFromDeck', 0);
+      script.triggerControl(this.group, 'CloneFromDeck', 50);
     }
   }
 }

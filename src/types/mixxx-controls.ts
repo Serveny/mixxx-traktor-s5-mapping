@@ -59,6 +59,7 @@ export type MixxxPotMeterControls =
   | '_minus_toggle';
 
 export type MixxxAppControl =
+  | 'gui_tick_50ms_period_s'
   | 'indicator_250ms'
   | 'indicator_500ms'
   | 'num_decks'
