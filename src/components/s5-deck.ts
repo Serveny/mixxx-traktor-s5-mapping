@@ -59,22 +59,6 @@ export class S5Deck extends Deck {
       io.displayAreaAndControls.performanceMode2
     );
 
-    //this.libraryStarButton = new Button({
-    //group: '[Library]',
-    //libraryEncoder: this.libraryEncoder,
-    //onShortRelease: function () {
-    //script.triggerControl(
-    //this.group,
-    //this.shifted ? 'track_color_prev' : 'track_color_next'
-    //);
-    //},
-    //onLongPress: function () {
-    //this.libraryEncoder.starButtonPressed = true;
-    //},
-    //onLongRelease: function () {
-    //this.libraryEncoder.starButtonPressed = false;
-    //},
-    //});
     // FIXME there is no feature about playlist at the moment, so we use this button to control the context menu, which has playlist control
     //this.libraryPlaylistButton = new Button({
     //group: '[Library]',

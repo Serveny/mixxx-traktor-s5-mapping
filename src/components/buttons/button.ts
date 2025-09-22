@@ -6,10 +6,6 @@ import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
 export abstract class Button<
   TGroup extends MixxxGroup
 > extends ComponentInOut<TGroup> {
-  // valid range 0 - 3, but 3 makes some colors appear whitish
-  brightnessOff = 0;
-  brightnessOn = 2;
-
   longPressTimeOutMillis: number = 225;
   indicatorIntervalMillis: number = 350;
   longPressTimer: number = 0;
@@ -38,28 +34,17 @@ export abstract class Button<
 
   uncoloredOutput(value: number) {
     if (this.indicatorTimer !== 0) return;
-    const color =
-      value > 0
-        ? (this.color || LedColors.white) + this.brightnessOn
-        : LedColors.off;
-    this.send(color);
+    this.send(value * 127);
   }
 
   output(value: number) {
-    if (this.indicatorTimer !== 0) {
-      return;
-    }
-    const brightness =
-      (value > 0 ? this.brightnessOn : this.brightnessOff) ?? 0;
-    this.send((this.color || LedColors.white) * brightness);
+    if (this.indicatorTimer !== 0) return;
+    this.send(value * 127);
   }
 
   indicatorCallback() {
     this.indicatorState = !this.indicatorState;
-    this.send(
-      (this.indicatorColor || this.color || LedColors.white) +
-        ((this.indicatorState ? this.brightnessOn : this.brightnessOff) ?? 0)
-    );
+    this.send(this.indicatorState ? 127 : 0);
   }
 
   indicator(on: boolean) {

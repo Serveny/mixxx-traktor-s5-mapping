@@ -32,26 +32,26 @@ export class BrowserEncoder extends Encoder<'[Library]'> {
         script.triggerControl(
           this.group,
           isRight ? 'track_color_prev' : 'track_color_next',
-          0
+          50
         );
       } else {
         script.triggerControl(
           this.group,
           isRight ? 'stars_up' : 'stars_down',
-          0
+          50
         );
       }
     } else if (this.gridButtonPressed) {
       script.triggerControl(
         this.group,
         isRight ? 'waveform_zoom_up' : 'waveform_zoom_down',
-        0
+        50
       );
     } else if (this.libraryPlayButtonPressed) {
       script.triggerControl(
         '[PreviewDeck1]',
         isRight ? 'beatjump_16_forward' : 'beatjump_16_backward',
-        0
+        50
       );
     } else {
       // FIXME there is a bug where this action has no effect when the Mixxx window has no focused. https://github.com/mixxxdj/mixxx/issues/11285
@@ -65,13 +65,13 @@ export class BrowserEncoder extends Encoder<'[Library]'> {
           script.triggerControl(
             '[Playlist]',
             isRight ? 'SelectNextPlaylist' : 'SelectPrevPlaylist',
-            0
+            50
           );
         } else {
           script.triggerControl(
             '[Playlist]',
             isRight ? 'SelectNextTrack' : 'SelectPrevTrack',
-            0
+            50
           );
         }
       } else {

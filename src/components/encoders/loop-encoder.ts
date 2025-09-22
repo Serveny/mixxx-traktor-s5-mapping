@@ -29,13 +29,13 @@ export class loopEncoder extends Encoder<MixxxChannelGroup> {
       script.triggerControl(
         this.group,
         isRight ? 'loop_move_1_forward' : 'loop_move_1_backward',
-        0
+        50
       );
     } else {
       script.triggerControl(
         this.group,
         isRight ? 'loop_double' : 'loop_halve',
-        0
+        50
       );
     }
   }
