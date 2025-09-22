@@ -4,12 +4,7 @@ import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
 import type { S5MixerColumnMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
-
-type Group =
-  | MixxxChannelGroup
-  | `[Auxiliary${number}]`
-  | `[Microphone${number}]`
-  | `[Microphone]`;
+import { VolumeMeter } from './volume-meter';
 
 type EqualizerGroup = `[EqualizerRack1_[Channel${number}]_Effect1]`;
 export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
@@ -19,11 +14,9 @@ export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
   eqLow: Pot<EqualizerGroup>;
   quickEffectKnob: Pot<`[QuickEffectRack1_[Channel${number}]]`>;
   volume: Pot<MixxxChannelGroup>;
-  // loudnessMeter: LoudnessMeter;
-  constructor(private idx: number, s5: S5, io: S5MixerColumnMapping) {
-    super(`[Channel${idx}]`);
-
-    this.idx = idx;
+  loudnessMeter: VolumeMeter;
+  constructor(private deckNum: number, s5: S5, io: S5MixerColumnMapping) {
+    super(`[Channel${deckNum}]`);
 
     this.gain = new Pot(this.group, 'pregain', s5.reports, io.gain);
     this.eqHigh = new Pot(
@@ -51,6 +44,7 @@ export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
       io.filter
     );
     this.volume = new Pot(this.group, 'volume', s5.reports, io.volume);
+    this.loudnessMeter = new VolumeMeter(deckNum, 'volume', s5, io.volumeLevel);
     //input: settings.mixerControlsMixAuxOnShift
     //? function (this: S5, value) {
     //if (this.mixer.isShifted && this.group !== `[Channel${idx}]`) {
@@ -149,22 +143,24 @@ export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
 
   updateGroup(shifted: boolean) {
     let alternativeInput = null;
-    if (engine.getValue(`[Auxiliary${this.idx}]`, 'input_configured')) {
-      alternativeInput = `[Auxiliary${this.idx}]`;
+    if (engine.getValue(`[Auxiliary${this.deckNum}]`, 'input_configured')) {
+      alternativeInput = `[Auxiliary${this.deckNum}]`;
     } else if (
       engine.getValue(
-        this.idx !== 1 ? `[Microphone${this.idx}]` : '[Microphone]',
+        this.deckNum !== 1 ? `[Microphone${this.deckNum}]` : '[Microphone]',
         'input_configured'
       )
     ) {
       alternativeInput =
-        this.idx !== 1 ? `[Microphone${this.idx}]` : '[Microphone]';
+        this.deckNum !== 1 ? `[Microphone${this.deckNum}]` : '[Microphone]';
     }
 
     if (!alternativeInput) {
       return;
     }
-    this.group = shifted ? (alternativeInput as any) : `[Channel${this.idx}]`;
+    this.group = shifted
+      ? (alternativeInput as any)
+      : `[Channel${this.deckNum}]`;
     for (const property of ['gain', 'volume', 'pfl', 'crossfaderSwitch']) {
       const component = (this as any)[property];
       if (component instanceof ComponentInOut) {
