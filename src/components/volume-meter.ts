@@ -1,4 +1,3 @@
-import type { HIDReportHodler } from '../hid-report';
 import type { S5 } from '../s5';
 import type { Meter } from '../types/mapping';
 import type { MixxxChannelGroup, MixxxKey } from '../types/mixxx-controls';

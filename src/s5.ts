@@ -47,16 +47,15 @@ export class S5 {
       io.deckRight
     );
 
-    const volumeMeterOutputs = [
-      this.mixer.channelA.loudnessMeter.output,
-      this.mixer.channelC.loudnessMeter.output,
-      this.mixer.channelB.loudnessMeter.output,
-      this.mixer.channelD.loudnessMeter.output,
+    const volumeMeter = [
+      this.mixer.channelA.loudnessMeter,
+      this.mixer.channelC.loudnessMeter,
+      this.mixer.channelB.loudnessMeter,
+      this.mixer.channelD.loudnessMeter,
     ];
 
-    /* eslint no-unused-vars: "off" */
     engine.makeConnection('[App]', 'gui_tick_50ms_period_s', (_value) => {
-      for (const output of volumeMeterOutputs) output();
+      for (const meter of volumeMeter) meter.output();
       this.reports.out[130].send();
     });
   }

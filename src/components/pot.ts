@@ -38,14 +38,5 @@ export class Pot<TGroup extends MixxxGroup> extends ComponentIn<TGroup> {
     if (receivingFirstValue) {
       engine.softTakeover(this.group, this.inKey, true);
     }
-    console.log('TURN: ', this.hardwarePosition);
   }
-
-  //outDisconnect() {
-  //if (this.hardwarePosition !== null) {
-  //engine.softTakeover(this.group, this.inKey, true);
-  //}
-  //engine.softTakeoverIgnoreNextValue(this.group, this.inKey);
-  //super.outDisconnect();
-  //}
 }

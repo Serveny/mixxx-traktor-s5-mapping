@@ -1,12 +1,12 @@
 # Mixxx Traktor S5 Mapping
 
-Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeScript. At the moment only
+Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeScript.
 
 ## Current status
 
 - ✅ Reverse engineered Traktor S5 HID mapping
 - ✅ Created basic TypeScript code foundation & types
-- ✅ Working components: Loop encoder, crossfader, cue button, play button
+- ✅ Working components: Loop encoder, crossfader, cue button, play button, volume meter
 
 ## How to use
 
