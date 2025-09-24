@@ -76,15 +76,19 @@ export const settings = {
       .map((c) => parseInt(c as string))
       .filter((c) => c), // Filter '0' column, equivalent to '---' value in the UI or disabled
 
-  loopWheelMoveFactor: engine.getSetting('loopWheelMoveFactor') || 50,
-  loopEncoderMoveFactor: engine.getSetting('loopEncoderMoveFactor') || 500,
+  loopWheelMoveFactor:
+    (engine.getSetting('loopWheelMoveFactor') as number) || 50,
+  loopEncoderMoveFactor:
+    (engine.getSetting('loopEncoderMoveFactor') as number) || 500,
   loopEncoderShiftMoveFactor:
-    engine.getSetting('loopEncoderShiftMoveFactor') || 2500,
+    (engine.getSetting('loopEncoderShiftMoveFactor') as number) || 2500,
 
   tempoFaderSoftTakeoverColorLow:
-    getLedColorSetting('tempoFaderSoftTakeoverColorLow') || LedColors.white,
+    (getLedColorSetting('tempoFaderSoftTakeoverColorLow') as number) ||
+    LedColors.white,
   tempoFaderSoftTakeoverColorHigh:
-    getLedColorSetting('tempoFaderSoftTakeoverColorHigh') || LedColors.green,
+    (getLedColorSetting('tempoFaderSoftTakeoverColorHigh') as number) ||
+    LedColors.green,
 
   // Tempo fader center snap range
   // Transform user value (mm) into upper/lower values
@@ -161,7 +165,7 @@ export const settings = {
   // the motor if enable. Recommended value are 33 + 1/3 or 45.
   // Default: 33 + 1/3
   baseRevolutionsPerMinute:
-    engine.getSetting('baseRevolutionsPerMinute') || 33 + 1 / 3,
+    (engine.getSetting('baseRevolutionsPerMinute') as number) || 33 + 1 / 3,
 
   // Define how much the wheel will resist. It is a similar setting that the Grid+Wheel in Tracktor
   // Value must defined between 0 to 1. 0 is very tight, 1 is very loose.

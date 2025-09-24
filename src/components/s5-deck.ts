@@ -14,6 +14,7 @@ import type { Mixer } from './mixer';
 import { loopEncoder } from './encoders/loop-encoder';
 import { PerformanceRightButton } from './buttons/performance-right-button';
 import type { S5EffectUnit } from './s5-effect-unit';
+import { TouchStrip } from './touch-strip';
 
 export class S5Deck extends Deck {
   shiftButton: ShiftButton;
@@ -26,6 +27,7 @@ export class S5Deck extends Deck {
   browserBackButton: BrowserBackButton;
   loopEncoder: loopEncoder;
   perfModeRightButton: PerformanceRightButton;
+  touchStrip: TouchStrip;
 
   constructor(
     decks: number[],
@@ -58,6 +60,8 @@ export class S5Deck extends Deck {
       this,
       io.displayAreaAndControls.performanceMode2
     );
+
+    this.touchStrip = new TouchStrip(this, io.touchStrip);
 
     // FIXME there is no feature about playlist at the moment, so we use this button to control the context menu, which has playlist control
     //this.libraryPlaylistButton = new Button({

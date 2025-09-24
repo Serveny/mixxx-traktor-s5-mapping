@@ -109,10 +109,7 @@ export interface S5DeckMapping {
     remix: Btn;
   };
   pads: [Btn, Btn, Btn, Btn, Btn, Btn, Btn, Btn];
-  touchStrip: {
-    phase: BlueRedLeds;
-    touch: BytePosIn;
-  };
+  touchStrip: TouchStripMapping;
   transportControls: { shift: Btn; sync: Btn; cue: Btn; play: Btn };
   flux: Btn;
   loop: Encoder;
@@ -133,6 +130,11 @@ export interface S5DisplayArea {
 export interface S5FxUnitMapping {
   knobs: [TouchKnob, TouchKnob, TouchKnob, TouchKnob];
   buttons: [Btn, Btn, Btn, Btn];
+}
+
+export interface TouchStripMapping {
+  phase: BlueRedLeds;
+  touch: BytePosIn;
 }
 
 export interface HidInReportField {
