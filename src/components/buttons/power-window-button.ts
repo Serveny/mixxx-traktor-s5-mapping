@@ -1,9 +1,24 @@
 import type { HIDReportHodler } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
+import {
+  GroupComponent,
+  GroupInMixin,
+  GroupOutMixin,
+  IndicatorMixin,
+  LongPressMixin,
+  ShiftMixin,
+} from '../component';
 import type { S5EffectUnit } from '../s5-effect-unit';
-import { Button } from './button';
 
-export class PowerWindowButton extends Button<`[EffectRack1_EffectUnit${number}]`> {
+export class PowerWindowButton extends IndicatorMixin(
+  LongPressMixin(
+    ShiftMixin(
+      GroupOutMixin(
+        GroupInMixin(GroupComponent<`[EffectRack1_EffectUnit${number}]`>)
+      )
+    )
+  )
+) {
   constructor(private unit: S5EffectUnit, reports: HIDReportHodler, io: Btn) {
     const key =
       `group_${unit.group}_enable` as `group_[Channel${number}]_enable`;

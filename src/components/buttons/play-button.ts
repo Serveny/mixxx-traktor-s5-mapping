@@ -2,9 +2,18 @@ import type { HIDReportHodler } from '../../hid-report';
 import { settings } from '../../settings';
 import type { Btn } from '../../types/mapping';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
-import { Button } from './button';
+import {
+  LongPressMixin,
+  ShiftMixin,
+  GroupComponent,
+  GroupInMixin,
+  GroupOutMixin,
+  IndicatorMixin,
+} from '../component';
 
-export class PlayButton extends Button<MixxxChannelGroup> {
+export class PlayButton extends IndicatorMixin(
+  LongPressMixin(ShiftMixin(GroupOutMixin(GroupInMixin(GroupComponent))))
+) {
   constructor(group: MixxxChannelGroup, reports: HIDReportHodler, io: Btn) {
     super({
       group,
@@ -16,9 +25,6 @@ export class PlayButton extends Button<MixxxChannelGroup> {
 
     // Prevent accidental ejection/duplication accident
     this.longPressTimeOutMillis = 800;
-
-    if (settings.inactiveLightsAlwaysBacklit)
-      this.output = this.uncoloredOutput;
   }
 
   onShortPress() {

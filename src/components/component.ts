@@ -10,7 +10,11 @@ import type {
   ComponentOutOptions,
 } from '../types/component';
 import type { BytePosIn, BytePosOut } from '../types/mapping';
-import type { MixxxGroup, MixxxKey } from '../types/mixxx-controls';
+import type {
+  MixxxChannelGroup,
+  MixxxGroup,
+  MixxxKey,
+} from '../types/mixxx-controls';
 
 export class Component {
   constructor(..._: any[]) {}
@@ -26,9 +30,7 @@ export class GroupComponent<TGroup extends MixxxGroup> extends Component {
 }
 type GroupComponentConstructor = new (...args: any[]) => GroupComponent<any>;
 
-export function ComponentInMixin<TBase extends ComponentConstructor>(
-  Base: TBase
-) {
+export function InMixin<TBase extends ComponentConstructor>(Base: TBase) {
   return class extends Base {
     inConnection: ScriptConnection;
     inReport: HIDInputReport;
@@ -63,11 +65,8 @@ export function ComponentInMixin<TBase extends ComponentConstructor>(
   };
 }
 
-export function ComponentOutMixin<TBase extends ComponentConstructor>(
-  Base: TBase
-) {
+export function OutMixin<TBase extends ComponentConstructor>(Base: TBase) {
   return class extends Base {
-    outConnection?: ScriptConnection;
     outReport: HIDOutputReport;
     io: BytePosOut;
 
@@ -94,17 +93,13 @@ export function ComponentOutMixin<TBase extends ComponentConstructor>(
       this.outReport.data[this.io.outByte] = value;
       this.outReport.send();
     }
-
-    outDisconnect() {
-      this.outConnection?.disconnect();
-    }
   };
 }
 
-export function GroupComponentInMixin<TBase extends GroupComponentConstructor>(
+export function GroupInMixin<TBase extends GroupComponentConstructor>(
   Base: TBase
 ) {
-  const BaseIn = ComponentInMixin(Base);
+  const BaseIn = InMixin(Base);
 
   return class extends BaseIn {
     inKey: MixxxKey[keyof MixxxKey];
@@ -122,10 +117,10 @@ export function GroupComponentInMixin<TBase extends GroupComponentConstructor>(
   };
 }
 
-export function GroupComponentOutMixin<TBase extends GroupComponentConstructor>(
+export function GroupOutMixin<TBase extends GroupComponentConstructor>(
   Base: TBase
 ) {
-  const BaseOut = ComponentOutMixin(Base);
+  const BaseOut = OutMixin(Base);
 
   return class extends BaseOut {
     outKey: MixxxKey[keyof MixxxKey];
@@ -154,12 +149,14 @@ export function GroupComponentOutMixin<TBase extends GroupComponentConstructor>(
     outTrigger() {
       this.outConnection?.trigger();
     }
+
+    outDisconnect() {
+      this.outConnection?.disconnect();
+    }
   };
 }
 
-export function ComponentShiftMixin<TBase extends GroupComponentConstructor>(
-  Base: TBase
-) {
+export function ShiftMixin<TBase extends ComponentConstructor>(Base: TBase) {
   return class extends Base {
     isShifted = false;
 
@@ -169,6 +166,102 @@ export function ComponentShiftMixin<TBase extends GroupComponentConstructor>(
 
     unshift() {
       this.isShifted = false;
+    }
+  };
+}
+
+export function LongPressMixin<TBase extends GroupComponentConstructor>(
+  Base: TBase
+) {
+  return class extends Base {
+    longPressTimeOutMillis = 225;
+    longPressTimer = 0;
+    isLongPress = false;
+
+    onShortPress(): void {}
+    onShortRelease(): void {}
+    onLongPress(): void {}
+    onLongRelease(): void {}
+
+    input(pressed: number) {
+      if (pressed) {
+        this.isLongPress = false;
+        this.onShortPress();
+
+        this.longPressTimer = engine.beginTimer(
+          this.longPressTimeOutMillis,
+          () => {
+            this.isLongPress = true;
+            this.longPressTimer = 0;
+            this.onLongPress();
+          },
+          true
+        );
+      } else if (this.isLongPress) this.onLongRelease();
+      else {
+        if (this.longPressTimer !== 0) {
+          engine.stopTimer(this.longPressTimer);
+          this.longPressTimer = 0;
+        }
+        this.onShortRelease();
+      }
+    }
+  };
+}
+
+export function IndicatorMixin<TBase extends ComponentConstructor>(
+  Base: TBase
+) {
+  const BaseOut = OutMixin(Base);
+
+  return class extends BaseOut {
+    indicatorIntervalMillis: number = 350;
+    indicatorTimer: number = 0;
+    indicatorState: boolean = false;
+
+    output(value: number) {
+      if (this.indicatorTimer !== 0) return;
+      this.send(value * 127);
+    }
+
+    indicatorCallback() {
+      this.indicatorState = !this.indicatorState;
+      this.send(this.indicatorState ? 127 : 0);
+    }
+
+    indicator(on: boolean) {
+      if (on && this.indicatorTimer === 0) {
+        // this.outDisconnect();
+        this.indicatorTimer = engine.beginTimer(
+          this.indicatorIntervalMillis,
+          this.indicatorCallback.bind(this)
+        );
+      } else if (!on && this.indicatorTimer !== 0) {
+        engine.stopTimer(this.indicatorTimer);
+        this.indicatorTimer = 0;
+        this.indicatorState = false;
+        // this.outConnect();
+        // this.outTrigger();
+      }
+    }
+  };
+}
+
+export function SetKeyMixin<TBase extends GroupComponentConstructor>(
+  Base: TBase
+) {
+  const BaseOut = GroupOutMixin(GroupInMixin(Base));
+
+  return class extends BaseOut {
+    setKey(key: MixxxKey[MixxxChannelGroup]) {
+      this.inKey = key;
+      if (key === this.outKey) {
+        return;
+      }
+      this.outDisconnect();
+      this.outKey = key;
+      this.outConnect();
+      this.outTrigger();
     }
   };
 }

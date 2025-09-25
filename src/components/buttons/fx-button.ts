@@ -3,7 +3,7 @@ import type { Btn } from '../../types/mapping';
 import type { S5EffectUnit } from '../s5-effect-unit';
 import { Button } from './button';
 
-export class FxButton extends Button<`[EffectRack1_EffectUnit${number}_Effect${number}]`> {
+export class FxButton extends Button {
   constructor(
     group: `[EffectRack1_EffectUnit${number}_Effect${number}]`,
     private unit: S5EffectUnit,

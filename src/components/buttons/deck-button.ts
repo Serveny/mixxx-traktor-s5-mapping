@@ -1,8 +1,8 @@
 import type { Btn } from '../../types/mapping';
-import { Component, ComponentInMixin } from '../component';
+import { Component, InMixin, OutMixin } from '../component';
 import type { S5Deck } from '../s5-deck';
 
-export class DeckButton extends ComponentInMixin(Component) {
+export class DeckButton extends OutMixin(InMixin(Component)) {
   constructor(private deck: S5Deck, io: Btn) {
     super({
       reports: deck.reports,
@@ -11,16 +11,18 @@ export class DeckButton extends ComponentInMixin(Component) {
   }
 
   input(value: number) {
-    if (value) {
-      this.deck.toggleDeck();
-      //this.outReport.data[this.io.outByte] =
-      //this.deck.colors[0] * this.brightnessOn;
-      //// turn off the other deck selection button's LED
-      //this.outReport.data[this.io.outByte + 1] =
-      //settings.deckSelectAlwaysBacklit
-      //? this.deck.colors[1] * this.brightnessOff
-      //: 0;
-      //this.outReport.send();
+    if (value) this.deck.toggleDeck();
+    this.output();
+  }
+
+  output() {
+    if (this.deck.currentDeckIdx === 0) {
+      this.outReport.data[this.io.outByte] = 127;
+      this.outReport.data[this.io.outByte] = 0;
+    } else {
+      this.outReport.data[this.io.outByte] = 0;
+      this.outReport.data[this.io.outByte] = 127;
     }
+    this.outReport.send();
   }
 }

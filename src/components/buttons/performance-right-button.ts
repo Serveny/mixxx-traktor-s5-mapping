@@ -2,7 +2,7 @@ import { Button } from './button';
 import type { Btn as ButtonMapping } from '../../types/mapping';
 import type { S5Deck } from '../s5-deck';
 
-export class PerformanceRightButton extends Button<`[PreviewDeck${number}]`> {
+export class PerformanceRightButton extends Button {
   constructor(private deck: S5Deck, io: ButtonMapping) {
     super({
       group: '[PreviewDeck1]',

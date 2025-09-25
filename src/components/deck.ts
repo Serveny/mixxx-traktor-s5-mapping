@@ -42,7 +42,7 @@ export class Deck extends createCompContainer<MixxxChannelGroup>() {
       this.wheelMode = this.secondDeckModes.wheelMode;
       this.moveMode = this.secondDeckModes.moveMode;
     }
-    this.reconnectComponents(function (this: Deck, component) {
+    this.reconnectComponents((component) => {
       if (
         component.group === undefined ||
         component.group.search(script.channelRegEx) !== -1
@@ -54,7 +54,7 @@ export class Deck extends createCompContainer<MixxxChannelGroup>() {
         component.group = `[QuickEffectRack1_${newGroup}]`;
       }
 
-      component.color = this.groupsToColors[newGroup];
+      // component.color = this.groupsToColors[newGroup];
     });
     this.secondDeckModes = currentModes;
   }

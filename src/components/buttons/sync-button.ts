@@ -1,10 +1,22 @@
 import type { HIDReportHodler } from '../../hid-report';
-import { Button } from './button';
 import type { Btn as ButtonMapping } from '../../types/mapping';
 import { settings } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
+import {
+  GroupComponent,
+  GroupInMixin,
+  GroupOutMixin,
+  IndicatorMixin,
+  LongPressMixin,
+  SetKeyMixin,
+  ShiftMixin,
+} from '../component';
 
-export class SyncButton extends Button<MixxxChannelGroup> {
+export class SyncButton extends IndicatorMixin(
+  SetKeyMixin(
+    LongPressMixin(ShiftMixin(GroupInMixin(GroupOutMixin(GroupComponent))))
+  )
+) {
   constructor(
     group: MixxxChannelGroup,
     reports: HIDReportHodler,

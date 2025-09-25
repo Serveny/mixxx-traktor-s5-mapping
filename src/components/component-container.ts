@@ -1,8 +1,8 @@
 import type { MixxxGroup } from '../types/mixxx-controls';
 import { Button } from './buttons/button';
-import { ComponentShiftMixin, GroupComponent } from './component';
+import { ShiftMixin, GroupComponent } from './component';
 
-export abstract class ComponentContainer<TGroup> extends ComponentShiftMixin(
+export abstract class ComponentContainer<TGroup> extends ShiftMixin(
   GroupComponent<MixxxGroup>
 ) {
   constructor(group: TGroup) {
@@ -12,12 +12,12 @@ export abstract class ComponentContainer<TGroup> extends ComponentShiftMixin(
     // can't use for...of here because it would create an infinite loop
     for (const property in this) {
       if (Object.prototype.hasOwnProperty.call(this, property)) {
-        const obj = this[property];
-        if (obj instanceof Button) {
+        const obj: any = this[property];
+        if (obj?.shift != null) {
           yield obj;
         } else if (Array.isArray(obj)) {
           for (const objectInArray of obj) {
-            if (objectInArray instanceof Button) {
+            if (objectInArray?.shift != null) {
               yield objectInArray;
             }
           }
@@ -25,14 +25,14 @@ export abstract class ComponentContainer<TGroup> extends ComponentShiftMixin(
       }
     }
   }
-  reconnectComponents(callback: (component: Button<MixxxGroup>) => void) {
+  reconnectComponents(callback: (component: Button) => void) {
     for (const component of this) {
-      component.outDisconnect();
+      component.outDisconnect?.();
       callback.call(this, component);
 
-      component.outConnect();
-      component.outTrigger();
-      component.unshift();
+      component.outConnect?.();
+      component.outTrigger?.();
+      component.unshift?.();
     }
   }
 
@@ -43,6 +43,7 @@ export abstract class ComponentContainer<TGroup> extends ComponentShiftMixin(
     }
     this.isShifted = false;
   }
+
   shift() {
     for (const component of this) {
       component.shift();

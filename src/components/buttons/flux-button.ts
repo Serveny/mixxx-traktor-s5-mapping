@@ -1,10 +1,24 @@
-import { settings, wheelModes } from '../../settings';
+import { wheelModes } from '../../settings';
 import type { Btn } from '../../types/mapping';
-import type { MixxxChannelGroup } from '../../types/mixxx-controls';
+import type { MixxxChannelGroup, MixxxKey } from '../../types/mixxx-controls';
+import {
+  GroupComponent,
+  GroupInMixin,
+  GroupOutMixin,
+  IndicatorMixin,
+  LongPressMixin,
+  SetKeyMixin,
+  ShiftMixin,
+} from '../component';
 import type { S5Deck } from '../s5-deck';
-import { Button } from './button';
 
-export class FluxButton extends Button<MixxxChannelGroup> {
+export class FluxButton extends SetKeyMixin(
+  LongPressMixin(
+    IndicatorMixin(
+      ShiftMixin(GroupOutMixin(GroupInMixin(GroupComponent<MixxxChannelGroup>)))
+    )
+  )
+) {
   private previousWheelMode: number | null = null;
   private loopModeConnection: ScriptConnection | null = null;
 
@@ -17,10 +31,8 @@ export class FluxButton extends Button<MixxxChannelGroup> {
       reports: deck.reports,
       io,
     });
-
-    if (settings.inactiveLightsAlwaysBacklit)
-      this.output = this.uncoloredOutput;
   }
+
   unshift() {
     this.setKey('slip_enabled');
   }

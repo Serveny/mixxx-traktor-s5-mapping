@@ -49,9 +49,9 @@ export class S5EffectUnit extends createCompContainer<Group>() {
     }
 
     for (const component of this) {
-      component.inConnect();
-      component.outConnect();
-      component.outTrigger();
+      component.inConnect?.();
+      component.outConnect?.();
+      component.outTrigger?.();
     }
   }
   indicatorLoop() {

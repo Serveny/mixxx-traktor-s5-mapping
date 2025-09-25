@@ -4,15 +4,15 @@ import type { ComponentInOptions } from '../../types/component';
 import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
 import {
   Component,
-  ComponentInMixin,
-  ComponentShiftMixin,
+  InMixin,
+  ShiftMixin,
   GroupComponent,
-  GroupComponentInMixin,
+  GroupInMixin,
 } from '../component';
 
-export abstract class Encoder<
-  TGroup extends MixxxGroup
-> extends ComponentShiftMixin(GroupComponentInMixin(GroupComponent)) {
+export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
+  GroupInMixin(GroupComponent)
+) {
   inBitLength = 4;
   lastValue: number | null = null;
   max: number = 0;
@@ -71,7 +71,7 @@ export abstract class Encoder<
   }
 }
 
-class EncoderTouch extends ComponentInMixin(Component) {
+class EncoderTouch extends InMixin(Component) {
   constructor(private encoder: Encoder<MixxxGroup>, opts: ComponentInOptions) {
     super(opts);
   }
@@ -80,7 +80,7 @@ class EncoderTouch extends ComponentInMixin(Component) {
   }
 }
 
-class EncoderPress extends ComponentInMixin(Component) {
+class EncoderPress extends InMixin(Component) {
   constructor(private encoder: Encoder<MixxxGroup>, opts: ComponentInOptions) {
     super(opts);
   }

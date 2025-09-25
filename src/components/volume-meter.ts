@@ -1,7 +1,7 @@
 import type { S5 } from '../s5';
 import type { Meter } from '../types/mapping';
 import type { MixxxChannelGroup, MixxxKey } from '../types/mixxx-controls';
-import { GroupComponent, GroupComponentOutMixin } from './component';
+import { GroupComponent, GroupOutMixin } from './component';
 
 type Group =
   | MixxxChannelGroup
@@ -9,7 +9,7 @@ type Group =
   | `[Microphone${number}]`
   | `[Microphone]`;
 
-export class VolumeMeter extends GroupComponentOutMixin(GroupComponent)<Group> {
+export class VolumeMeter extends GroupOutMixin(GroupComponent)<Group> {
   // Each column has 11 segments, but treat the top one specially for the clip indicator.
   private deckSegments = 10;
   private channelGroup: MixxxChannelGroup;
