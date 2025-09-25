@@ -2,28 +2,36 @@ import type { HIDReportHodler } from '../hid-report';
 import type { BytePosIn, BytePosInOut, BytePosOut } from './mapping';
 import type { MixxxGroup, MixxxKey } from './mixxx-controls';
 
-export interface ComponentOptions<TGroup extends MixxxGroup> {
-  group: TGroup;
-}
+export interface ComponentOptions {}
 
-export interface ComponentInOptions<TGroup extends MixxxGroup>
-  extends ComponentOptions<TGroup> {
-  inKey: MixxxKey[TGroup];
+export interface ComponentInOptions extends ComponentOptions {
+  input?: (value: number) => void;
   reports: HIDReportHodler;
   io: BytePosIn;
   oldDataDefault?: number;
 }
 
-export interface ComponentOutOptions<TGroup extends MixxxGroup>
-  extends ComponentOptions<TGroup> {
-  outKey: MixxxKey[TGroup];
+export interface ComponentInGroupOptions<TGroup extends MixxxGroup>
+  extends ComponentInOptions {
+  group: TGroup;
+  inKey: MixxxKey[TGroup];
+}
+
+export interface ComponentOutOptions extends ComponentOptions {
+  output?: (value: number) => void;
   reports: HIDReportHodler;
   io: BytePosOut;
 }
 
+export interface ComponentOutGroupOptions<TGroup extends MixxxGroup>
+  extends ComponentOutOptions {
+  group: TGroup;
+  outKey: MixxxKey[TGroup];
+}
+
 export interface ComponentInOutOptions<TGroup extends MixxxGroup>
-  extends ComponentInOptions<TGroup>,
-    ComponentOutOptions<TGroup> {
+  extends ComponentInGroupOptions<TGroup>,
+    ComponentOutGroupOptions<TGroup> {
   io: BytePosInOut;
 }
 

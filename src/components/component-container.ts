@@ -1,12 +1,12 @@
 import type { MixxxGroup } from '../types/mixxx-controls';
 import { Button } from './buttons/button';
-import { Component } from './component';
+import { ComponentShiftMixin, GroupComponent } from './component';
 
-export abstract class ComponentContainer<
-  TGroup extends MixxxGroup
-> extends Component<TGroup> {
+export abstract class ComponentContainer<TGroup> extends ComponentShiftMixin(
+  GroupComponent<MixxxGroup>
+) {
   constructor(group: TGroup) {
-    super(group);
+    super({ group });
   }
   *[Symbol.iterator]() {
     // can't use for...of here because it would create an infinite loop
@@ -50,4 +50,9 @@ export abstract class ComponentContainer<
     }
     this.isShifted = true;
   }
+}
+
+// Factory to keep TGroup (can't give TGroup into GroupComponent)
+export function createCompContainer<TGroup extends MixxxGroup>() {
+  return ComponentContainer<TGroup>;
 }

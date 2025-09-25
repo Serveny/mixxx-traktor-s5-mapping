@@ -1,7 +1,11 @@
 import { settings, wheelModes } from '../settings';
 import type { TouchStripMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
-import { ComponentIn } from './component';
+import {
+  ComponentInMixin,
+  GroupComponent,
+  GroupComponentInMixin,
+} from './component';
 import type { S5Deck } from './s5-deck';
 
 const wheelRelativeMax = 2 ** 32 - 1;
@@ -14,7 +18,9 @@ const baseRevolutionsPerSecond = settings.baseRevolutionsPerMinute / 60;
 const wheelTicksPerTimerTicksToRevolutionsPerSecond =
   wheelTimerTicksPerSecond / wheelAbsoluteMax;
 
-export class TouchStrip extends ComponentIn<MixxxChannelGroup> {
+export class TouchStrip extends GroupComponentInMixin(
+  GroupComponent
+)<MixxxChannelGroup> {
   speed: number = 0;
   oldValue: [number, number, number] | null = null;
 

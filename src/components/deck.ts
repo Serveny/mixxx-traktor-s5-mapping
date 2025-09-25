@@ -1,8 +1,9 @@
 import type { DeckModes } from '../types/component';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
-import { ComponentContainer } from './component-container';
+import { createCompContainer } from './component-container';
 
-export class Deck extends ComponentContainer<MixxxChannelGroup> {
+export class Deck extends createCompContainer<MixxxChannelGroup>() {
+  declare group: MixxxChannelGroup;
   currentDeckIdx: number = 0;
   color?: number;
   settings?: object;

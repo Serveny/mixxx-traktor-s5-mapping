@@ -4,138 +4,171 @@
 
 import { HIDInputReport, HIDOutputReport } from '../hid-report';
 import type {
+  ComponentInGroupOptions,
   ComponentInOptions,
-  ComponentInOutOptions,
+  ComponentOutGroupOptions,
   ComponentOutOptions,
 } from '../types/component';
-import type { BytePosIn, BytePosInOut, BytePosOut } from '../types/mapping';
+import type { BytePosIn, BytePosOut } from '../types/mapping';
 import type { MixxxGroup, MixxxKey } from '../types/mixxx-controls';
 
-export abstract class Component<TGroup extends MixxxGroup> {
-  isShifted = false;
-  constructor(public group: TGroup) {}
+export class Component {
+  constructor(..._: any[]) {}
 }
+type ComponentConstructor = new (...args: any[]) => Component;
 
-export abstract class ComponentIn<
-  TGroup extends MixxxGroup
-> extends Component<TGroup> {
-  private inConnection: ScriptConnection;
-  public inKey: MixxxKey[TGroup];
-  private inReport: HIDInputReport;
-  protected io: BytePosIn;
-  private oldDataDefault?: number;
-
-  constructor(opts: ComponentInOptions<TGroup>) {
-    super(opts.group);
-    this.inKey = opts.inKey;
-    this.inReport = opts.reports.in[opts.io.inReportId];
-    this.io = opts.io;
-
-    this.inConnection = this.inConnect();
+export class GroupComponent<TGroup extends MixxxGroup> extends Component {
+  group: TGroup;
+  constructor(...args: any[]) {
+    super();
+    this.group = (args[0] as { group: TGroup }).group;
   }
-
-  inConnect(): ScriptConnection {
-    return this.inReport.registerCallback(
-      this.input.bind(this)!,
-      this.io,
-      this.oldDataDefault
-    );
-  }
-
-  inDisconnect() {
-    this.inConnection.disconnect();
-  }
-
-  abstract input(value: number): void;
 }
+type GroupComponentConstructor = new (...args: any[]) => GroupComponent<any>;
 
-export abstract class ComponentOut<
-  TGroup extends MixxxGroup
-> extends Component<TGroup> {
-  outConnection?: ScriptConnection;
-  outKey: MixxxKey[TGroup];
-  outReport: HIDOutputReport;
-  io: BytePosOut;
-  constructor(opts: ComponentOutOptions<TGroup>) {
-    super(opts.group);
-    this.outKey = opts.outKey;
-    this.outReport = opts.reports.out[opts.io.outReportId];
-    this.io = opts.io;
-    this.outConnection = this.outConnect();
-  }
+export function ComponentInMixin<TBase extends ComponentConstructor>(
+  Base: TBase
+) {
+  return class extends Base {
+    inConnection: ScriptConnection;
+    inReport: HIDInputReport;
+    io: BytePosIn;
+    oldDataDefault?: number;
 
-  outConnect(): ScriptConnection | undefined {
-    if (this.group === '') return;
-    const outCon = engine.makeConnection(
-      this.group,
-      this.outKey,
-      this.output.bind(this)
-    );
-    if (outCon == null)
-      console.warn(
-        `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
-      );
-    return outCon;
-  }
+    constructor(...args: any[]) {
+      super(...args);
+      const opts: ComponentInOptions = args[0];
+      this.inReport = opts.reports.in[opts.io.inReportId];
+      this.io = opts.io;
+      if (opts.input) this.input = opts.input;
 
-  send(value: number) {
-    this.outReport.data[this.io.outByte] = value;
-    this.outReport.send();
-  }
-
-  sendArr(data: Uint8Array) {
-    for (let i = 0; i < data.length; i++) {
-      this.outReport.data[this.io.outByte + i] = data[i];
+      this.inConnection = this.inConnect();
     }
-  }
 
-  outDisconnect() {
-    this.outConnection?.disconnect();
-  }
+    inConnect(): ScriptConnection {
+      return this.inReport.registerCallback(
+        this.input.bind(this)!,
+        this.io,
+        this.oldDataDefault
+      );
+    }
 
-  abstract output(): void;
+    input(_: number) {
+      // Placeholder: Can't do abstract classes in mixins
+    }
+
+    inDisconnect() {
+      this.inConnection.disconnect();
+    }
+  };
 }
 
-export abstract class ComponentInOut<
-  TGroup extends MixxxGroup
-> extends ComponentIn<TGroup> {
-  private outConnection?: ScriptConnection;
-  outKey: MixxxKey[TGroup];
-  outReport: HIDOutputReport;
-  protected declare io: BytePosInOut;
-  constructor(opts: ComponentInOutOptions<TGroup>) {
-    super(opts);
-    this.outKey = opts.outKey;
-    this.outReport = opts.reports.out[this.io.outReportId];
-    this.outConnection = this.outConnect();
-  }
+export function ComponentOutMixin<TBase extends ComponentConstructor>(
+  Base: TBase
+) {
+  return class extends Base {
+    outConnection?: ScriptConnection;
+    outReport: HIDOutputReport;
+    io: BytePosOut;
 
-  outConnect(): ScriptConnection | undefined {
-    if (this.group === '') return;
-    const outCon = engine.makeConnection(
-      this.group,
-      this.outKey,
-      this.output.bind(this)
-    );
-    if (outCon == null)
-      console.warn(
-        `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
+    constructor(...args: any[]) {
+      super(...args);
+      const opts = args[0] as ComponentOutOptions;
+
+      this.outReport = opts.reports.out[opts.io.outReportId];
+      this.io = opts.io;
+      if (opts.output) this.output = opts.output;
+    }
+
+    output(value: number) {
+      this.send(value);
+    }
+
+    outputArr(data: Uint8Array) {
+      for (let i = 0; i < data.length; i++) {
+        this.outReport.data[this.io.outByte + i] = data[i];
+      }
+    }
+
+    send(value: number) {
+      this.outReport.data[this.io.outByte] = value;
+      this.outReport.send();
+    }
+
+    outDisconnect() {
+      this.outConnection?.disconnect();
+    }
+  };
+}
+
+export function GroupComponentInMixin<TBase extends GroupComponentConstructor>(
+  Base: TBase
+) {
+  const BaseIn = ComponentInMixin(Base);
+
+  return class extends BaseIn {
+    inKey: MixxxKey[keyof MixxxKey];
+
+    constructor(...args: any[]) {
+      super(...args);
+      const opts = args[0] as ComponentInGroupOptions<any>;
+
+      this.inKey = opts.inKey;
+    }
+
+    input(pressed: number) {
+      engine.setValue(this.group, this.inKey, pressed);
+    }
+  };
+}
+
+export function GroupComponentOutMixin<TBase extends GroupComponentConstructor>(
+  Base: TBase
+) {
+  const BaseOut = ComponentOutMixin(Base);
+
+  return class extends BaseOut {
+    outKey: MixxxKey[keyof MixxxKey];
+    outConnection?: ScriptConnection;
+    constructor(...args: any[]) {
+      super(...args);
+      const opts = args[0] as ComponentOutGroupOptions<any>;
+
+      this.outKey = opts.outKey;
+      this.outConnection = this.outConnect();
+    }
+
+    outConnect(): ScriptConnection | undefined {
+      const outCon = engine.makeConnection(
+        this.group,
+        this.outKey,
+        this.output.bind(this)
       );
-    return outCon;
-  }
+      if (outCon == null)
+        console.warn(
+          `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
+        );
+      return outCon;
+    }
 
-  outTrigger() {
-    this.outConnection?.trigger();
-  }
+    outTrigger() {
+      this.outConnection?.trigger();
+    }
+  };
+}
 
-  send(value: number) {
-    this.outReport.data[this.io.outByte] = value;
-    this.outReport.send();
-  }
+export function ComponentShiftMixin<TBase extends GroupComponentConstructor>(
+  Base: TBase
+) {
+  return class extends Base {
+    isShifted = false;
 
-  outDisconnect() {
-    this.outConnection?.disconnect();
-  }
+    shift() {
+      this.isShifted = true;
+    }
 
-  abstract output(value: number): void;
+    unshift() {
+      this.isShifted = false;
+    }
+  };
 }

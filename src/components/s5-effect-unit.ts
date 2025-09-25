@@ -6,13 +6,13 @@ import type { HIDReportHodler } from '../hid-report';
 import type { S5FxUnitMapping } from '../types/mapping';
 import { FxButton } from './buttons/fx-button';
 import { PowerWindowButton } from './buttons/power-window-button';
-import { ComponentContainer } from './component-container';
+import { createCompContainer } from './component-container';
 import { Pot } from './pot';
 
 type Group = `[EffectRack1_EffectUnit${number}]`;
 type EffectGroup = `[EffectRack1_EffectUnit${number}_Effect${number}]`;
-
-export class S5EffectUnit extends ComponentContainer<Group> {
+export class S5EffectUnit extends createCompContainer<Group>() {
+  declare group: Group;
   focusedEffect: number | null = null;
   isFocusedEffectIndicator: boolean = false;
   mixKnob: Pot<Group>;

@@ -1,13 +1,14 @@
 import type { S5 } from '../s5';
-import { ComponentInOut } from './component';
-import { ComponentContainer } from './component-container';
+import { createCompContainer } from './component-container';
 import { Pot } from './pot';
 import type { S5MixerColumnMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { VolumeMeter } from './volume-meter';
 
 type EqualizerGroup = `[EqualizerRack1_[Channel${number}]_Effect1]`;
-export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
+const CompContainer = createCompContainer<MixxxChannelGroup>();
+export class S5MixerColumn extends CompContainer {
+  declare group: MixxxChannelGroup;
   gain: Pot<MixxxChannelGroup>;
   eqHigh: Pot<EqualizerGroup>;
   eqMid: Pot<EqualizerGroup>;
@@ -15,6 +16,7 @@ export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
   quickEffectKnob: Pot<`[QuickEffectRack1_[Channel${number}]]`>;
   volume: Pot<MixxxChannelGroup>;
   loudnessMeter: VolumeMeter;
+
   constructor(private deckNum: number, s5: S5, io: S5MixerColumnMapping) {
     super(`[Channel${deckNum}]`);
 
@@ -163,23 +165,18 @@ export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
       : `[Channel${this.deckNum}]`;
     for (const property of ['gain', 'volume', 'pfl', 'crossfaderSwitch']) {
       const component = (this as any)[property];
-      if (component instanceof ComponentInOut) {
-        component.outDisconnect();
+      if (component.group != null) {
         component.inDisconnect();
         component.group = this.group;
         component.inConnect();
-        component.outConnect();
-        component.outTrigger();
       }
     }
     for (const property of ['effectUnit1Assign', 'effectUnit2Assign']) {
-      const component: ComponentInOut<`[EffectRack1_EffectUnit${number}]`> = (
-        this as any
-      )[property];
-      if (component instanceof ComponentInOut) {
+      const component = (this as any)[property];
+      if (component.group != null) {
         component.outDisconnect();
         component.inDisconnect();
-        component.inKey = `group_${this.group}_enable` as any;
+        component.inKey = `group_${this.group}_enable`;
         component.outKey = `group_${this.group}_enable`;
         component.inConnect();
         component.outConnect();

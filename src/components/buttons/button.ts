@@ -1,11 +1,15 @@
-import { LedColors } from '../../color';
-import { ComponentInOut } from '../component';
 import type { ButtonOptions } from '../../types/component';
 import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
+import {
+  GroupComponentInMixin,
+  GroupComponentOutMixin,
+  ComponentShiftMixin,
+  GroupComponent,
+} from '../component';
 
-export abstract class Button<
-  TGroup extends MixxxGroup
-> extends ComponentInOut<TGroup> {
+export class Button<TGroup extends MixxxGroup> extends ComponentShiftMixin(
+  GroupComponentInMixin(GroupComponentOutMixin(GroupComponent))
+) {
   longPressTimeOutMillis: number = 225;
   indicatorIntervalMillis: number = 350;
   longPressTimer: number = 0;
@@ -91,14 +95,6 @@ export abstract class Button<
       }
       this.onShortRelease();
     }
-  }
-
-  shift() {
-    this.isShifted = true;
-  }
-
-  unshift() {
-    this.isShifted = false;
   }
 }
 

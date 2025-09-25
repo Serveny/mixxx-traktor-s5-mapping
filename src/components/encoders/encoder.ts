@@ -1,19 +1,25 @@
 import type { HIDReportHodler } from '../../hid-report';
-import { ComponentIn } from '../component';
 import type { Encoder as EncoderMapping } from '../../types/mapping';
 import type { ComponentInOptions } from '../../types/component';
 import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
+import {
+  Component,
+  ComponentInMixin,
+  ComponentShiftMixin,
+  GroupComponent,
+  GroupComponentInMixin,
+} from '../component';
 
 export abstract class Encoder<
   TGroup extends MixxxGroup
-> extends ComponentIn<TGroup> {
+> extends ComponentShiftMixin(GroupComponentInMixin(GroupComponent)) {
   inBitLength = 4;
   lastValue: number | null = null;
   max: number = 0;
   isPressed: boolean = false;
 
-  touch: EncoderTouch<''>;
-  press: EncoderPress<''>;
+  touch: EncoderTouch;
+  press: EncoderPress;
 
   constructor(
     group: TGroup,
@@ -29,17 +35,13 @@ export abstract class Encoder<
     });
 
     // TODO
-    this.touch = new EncoderTouch<''>(this, {
-      group: '',
-      inKey: '',
+    this.touch = new EncoderTouch(this, {
       reports,
       io: io.touch,
     });
 
     // TODO
     this.press = new EncoderPress(this, {
-      group: '',
-      inKey: '',
       reports,
       io: io.press,
     });
@@ -69,11 +71,8 @@ export abstract class Encoder<
   }
 }
 
-class EncoderTouch<TGroup extends MixxxGroup> extends ComponentIn<TGroup> {
-  constructor(
-    private encoder: Encoder<MixxxGroup>,
-    opts: ComponentInOptions<TGroup>
-  ) {
+class EncoderTouch extends ComponentInMixin(Component) {
+  constructor(private encoder: Encoder<MixxxGroup>, opts: ComponentInOptions) {
     super(opts);
   }
   input(value: number) {
@@ -81,11 +80,8 @@ class EncoderTouch<TGroup extends MixxxGroup> extends ComponentIn<TGroup> {
   }
 }
 
-class EncoderPress<TGroup extends MixxxGroup> extends ComponentIn<TGroup> {
-  constructor(
-    private encoder: Encoder<MixxxGroup>,
-    opts: ComponentInOptions<TGroup>
-  ) {
+class EncoderPress extends ComponentInMixin(Component) {
+  constructor(private encoder: Encoder<MixxxGroup>, opts: ComponentInOptions) {
     super(opts);
   }
   input(value: number) {

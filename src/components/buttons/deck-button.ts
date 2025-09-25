@@ -1,14 +1,10 @@
-import { settings } from '../../settings';
 import type { Btn } from '../../types/mapping';
+import { Component, ComponentInMixin } from '../component';
 import type { S5Deck } from '../s5-deck';
-import { Button } from './button';
 
-export class DeckButton extends Button<''> {
+export class DeckButton extends ComponentInMixin(Component) {
   constructor(private deck: S5Deck, io: Btn) {
     super({
-      group: '',
-      inKey: '',
-      outKey: '',
       reports: deck.reports,
       io,
     });
