@@ -8,6 +8,7 @@ export class DeckButton extends OutMixin(InMixin(Component)) {
       reports: deck.reports,
       io,
     });
+    this.output();
   }
 
   input(value: number) {
@@ -18,10 +19,10 @@ export class DeckButton extends OutMixin(InMixin(Component)) {
   output() {
     if (this.deck.currentDeckIdx === 0) {
       this.outReport.data[this.io.outByte] = 127;
-      this.outReport.data[this.io.outByte] = 0;
+      this.outReport.data[this.io.outByte + 1] = 0;
     } else {
       this.outReport.data[this.io.outByte] = 0;
-      this.outReport.data[this.io.outByte] = 127;
+      this.outReport.data[this.io.outByte + 1] = 127;
     }
     this.outReport.send();
   }

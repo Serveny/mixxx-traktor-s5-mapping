@@ -1,5 +1,4 @@
 import type { HIDReportHodler } from '../../hid-report';
-import { settings } from '../../settings';
 import type { Btn } from '../../types/mapping';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import {
