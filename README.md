@@ -219,7 +219,8 @@ Reverse engineered HID mapping. Some bits/byte in the reports are empty between 
 |   50 |   0 |           16 | deckLeft.transportControls.**sync**                  |
 |   52 |   0 |            8 | deckLeft.transportControls.**cue**                   |
 |   53 |   0 |            8 | deckLeft.transportControls.**play**                  |
-|   54 |   0 |          400 | deckLeft.**phase**                                   |
+|   54 |   0 |          200 | deckLeft.touchStrip.phase.**blue**                   |
+|   79 |   0 |          200 | deckLeft.touchStrip.phase.**red**                    |
 
 Byte 0-23: 8 Pad-Buttons RGB of 3 byte
 
@@ -229,6 +230,8 @@ Pad buttons color:
 Byte 1 (0-127): red
 Byte 2 (0-127): green
 Byte 3 (0-127): blue
+
+Touch strip phase LEDS: 25 bit for blue, then 25 bit for red
 
 ### Report-ID 130 (OUT)
 

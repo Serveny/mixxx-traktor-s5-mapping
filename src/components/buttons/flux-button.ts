@@ -7,12 +7,12 @@ import {
   ControlOutMixin,
   IndicatorMixin,
   LongPressMixin,
-  SetKeyMixin,
+  SetInOutKeyMixin,
   ShiftMixin,
 } from '../component';
 import type { S5Deck } from '../s5-deck';
 
-export class FluxButton extends SetKeyMixin(
+export class FluxButton extends SetInOutKeyMixin(
   LongPressMixin(
     IndicatorMixin(
       ShiftMixin(

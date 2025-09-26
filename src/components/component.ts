@@ -118,6 +118,15 @@ export function ControlInMixin<TBase extends GroupComponentConstructor>(
     input(pressed: number) {
       engine.setValue(this.group, this.inKey, pressed);
     }
+
+    setInKey(key: MixxxKey[MixxxChannelGroup]) {
+      if (key === this.inKey) {
+        return;
+      }
+      this.inDisconnect();
+      this.inKey = key;
+      this.inConnect();
+    }
   };
 }
 
@@ -158,6 +167,16 @@ export function ControlOutMixin<TBase extends GroupComponentConstructor>(
 
     outDisconnect() {
       this.outConnection.disconnect();
+    }
+
+    setOutKey(key: MixxxKey[MixxxChannelGroup]) {
+      if (key === this.outKey) {
+        return;
+      }
+      this.outDisconnect();
+      this.outKey = key;
+      this.outConnect();
+      this.outTrigger();
     }
   };
 }
@@ -259,21 +278,15 @@ export function IndicatorMixin<TBase extends ComponentConstructor>(
   };
 }
 
-export function SetKeyMixin<TBase extends GroupComponentConstructor>(
+export function SetInOutKeyMixin<TBase extends GroupComponentConstructor>(
   Base: TBase
 ) {
   const BaseOut = ControlOutMixin(ControlInMixin(Base));
 
   return class extends BaseOut {
     setKey(key: MixxxKey[MixxxChannelGroup]) {
-      this.inKey = key;
-      if (key === this.outKey) {
-        return;
-      }
-      this.outDisconnect();
-      this.outKey = key;
-      this.outConnect();
-      this.outTrigger();
+      this.setInKey(key);
+      this.setOutKey(key);
     }
   };
 }

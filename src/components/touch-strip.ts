@@ -1,7 +1,20 @@
+import type { HIDOutputReport } from '../hid-report';
 import { settings, wheelModes } from '../settings';
-import type { TouchStripMapping } from '../types/mapping';
+import type {
+  ComponentInOptions,
+  ComponentOutGroupOptions,
+} from '../types/component';
+import type { BlueRedLeds, TouchStripMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
-import { GroupComponent, ControlInMixin } from './component';
+import {
+  GroupComponent,
+  ControlInMixin,
+  ShiftMixin,
+  ControlOutMixin,
+  InMixin,
+  SetInOutKeyMixin,
+  Component,
+} from './component';
 import type { S5Deck } from './s5-deck';
 
 const wheelRelativeMax = 2 ** 32 - 1;
@@ -14,100 +27,86 @@ const baseRevolutionsPerSecond = settings.baseRevolutionsPerMinute / 60;
 const wheelTicksPerTimerTicksToRevolutionsPerSecond =
   wheelTimerTicksPerSecond / wheelAbsoluteMax;
 
-export class TouchStrip extends ControlInMixin(
-  GroupComponent
-)<MixxxChannelGroup> {
+export class TouchStrip extends ShiftMixin(InMixin(Component)) {
+  maxValue = 1024;
   speed: number = 0;
   oldValue: [number, number, number] | null = null;
 
-  constructor(private deck: S5Deck, io: TouchStripMapping) {
+  private phase: TouchStripPhase;
+
+  constructor(public deck: S5Deck, public stripIo: TouchStripMapping) {
     super({
-      group: deck.group,
-      inKey: 'scratch2',
       reports: deck.reports,
-      io: io.touch,
+      io: stripIo.touch,
     });
+    this.phase = new TouchStripPhase(this, stripIo.phase);
   }
 
   input(value: number) {
-    const timestamp = Date.now();
-    console.log('value', value, timestamp);
-    if (this.oldValue === null) {
-      // This is to avoid the issue where the first time, we diff with 0, leading to the absolute value
-      this.oldValue = [value, timestamp, 0];
+    if (!value) return;
+    if (this.isShifted) {
+      engine.setValue(this.deck.group, 'playposition', value / this.maxValue);
       return;
     }
-    let [oldValue, oldTimestamp, speed] = this.oldValue;
+  }
 
-    if (timestamp < oldTimestamp) {
-      oldTimestamp -= wheelTimerMax;
-    }
+  onShift(): void {
+    this.phase.setOutKey('playposition');
+    this.phase.lightAll(127, 0); // light bar blue
+  }
 
-    let diff = value - oldValue;
-    if (diff > wheelRelativeMax / 2) {
-      oldValue += wheelRelativeMax;
-    } else if (diff < -wheelRelativeMax / 2) {
-      oldValue -= wheelRelativeMax;
-    }
+  onUnshift(): void {
+    this.phase.setOutKey('scratch2');
+    this.phase.lightAll(0, 0); // unlight bar
 
-    const currentSpeed = (value - oldValue) / (timestamp - oldTimestamp);
-    if (currentSpeed <= 0 === speed <= 0) {
-      speed = (speed + currentSpeed) / 2;
-    } else {
-      speed = currentSpeed;
-    }
-    this.oldValue = [value, timestamp, speed];
-    this.speed = wheelAbsoluteMax * speed * 10;
+    // Light the middle segment red
+    this.phase.lightRed(12, 127);
+  }
+}
 
-    if (
-      this.speed === 0 &&
-      engine.getValue(this.deck.group, 'scratch2') === 0 &&
-      engine.getValue(this.deck.group, 'jog') === 0 &&
-      this.deck.wheelMode !== wheelModes.motor
-    ) {
-      return;
+class TouchStripPhase extends ControlOutMixin(
+  GroupComponent<MixxxChannelGroup>
+) {
+  oldSegmentIdx = 0;
+
+  private stripSegments = 25;
+
+  constructor(private strip: TouchStrip, private brIo: BlueRedLeds) {
+    super({
+      group: strip.deck.group,
+      outKey: 'scratch2',
+      io: brIo.blue,
+      reports: strip.deck.reports,
+    });
+
+    this.outReport.data[brIo.red.outByte + 12] = 127;
+  }
+
+  output(value: number) {
+    if (this.strip.isShifted) {
+      const segmentToLightRed = Math.floor(value * (this.stripSegments - 1));
+      if (segmentToLightRed === this.oldSegmentIdx) return;
+
+      this.lightBlue(this.oldSegmentIdx, 127);
+      this.lightRed(this.oldSegmentIdx, 0);
+      this.oldSegmentIdx = segmentToLightRed;
+
+      this.lightBlue(segmentToLightRed, 0);
+      this.lightRed(segmentToLightRed, 127);
+      this.outReport.send();
     }
-    switch (this.deck.wheelMode) {
-      case wheelModes.motor:
-        engine.setValue(this.deck.group, 'scratch2', this.speed);
-        break;
-      case wheelModes.loopIn:
-        {
-          const loopStartPosition = engine.getValue(
-            this.deck.group,
-            'loop_start_position'
-          );
-          const loopEndPosition = engine.getValue(
-            this.deck.group,
-            'loop_end_position'
-          );
-          const value = Math.min(
-            loopStartPosition + this.speed * settings.loopWheelMoveFactor,
-            loopEndPosition - settings.loopWheelMoveFactor
-          );
-          engine.setValue(this.deck.group, 'loop_start_position', value);
-        }
-        break;
-      case wheelModes.loopOut:
-        {
-          const loopEndPosition = engine.getValue(
-            this.deck.group,
-            'loop_end_position'
-          );
-          const value =
-            loopEndPosition + this.speed * settings.loopWheelMoveFactor;
-          engine.setValue(this.deck.group, 'loop_end_position', value);
-        }
-        break;
-      case wheelModes.vinyl:
-        if (engine.getValue(this.deck.group, 'scratch2') !== 0) {
-          engine.setValue(this.deck.group, 'scratch2', this.speed);
-        } else {
-          engine.setValue(this.deck.group, 'jog', this.speed);
-        }
-        break;
-      default:
-        engine.setValue(this.deck.group, 'jog', this.speed);
+  }
+
+  lightAll(blueBrightness: number, redBrightness: number) {
+    for (let i = 0; i < this.stripSegments; i++) {
+      this.lightBlue(i, blueBrightness);
+      this.lightRed(i, redBrightness);
     }
+  }
+  lightBlue(idx: number, brightness: number) {
+    this.outReport.data[this.brIo.blue.outByte + idx] = brightness;
+  }
+  lightRed(idx: number, brightness: number) {
+    this.outReport.data[this.brIo.red.outByte + idx] = brightness;
   }
 }
