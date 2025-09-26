@@ -1,14 +1,14 @@
 import type { MixxxKey } from '../../types/mixxx-controls';
 import {
-  GroupInMixin,
-  GroupOutMixin,
+  ControlInMixin,
+  ControlOutMixin,
   ShiftMixin,
   GroupComponent,
   IndicatorMixin,
 } from '../component';
 
 export abstract class Button extends IndicatorMixin(
-  ShiftMixin(GroupInMixin(GroupOutMixin(GroupComponent)))
+  ShiftMixin(ControlInMixin(ControlOutMixin(GroupComponent)))
 ) {}
 
 export abstract class PushButton extends Button {

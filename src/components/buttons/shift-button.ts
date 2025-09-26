@@ -18,11 +18,11 @@ export class ShiftButton extends IndicatorMixin(
     });
   }
 
-  unshift() {
+  onUnshift() {
     this.output(0);
   }
 
-  shift() {
+  onShift() {
     this.output(1);
   }
 

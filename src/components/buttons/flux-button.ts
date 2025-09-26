@@ -3,8 +3,8 @@ import type { Btn } from '../../types/mapping';
 import type { MixxxChannelGroup, MixxxKey } from '../../types/mixxx-controls';
 import {
   GroupComponent,
-  GroupInMixin,
-  GroupOutMixin,
+  ControlInMixin,
+  ControlOutMixin,
   IndicatorMixin,
   LongPressMixin,
   SetKeyMixin,
@@ -15,7 +15,9 @@ import type { S5Deck } from '../s5-deck';
 export class FluxButton extends SetKeyMixin(
   LongPressMixin(
     IndicatorMixin(
-      ShiftMixin(GroupOutMixin(GroupInMixin(GroupComponent<MixxxChannelGroup>)))
+      ShiftMixin(
+        ControlOutMixin(ControlInMixin(GroupComponent<MixxxChannelGroup>))
+      )
     )
   )
 ) {
@@ -33,11 +35,11 @@ export class FluxButton extends SetKeyMixin(
     });
   }
 
-  unshift() {
+  onUnshift() {
     this.setKey('slip_enabled');
   }
 
-  shift() {
+  onShift() {
     this.setKey('loop_enabled');
   }
 

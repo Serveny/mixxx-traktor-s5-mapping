@@ -7,11 +7,11 @@ import {
   InMixin,
   ShiftMixin,
   GroupComponent,
-  GroupInMixin,
+  ControlInMixin,
 } from '../component';
 
 export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
-  GroupInMixin(GroupComponent)
+  ControlInMixin(GroupComponent)
 ) {
   inBitLength = 4;
   lastValue: number | null = null;

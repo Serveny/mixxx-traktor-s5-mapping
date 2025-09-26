@@ -1,21 +1,21 @@
 import type { HIDReportHodler } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
-import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import {
   LongPressMixin,
   ShiftMixin,
   GroupComponent,
-  GroupInMixin,
-  GroupOutMixin,
+  ControlInMixin,
+  ControlOutMixin,
   IndicatorMixin,
 } from '../component';
+import type { S5Deck } from '../s5-deck';
 
 export class PlayButton extends IndicatorMixin(
-  LongPressMixin(ShiftMixin(GroupOutMixin(GroupInMixin(GroupComponent))))
+  LongPressMixin(ShiftMixin(ControlOutMixin(ControlInMixin(GroupComponent))))
 ) {
-  constructor(group: MixxxChannelGroup, reports: HIDReportHodler, io: Btn) {
+  constructor(deck: S5Deck, reports: HIDReportHodler, io: Btn) {
     super({
-      group,
+      group: deck.group,
       inKey: 'play',
       outKey: 'play_indicator',
       reports,

@@ -30,6 +30,7 @@ export class GroupComponent<TGroup extends MixxxGroup> extends Component {
 }
 type GroupComponentConstructor = new (...args: any[]) => GroupComponent<any>;
 
+// Register input from controller
 export function InMixin<TBase extends ComponentConstructor>(Base: TBase) {
   return class extends Base {
     inConnection: ScriptConnection;
@@ -65,6 +66,7 @@ export function InMixin<TBase extends ComponentConstructor>(Base: TBase) {
   };
 }
 
+// Register output to controller
 export function OutMixin<TBase extends ComponentConstructor>(Base: TBase) {
   return class extends Base {
     outReport: HIDOutputReport;
@@ -96,7 +98,9 @@ export function OutMixin<TBase extends ComponentConstructor>(Base: TBase) {
   };
 }
 
-export function GroupInMixin<TBase extends GroupComponentConstructor>(
+// Interact with mixxx input control
+// input() is called on controller or GUI input
+export function ControlInMixin<TBase extends GroupComponentConstructor>(
   Base: TBase
 ) {
   const BaseIn = InMixin(Base);
@@ -117,7 +121,9 @@ export function GroupInMixin<TBase extends GroupComponentConstructor>(
   };
 }
 
-export function GroupOutMixin<TBase extends GroupComponentConstructor>(
+// Interact with mixxx output control
+// output() is called on mixxx control change
+export function ControlOutMixin<TBase extends GroupComponentConstructor>(
   Base: TBase
 ) {
   const BaseOut = OutMixin(Base);
@@ -156,17 +162,23 @@ export function GroupOutMixin<TBase extends GroupComponentConstructor>(
   };
 }
 
+// Activate shift functionality
 export function ShiftMixin<TBase extends ComponentConstructor>(Base: TBase) {
   return class extends Base {
     isShifted = false;
 
     shift() {
       this.isShifted = true;
+      this.onShift();
     }
 
     unshift() {
       this.isShifted = false;
+      this.onUnshift();
     }
+
+    onShift() {}
+    onUnshift() {}
   };
 }
 
@@ -184,7 +196,6 @@ export function LongPressMixin<TBase extends GroupComponentConstructor>(
     onLongRelease(): void {}
 
     input(pressed: number) {
-      console.log('LPMixinInput', pressed);
       if (pressed) {
         this.isLongPress = false;
         this.onShortPress();
@@ -221,7 +232,6 @@ export function IndicatorMixin<TBase extends ComponentConstructor>(
     indicatorState: boolean = false;
 
     output(value: number) {
-      console.log('INDICATOR OUTPUT', value);
       if (this.indicatorTimer !== 0) return;
       this.send(value * 127);
     }
@@ -252,7 +262,7 @@ export function IndicatorMixin<TBase extends ComponentConstructor>(
 export function SetKeyMixin<TBase extends GroupComponentConstructor>(
   Base: TBase
 ) {
-  const BaseOut = GroupOutMixin(GroupInMixin(Base));
+  const BaseOut = ControlOutMixin(ControlInMixin(Base));
 
   return class extends BaseOut {
     setKey(key: MixxxKey[MixxxChannelGroup]) {

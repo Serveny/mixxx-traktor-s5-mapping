@@ -25,9 +25,6 @@ export class S5 {
 
     this.mixer = new Mixer(this, io.mixer);
 
-    // There is no consistent offset between the left and right deck,
-    // so every single components' IO needs to be specified individually
-    // for both decks.
     this.deckLeft = new S5Deck(
       [1, 3],
       [settings.deckColors[0], settings.deckColors[2]],

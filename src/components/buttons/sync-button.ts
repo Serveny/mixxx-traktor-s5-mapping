@@ -4,27 +4,24 @@ import { settings } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import {
   GroupComponent,
-  GroupInMixin,
-  GroupOutMixin,
+  ControlInMixin,
+  ControlOutMixin,
   IndicatorMixin,
   LongPressMixin,
   SetKeyMixin,
   ShiftMixin,
 } from '../component';
+import type { S5Deck } from '../s5-deck';
 
 export class SyncButton extends IndicatorMixin(
   SetKeyMixin(
-    LongPressMixin(ShiftMixin(GroupInMixin(GroupOutMixin(GroupComponent))))
+    LongPressMixin(ShiftMixin(ControlInMixin(ControlOutMixin(GroupComponent))))
   )
 ) {
-  constructor(
-    group: MixxxChannelGroup,
-    reports: HIDReportHodler,
-    io: ButtonMapping
-  ) {
+  constructor(deck: S5Deck, reports: HIDReportHodler, io: ButtonMapping) {
     const key = 'sync_enabled';
     super({
-      group,
+      group: deck.group,
       inKey: key,
       outKey: key,
       reports,
@@ -47,11 +44,11 @@ export class SyncButton extends IndicatorMixin(
     }
   }
 
-  shift() {
+  onShift() {
     if (settings.useKeylockOnMaster) this.setKey('keylock');
   }
 
-  unshift() {
+  onUnshift() {
     if (settings.useKeylockOnMaster) this.setKey('sync_enabled');
   }
 }

@@ -2,8 +2,8 @@ import type { HIDReportHodler } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
 import {
   GroupComponent,
-  GroupInMixin,
-  GroupOutMixin,
+  ControlInMixin,
+  ControlOutMixin,
   IndicatorMixin,
   LongPressMixin,
   ShiftMixin,
@@ -13,8 +13,8 @@ import type { S5EffectUnit } from '../s5-effect-unit';
 export class FxButton extends IndicatorMixin(
   LongPressMixin(
     ShiftMixin(
-      GroupOutMixin(
-        GroupInMixin(GroupComponent<`[EffectRack1_EffectUnit${number}]`>)
+      ControlOutMixin(
+        ControlInMixin(GroupComponent<`[EffectRack1_EffectUnit${number}]`>)
       )
     )
   )

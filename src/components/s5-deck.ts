@@ -41,9 +41,9 @@ export class S5Deck extends Deck {
 
     const transCltr = io.transportControls;
     this.shiftButton = new ShiftButton(this, transCltr.shift);
-    this.syncButton = new SyncButton(this.group, reports, transCltr.sync);
+    this.syncButton = new SyncButton(this, reports, transCltr.sync);
     this.cueButton = new CueButton(this, transCltr.cue);
-    this.playButton = new PlayButton(this.group, reports, transCltr.play);
+    this.playButton = new PlayButton(this, reports, transCltr.play);
 
     this.fluxButton = new FluxButton(this, io.flux);
     this.deckButton = new DeckButton(this, io.deck);

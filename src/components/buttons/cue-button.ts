@@ -14,11 +14,11 @@ export class CueButton extends PushButton {
     });
   }
 
-  unshift() {
+  onUnshift() {
     this.inKey = 'cue_default';
   }
 
-  shift() {
+  onShift() {
     this.inKey = 'start_stop';
   }
 

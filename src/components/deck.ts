@@ -25,6 +25,8 @@ export class Deck extends createCompContainer<MixxxChannelGroup>() {
 
   toggleDeck() {
     this.currentDeckIdx = this.currentDeckIdx === 1 ? 0 : 1;
+    console.log('--------------------');
+    console.log('DECKS', this.decks, this.currentDeckIdx);
     this.switchDeck(Deck.groupForNumber(this.decks[this.currentDeckIdx]));
   }
 

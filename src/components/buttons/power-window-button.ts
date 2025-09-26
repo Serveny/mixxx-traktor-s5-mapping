@@ -2,18 +2,17 @@ import type { HIDReportHodler } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
 import {
   GroupComponent,
-  GroupInMixin,
-  GroupOutMixin,
+  ControlInMixin,
+  ControlOutMixin,
   IndicatorMixin,
-  LongPressMixin,
   ShiftMixin,
 } from '../component';
 import type { S5EffectUnit } from '../s5-effect-unit';
 
 export class PowerWindowButton extends IndicatorMixin(
   ShiftMixin(
-    GroupOutMixin(
-      GroupInMixin(GroupComponent<`[EffectRack1_EffectUnit${number}]`>)
+    ControlOutMixin(
+      ControlInMixin(GroupComponent<`[EffectRack1_EffectUnit${number}]`>)
     )
   )
 ) {
@@ -28,14 +27,14 @@ export class PowerWindowButton extends IndicatorMixin(
     });
   }
 
-  shift() {
+  onShift() {
     this.group = this.unit.group;
     this.outKey = 'group_[Master]_enable';
     this.outConnect();
     this.outTrigger();
   }
 
-  unshift() {
+  onUnshift() {
     this.outDisconnect();
     this.group = this.unit.group;
     const key =

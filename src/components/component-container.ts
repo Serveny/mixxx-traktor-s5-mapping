@@ -36,20 +36,12 @@ export abstract class ComponentContainer<TGroup> extends ShiftMixin(
     }
   }
 
-  unshift() {
-    for (const component of this) {
-      component.unshift();
-      component.isShifted = false;
-    }
-    this.isShifted = false;
+  onUnshift() {
+    for (const component of this) component.unshift();
   }
 
-  shift() {
-    for (const component of this) {
-      component.shift();
-      component.isShifted = true;
-    }
-    this.isShifted = true;
+  onShift() {
+    for (const component of this) component.shift();
   }
 }
 
