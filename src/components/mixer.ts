@@ -4,6 +4,7 @@ import type { S5MixerMapping } from '../types/mapping';
 // import { FXSelect } from './buttons/fx-select-button';
 import { QuantizeButton } from './buttons/quantize-button';
 import { ComponentContainer } from './component-container';
+import { TempoEncoder } from './encoders/tempo-encoder';
 import { Pot } from './pot';
 import { S5MixerColumn } from './s5-mixer-column';
 
@@ -14,6 +15,7 @@ export class Mixer extends ComponentContainer<'[Master]'> {
   channelD: S5MixerColumn;
   // fxSelects: FXSelect[] = [];
   quantizeButton: QuantizeButton;
+  tempoEncoder: TempoEncoder;
   crossfader: Pot<'[Master]'>;
   master?: Pot<'[Master]'>;
   booth?: Pot<'[Master]'>;
@@ -29,6 +31,7 @@ export class Mixer extends ComponentContainer<'[Master]'> {
     this.channelD = new S5MixerColumn(4, s5, io.channelD);
 
     this.quantizeButton = new QuantizeButton(s5.reports, io.quantize);
+    this.tempoEncoder = new TempoEncoder(s5.reports, io.tempo);
 
     this.crossfader = new Pot('[Master]', 'crossfader', s5.reports, io.cross);
 

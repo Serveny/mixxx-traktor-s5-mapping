@@ -1,9 +1,9 @@
 import { settings } from '../../settings';
-import { Encoder } from './encoder';
+import { Encoder, TouchEncoder } from './encoder';
 import type { S5Deck } from '../s5-deck';
-import type { Encoder as EncoderMapping } from '../../types/mapping';
+import type { TouchEncoder as EncoderMapping } from '../../types/mapping';
 
-export class BrowserEncoder extends Encoder<'[Library]'> {
+export class BrowserEncoder extends TouchEncoder<'[Library]'> {
   libraryPlayButtonPressed = false;
   gridButtonPressed = false;
   starButtonPressed = false;

@@ -1,7 +1,7 @@
 import { settings, wheelModes } from '../settings';
 import type { TouchStripMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
-import { InMixin, GroupComponent, ControlInMixin } from './component';
+import { GroupComponent, ControlInMixin } from './component';
 import type { S5Deck } from './s5-deck';
 
 const wheelRelativeMax = 2 ** 32 - 1;

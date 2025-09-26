@@ -70,7 +70,7 @@ export const mapping: S5Mapping = {
         blue: { outReportId: 128, outByte: 54, outLengthByte: 25 },
         red : { outReportId: 128, outByte: 79, outLengthByte: 25 },
       },
-      touch: { inReportId: 1, inByte: 25, inBit: 0, inLengthBit: 16 }
+      touch: { inReportId: 1, inByte: 19, inBit: 0, inLengthBit: 16 }
     },
     transportControls: {
       shift: { inReportId: 1, inByte: 8, inBit: 4, inLengthBit: 1, outReportId: 128, outByte: 49, outLengthByte: 1 },
@@ -120,7 +120,10 @@ export const mapping: S5Mapping = {
     snap     : { inReportId: 1, inByte: 4, inBit: 0, inLengthBit: 1, outReportId: 130, outByte: 4, outLengthByte: 1 },
     quantize : { inReportId: 1, inByte: 4, inBit: 7, inLengthBit: 1, outReportId: 130, outByte: 5, outLengthByte: 1 },
     boothGain: { inReportId: 2, inByte: 12 },
-    tempo    : { inReportId: 1, inByte: 2, inBit: 0, inLengthBit: 4 },
+    tempo    : { 
+        fade : { inReportId: 1, inByte: 2,  inBit: 0, inLengthBit: 4 },
+        press: { inReportId: 1, inByte: 10, inBit: 7, inLengthBit: 1 }
+    },
     cueMix   : { inReportId: 2, inByte: 14 },
     cueGain  : { inReportId: 2, inByte: 16 },
     aux      : { inReportId: 1, inByte: 11, inBit: 0, inLengthBit: 1, outReportId: 130, outByte: 16, outLengthByte: 1 },

@@ -26,9 +26,12 @@ export type Knob = FullBytePosIn;
 export type Fader = FullBytePosIn;
 
 export interface Encoder {
-  touch: BytePosIn;
   press: BytePosIn;
   fade: BytePosIn;
+}
+
+export interface TouchEncoder extends Encoder {
+  touch: BytePosIn;
 }
 
 export interface TouchKnob {
@@ -62,7 +65,7 @@ export interface S5MixerMapping {
   snap: Btn;
   quantize: Btn;
   boothGain: Knob;
-  tempo: BytePosIn;
+  tempo: Encoder;
   cueMix: Knob;
   cueGain: Knob;
   aux: Btn;
@@ -100,7 +103,7 @@ export interface S5DeckMapping {
     performanceMode2: Btn;
   };
   browseControls: {
-    browse: Encoder;
+    browse: TouchEncoder;
     back: Btn;
   };
   modeSelect: {
@@ -112,7 +115,7 @@ export interface S5DeckMapping {
   touchStrip: TouchStripMapping;
   transportControls: { shift: Btn; sync: Btn; cue: Btn; play: Btn };
   flux: Btn;
-  loop: Encoder;
+  loop: TouchEncoder;
   deck: Btn;
 }
 

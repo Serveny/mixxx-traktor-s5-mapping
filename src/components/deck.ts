@@ -8,7 +8,7 @@ export class Deck extends createCompContainer<MixxxChannelGroup>() {
   color?: number;
   settings?: object;
   groupsToColors: { [key: string]: number } = {};
-  wheelMode: number = 0;
+  wheelMode: number = 1;
   moveMode: number = 0;
   secondDeckModes: DeckModes | null = null;
   keyboardPlayMode: number = 0;

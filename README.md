@@ -32,7 +32,7 @@ Reverse engineered HID mapping. Some bits/byte in the reports are empty between 
 |    0 |   4 |            4 | deckLeft.loop.**fade**                                |
 |    1 |   0 |            4 | deckRight.browseControls.browse.**fade**              |
 |    1 |   4 |            4 | deckRight.loop.**fade**                               |
-|    2 |   0 |            4 | mixer.**tempo**                                       |
+|    2 |   0 |            4 | mixer.tempo.**fade**                                  |
 |    3 |   0 |            1 | fxUnitLeft.knobs[3].**touch**                         |
 |    3 |   1 |            1 | fxUnitLeft.knobs[2].**touch**                         |
 |    3 |   2 |            1 | fxUnitLeft.knobs[1].**touch**                         |
@@ -88,6 +88,7 @@ Reverse engineered HID mapping. Some bits/byte in the reports are empty between 
 |   10 |   4 |            1 | mixer.channelD.**cue**                                |
 |   10 |   5 |            1 | mixer.channelB.**cue**                                |
 |   10 |   6 |            1 | mixer.channelD.**filterBtn**                          |
+|   10 |   7 |            1 | mixer.tempo.**press**                                 |
 |   11 |   0 |            1 | mixer.**aux**                                         |
 |   11 |   1 |            1 | deckRight.transportControls.**sync**                  |
 |   11 |   2 |            1 | deckRight.transportControls.**cue**                   |
