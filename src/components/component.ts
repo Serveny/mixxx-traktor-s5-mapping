@@ -124,7 +124,7 @@ export function GroupOutMixin<TBase extends GroupComponentConstructor>(
 
   return class extends BaseOut {
     outKey: MixxxKey[keyof MixxxKey];
-    outConnection?: ScriptConnection;
+    outConnection: ScriptConnection;
     constructor(...args: any[]) {
       super(...args);
       const opts = args[0] as ComponentOutGroupOptions<any>;
@@ -133,25 +133,25 @@ export function GroupOutMixin<TBase extends GroupComponentConstructor>(
       this.outConnection = this.outConnect();
     }
 
-    outConnect(): ScriptConnection | undefined {
+    outConnect(): ScriptConnection {
       const outCon = engine.makeConnection(
         this.group,
         this.outKey,
         this.output.bind(this)
       );
       if (outCon == null)
-        console.warn(
+        throw Error(
           `Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
         );
       return outCon;
     }
 
     outTrigger() {
-      this.outConnection?.trigger();
+      this.outConnection.trigger();
     }
 
     outDisconnect() {
-      this.outConnection?.disconnect();
+      this.outConnection.disconnect();
     }
   };
 }
@@ -184,6 +184,7 @@ export function LongPressMixin<TBase extends GroupComponentConstructor>(
     onLongRelease(): void {}
 
     input(pressed: number) {
+      console.log('LPMixinInput', pressed);
       if (pressed) {
         this.isLongPress = false;
         this.onShortPress();
@@ -220,6 +221,7 @@ export function IndicatorMixin<TBase extends ComponentConstructor>(
     indicatorState: boolean = false;
 
     output(value: number) {
+      console.log('INDICATOR OUTPUT', value);
       if (this.indicatorTimer !== 0) return;
       this.send(value * 127);
     }

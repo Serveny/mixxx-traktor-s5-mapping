@@ -11,17 +11,14 @@ import {
 import type { S5EffectUnit } from '../s5-effect-unit';
 
 export class PowerWindowButton extends IndicatorMixin(
-  LongPressMixin(
-    ShiftMixin(
-      GroupOutMixin(
-        GroupInMixin(GroupComponent<`[EffectRack1_EffectUnit${number}]`>)
-      )
+  ShiftMixin(
+    GroupOutMixin(
+      GroupInMixin(GroupComponent<`[EffectRack1_EffectUnit${number}]`>)
     )
   )
 ) {
   constructor(private unit: S5EffectUnit, reports: HIDReportHodler, io: Btn) {
-    const key =
-      `group_${unit.group}_enable` as `group_[Channel${number}]_enable`;
+    const key: `group_[Channel${number}]_enable` = `group_[Channel${unit.unitNumber}]_enable`;
     super({
       inKey: key,
       outKey: key,
@@ -29,16 +26,6 @@ export class PowerWindowButton extends IndicatorMixin(
       reports,
       io,
     });
-    this.isLongPress = false;
-    this.longPressTimer = 0;
-  }
-
-  onShortPress() {
-    script.toggleControl(this.group, this.inKey);
-  }
-
-  onLongRelease() {
-    script.toggleControl(this.group, this.inKey);
   }
 
   shift() {

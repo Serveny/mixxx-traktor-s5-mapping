@@ -47,13 +47,8 @@ export class S5EffectUnit extends createCompContainer<Group>() {
         io.buttons
       );
     }
-
-    for (const component of this) {
-      component.inConnect?.();
-      component.outConnect?.();
-      component.outTrigger?.();
-    }
   }
+
   indicatorLoop() {
     this.isFocusedEffectIndicator = !this.isFocusedEffectIndicator;
     this.mainButton.output(1);
