@@ -71,11 +71,7 @@ export class S5 {
 
   init() {
     // get state of knobs and faders
-    for (const repordId of [1, 2]) {
-      this.reports.in[repordId].handleInput(
-        controller.getInputReport(repordId)
-      );
-    }
+    this.reports.in[2].handleInput(controller.getInputReport(2));
   }
 
   shutdown() {

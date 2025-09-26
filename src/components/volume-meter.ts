@@ -10,8 +10,9 @@ type Group =
   | `[Microphone]`;
 
 export class VolumeMeter extends ControlOutMixin(GroupComponent)<Group> {
-  // Each column has 11 segments, but treat the top one specially for the clip indicator.
-  private deckSegments = 10;
+  // Each column has 11 segments, I could reserve the top one specially for the clip indicator,
+  // but in my opinion it looks irritating if the top blinks and the one under is not on
+  private deckSegments = 11;
   private channelGroup: MixxxChannelGroup;
   private auxGroup: `[Auxiliary${number}]`;
   private micGroup: `[Microphone${number}]` | `[Microphone]`;
@@ -75,7 +76,8 @@ export class VolumeMeter extends ControlOutMixin(GroupComponent)<Group> {
     for (let i = segmentsToLightFully; i < this.deckSegments; i++)
       this.outReport.data[columnBaseIndex + i] = 0;
 
-    const peak = engine.getValue(deckGroup, 'PeakIndicator') * 127;
-    this.outReport.data[columnBaseIndex + this.deckSegments] = peak;
+    // Peak indicator, but I do not use it
+    //const peak = engine.getValue(deckGroup, 'PeakIndicator') * 127;
+    //this.outReport.data[columnBaseIndex + this.deckSegments] = peak;
   }
 }
