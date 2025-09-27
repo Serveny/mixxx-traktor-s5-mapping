@@ -33,7 +33,7 @@ export class SyncButton extends IndicatorMixin(
       engine.setValue(this.group, 'sync_key', 1);
       engine.setValue(this.group, 'sync_key', 0);
     } else {
-      script.triggerControl(this.group, 'beatsync_tempo', 50);
+      script.triggerControl(this.group, 'beatsync', 50);
     }
   }
 

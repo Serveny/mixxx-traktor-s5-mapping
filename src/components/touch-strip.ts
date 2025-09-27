@@ -62,7 +62,7 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
 class TouchStripPhase extends ControlOutMixin(
   GroupComponent<MixxxChannelGroup>
 ) {
-  private oldSegmentIdx = 0;
+  private oldPlPosIdx = 0;
 
   private stripSegments = 25;
 
@@ -83,15 +83,15 @@ class TouchStripPhase extends ControlOutMixin(
 
   // Light the red LED at the track play position
   showPlayPositon(value: number) {
-    const segmentToLightRed = Math.floor(value * (this.stripSegments - 1));
-    if (segmentToLightRed === this.oldSegmentIdx) return;
+    const plPosIdx = Math.ceil(value * this.stripSegments - 1) - 1;
+    if (plPosIdx === this.oldPlPosIdx) return;
+    [127, 127, 127].forEach((b, i) => this.lightBlue(this.oldPlPosIdx + i, b));
+    [0, 0, 0].forEach((b, i) => this.lightRed(this.oldPlPosIdx + i, b));
+    this.oldPlPosIdx = plPosIdx;
 
-    this.lightBlue(this.oldSegmentIdx, 127);
-    this.lightRed(this.oldSegmentIdx, 0);
-    this.oldSegmentIdx = segmentToLightRed;
+    [0, 0, 0].forEach((b, i) => this.lightBlue(plPosIdx + i, b));
+    [31, 127, 31].forEach((b, i) => this.lightRed(plPosIdx + i, b));
 
-    this.lightBlue(segmentToLightRed, 0);
-    this.lightRed(segmentToLightRed, 127);
     this.outReport.send();
   }
 
@@ -103,10 +103,12 @@ class TouchStripPhase extends ControlOutMixin(
   }
 
   lightBlue(idx: number, brightness: number) {
-    this.outReport.data[this.brIo.blue.outByte + idx] = brightness;
+    if (idx >= 0 && idx < 25)
+      this.outReport.data[this.brIo.blue.outByte + idx] = brightness;
   }
 
   lightRed(idx: number, brightness: number) {
-    this.outReport.data[this.brIo.red.outByte + idx] = brightness;
+    if (idx >= 0 && idx < 25)
+      this.outReport.data[this.brIo.red.outByte + idx] = brightness;
   }
 }
