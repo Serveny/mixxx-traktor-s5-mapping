@@ -6,11 +6,11 @@ import {
   GroupComponent,
   ControlInMixin,
   ControlOutMixin,
-  IndicatorMixin,
+  SingleColorOutMixin,
 } from '../component';
 import type { S5Deck } from '../s5-deck';
 
-export class PlayButton extends IndicatorMixin(
+export class PlayButton extends SingleColorOutMixin(
   LongPressMixin(ShiftMixin(ControlOutMixin(ControlInMixin(GroupComponent))))
 ) {
   constructor(deck: S5Deck, reports: HIDReportHodler, io: Btn) {

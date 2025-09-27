@@ -1,18 +1,11 @@
-import type { HIDOutputReport } from '../hid-report';
-import { settings, wheelModes } from '../settings';
-import type {
-  ComponentInOptions,
-  ComponentOutGroupOptions,
-} from '../types/component';
+import { settings } from '../settings';
 import type { BlueRedLeds, TouchStripMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import {
   GroupComponent,
-  ControlInMixin,
   ShiftMixin,
   ControlOutMixin,
   InMixin,
-  SetInOutKeyMixin,
   Component,
 } from './component';
 import type { S5Deck } from './s5-deck';
@@ -53,6 +46,8 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
   onShift(): void {
     this.phase.setOutKey('playposition');
     this.phase.lightAll(127, 0); // light bar blue
+    const playPos = engine.getValue(this.deck.group, 'playposition');
+    this.phase.showPlayPositon(playPos);
   }
 
   onUnshift(): void {
@@ -67,7 +62,7 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
 class TouchStripPhase extends ControlOutMixin(
   GroupComponent<MixxxChannelGroup>
 ) {
-  oldSegmentIdx = 0;
+  private oldSegmentIdx = 0;
 
   private stripSegments = 25;
 
@@ -83,18 +78,21 @@ class TouchStripPhase extends ControlOutMixin(
   }
 
   output(value: number) {
-    if (this.strip.isShifted) {
-      const segmentToLightRed = Math.floor(value * (this.stripSegments - 1));
-      if (segmentToLightRed === this.oldSegmentIdx) return;
+    if (this.strip.isShifted) this.showPlayPositon(value);
+  }
 
-      this.lightBlue(this.oldSegmentIdx, 127);
-      this.lightRed(this.oldSegmentIdx, 0);
-      this.oldSegmentIdx = segmentToLightRed;
+  // Light the red LED at the track play position
+  showPlayPositon(value: number) {
+    const segmentToLightRed = Math.floor(value * (this.stripSegments - 1));
+    if (segmentToLightRed === this.oldSegmentIdx) return;
 
-      this.lightBlue(segmentToLightRed, 0);
-      this.lightRed(segmentToLightRed, 127);
-      this.outReport.send();
-    }
+    this.lightBlue(this.oldSegmentIdx, 127);
+    this.lightRed(this.oldSegmentIdx, 0);
+    this.oldSegmentIdx = segmentToLightRed;
+
+    this.lightBlue(segmentToLightRed, 0);
+    this.lightRed(segmentToLightRed, 127);
+    this.outReport.send();
   }
 
   lightAll(blueBrightness: number, redBrightness: number) {
@@ -103,9 +101,11 @@ class TouchStripPhase extends ControlOutMixin(
       this.lightRed(i, redBrightness);
     }
   }
+
   lightBlue(idx: number, brightness: number) {
     this.outReport.data[this.brIo.blue.outByte + idx] = brightness;
   }
+
   lightRed(idx: number, brightness: number) {
     this.outReport.data[this.brIo.red.outByte + idx] = brightness;
   }

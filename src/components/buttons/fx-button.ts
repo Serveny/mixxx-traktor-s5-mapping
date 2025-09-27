@@ -4,13 +4,13 @@ import {
   GroupComponent,
   ControlInMixin,
   ControlOutMixin,
-  IndicatorMixin,
   LongPressMixin,
   ShiftMixin,
+  SingleColorOutMixin,
 } from '../component';
 import type { S5EffectUnit } from '../s5-effect-unit';
 
-export class FxButton extends IndicatorMixin(
+export class FxButton extends SingleColorOutMixin(
   LongPressMixin(
     ShiftMixin(
       ControlOutMixin(

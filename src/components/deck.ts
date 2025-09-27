@@ -5,20 +5,14 @@ import { createCompContainer } from './component-container';
 export class Deck extends createCompContainer<MixxxChannelGroup>() {
   declare group: MixxxChannelGroup;
   currentDeckIdx: number = 0;
-  color?: number;
   settings?: object;
-  groupsToColors: { [key: string]: number } = {};
   wheelMode: number = 1;
   moveMode: number = 0;
   secondDeckModes: DeckModes | null = null;
   keyboardPlayMode: number = 0;
 
-  constructor(private decks: number[], colors: number[], settings: object) {
+  constructor(private decks: number[], settings: object) {
     super(Deck.groupForNumber(decks[0] ?? 1));
-    for (const i in this.decks) {
-      this.groupsToColors[Deck.groupForNumber(this.decks[i])] = colors[i];
-    }
-    this.color = colors[0];
     this.settings = settings;
     this.secondDeckModes = null;
   }
@@ -38,7 +32,6 @@ export class Deck extends createCompContainer<MixxxChannelGroup>() {
 
     engine.setValue(this.group, 'scratch2_enable', 0);
     this.group = newGroup;
-    this.color = this.groupsToColors[newGroup];
 
     if (this.secondDeckModes !== null) {
       this.wheelMode = this.secondDeckModes.wheelMode;
@@ -55,8 +48,6 @@ export class Deck extends createCompContainer<MixxxChannelGroup>() {
       } else if (component.group.search(script.quickEffectRegEx) !== -1) {
         component.group = `[QuickEffectRack1_${newGroup}]`;
       }
-
-      // component.color = this.groupsToColors[newGroup];
     });
     this.secondDeckModes = currentModes;
   }

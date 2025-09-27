@@ -4,6 +4,7 @@ import type { S5Mapping } from './types/mapping';
 import { settings } from './settings';
 import { HIDReportHodler } from './hid-report';
 import { S5EffectUnit } from './components/s5-effect-unit';
+import type { MixxxChannelGroup } from './types/mixxx-controls';
 
 export class S5 {
   reports = new HIDReportHodler();
@@ -12,6 +13,7 @@ export class S5 {
   deckLeft: S5Deck;
   deckRight: S5Deck;
   mixer: Mixer;
+
   constructor(io: S5Mapping) {
     if (engine.getValue('[App]', 'num_decks') < 4) {
       engine.setValue('[App]', 'num_decks', 4);
@@ -27,8 +29,6 @@ export class S5 {
 
     this.deckLeft = new S5Deck(
       [1, 3],
-      [settings.deckColors[0], settings.deckColors[2]],
-
       this.fxUnitLeft,
       this.mixer,
       this.reports,
@@ -37,7 +37,6 @@ export class S5 {
 
     this.deckRight = new S5Deck(
       [2, 4],
-      [settings.deckColors[1], settings.deckColors[3]],
       this.fxUnitRight,
       this.mixer,
       this.reports,

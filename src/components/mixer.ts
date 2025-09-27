@@ -57,14 +57,5 @@ export class Mixer extends ComponentContainer<'[Master]'> {
     //component.outConnect();
     //component.outTrigger();
     //}
-
-    let lightQuantizeButton = true;
-    for (let deckIdx = 1; deckIdx <= 4; deckIdx++) {
-      if (!engine.getValue(`[Channel${deckIdx}]`, 'quantize')) {
-        lightQuantizeButton = false;
-      }
-    }
-    this.quantizeButton.send(lightQuantizeButton ? 127 : 0);
-    this.quantizeButton.globalQuantizeOn = lightQuantizeButton;
   }
 }

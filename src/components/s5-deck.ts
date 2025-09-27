@@ -31,13 +31,12 @@ export class S5Deck extends Deck {
 
   constructor(
     decks: number[],
-    public colors: number[],
     public effectUnit: S5EffectUnit,
     public mixer: Mixer,
     public reports: HIDReportHodler,
     io: S5DeckMapping
   ) {
-    super(decks, colors, settings);
+    super(decks, settings);
 
     const transCltr = io.transportControls;
     this.shiftButton = new ShiftButton(this, transCltr.shift);

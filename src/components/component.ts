@@ -290,3 +290,15 @@ export function SetInOutKeyMixin<TBase extends GroupComponentConstructor>(
     }
   };
 }
+
+export function SingleColorOutMixin<TBase extends ComponentConstructor>(
+  Base: TBase
+) {
+  const BaseOut = OutMixin(Base);
+
+  return class extends BaseOut {
+    output(value: number) {
+      this.send(value * 127);
+    }
+  };
+}

@@ -4,8 +4,8 @@ import {
   GroupComponent,
   ControlInMixin,
   ControlOutMixin,
-  IndicatorMixin,
   ShiftMixin,
+  IndicatorMixin,
 } from '../component';
 import type { S5EffectUnit } from '../s5-effect-unit';
 

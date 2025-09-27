@@ -5,14 +5,9 @@ import type {
   MixxxChannelGroup,
 } from '../../types/mixxx-controls';
 import type { HIDReportHodler } from '../../hid-report';
+import { channels } from '../../settings';
 
 export class TempoEncoder extends Encoder<MixxxChannelGroup> {
-  private channels: MixxxChannelGroup[] = [
-    `[Channel1]`,
-    `[Channel2]`,
-    `[Channel3]`,
-    `[Channel4]`,
-  ];
   constructor(reports: HIDReportHodler, io: EncoderMapping) {
     super('[Channel1]', 'rate_perm_down', reports, io);
   }
@@ -29,7 +24,6 @@ export class TempoEncoder extends Encoder<MixxxChannelGroup> {
   }
 
   private triggerAllChannels(control: MixxxChannelControl) {
-    for (const group of this.channels)
-      script.triggerControl(group, control, 20);
+    for (const channel of channels) script.triggerControl(channel, control, 50);
   }
 }

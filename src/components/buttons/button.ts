@@ -4,10 +4,10 @@ import {
   ControlOutMixin,
   ShiftMixin,
   GroupComponent,
-  IndicatorMixin,
+  SingleColorOutMixin,
 } from '../component';
 
-export abstract class Button extends IndicatorMixin(
+export abstract class Button extends SingleColorOutMixin(
   ShiftMixin(ControlInMixin(ControlOutMixin(GroupComponent)))
 ) {}
 

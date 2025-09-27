@@ -1,4 +1,5 @@
 import { LedColors } from './color';
+import type { MixxxChannelGroup } from './types/mixxx-controls';
 
 // Constant used to define custom default pad layout
 export const DefaultPadLayoutHotcue = 'hotcue';
@@ -35,6 +36,14 @@ export const moveModes = {
   grid: 2,
   keyboard: 3,
 };
+
+export const channels: MixxxChannelGroup[] = [
+  `[Channel1]`,
+  `[Channel2]`,
+  `[Channel3]`,
+  `[Channel4]`,
+];
+
 /*
  * USER CONFIGURABLE SETTINGS
  * Change settings in the preferences
@@ -166,15 +175,6 @@ export const settings = {
   // Default: 33 + 1/3
   baseRevolutionsPerMinute:
     (engine.getSetting('baseRevolutionsPerMinute') as number) || 33 + 1 / 3,
-
-  // Define how much the wheel will resist. It is a similar setting that the Grid+Wheel in Tracktor
-  // Value must defined between 0 to 1. 0 is very tight, 1 is very loose.
-  // Default: 0.5
-  tightnessFactor: engine.getSetting('tightnessFactor') || 0.5,
-
-  // Define how much force can the motor use. This defines how much the wheel will "fight" you when you block it in TT mode
-  // This will also affect how quick the wheel starts spinning when enabling motor mode, or starting a deck with motor mode on
-  maxWheelForce: engine.getSetting('maxWheelForce') || 25000, // Traktor seems to cap the max value at 60000, which just sounds insane
 
   // Map the mixer potentiometers to different components of the software mixer in Mixxx, on top of the physical control of the hardware
   // mixer embedded in the S5. This is useful if you are not using certain S5 outputs.
