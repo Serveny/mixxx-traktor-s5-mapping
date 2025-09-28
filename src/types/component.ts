@@ -12,39 +12,39 @@ export type ControlComponentConstructor = new (
 
 export interface ComponentOptions {}
 
-export interface ComponentInOptions extends ComponentOptions {
+export interface InOptions extends ComponentOptions {
   input?: (value: number) => void;
   reports: HIDReportHodler;
   io: BytePosIn;
   oldDataDefault?: number;
 }
 
-export interface ControlComponentOptions<TGroup extends MixxxGroup>
+export interface ControlOptions<TGroup extends MixxxGroup>
   extends ComponentOptions {
   group: TGroup;
 }
 
-export interface ControlComponentInOptions<TGroup extends MixxxGroup>
-  extends ComponentInOptions,
-    ControlComponentOptions<TGroup> {
+export interface ControlInOptions<TGroup extends MixxxGroup>
+  extends InOptions,
+    ControlOptions<TGroup> {
   inKey: MixxxKey[TGroup];
 }
 
-export interface ComponentOutOptions extends ComponentOptions {
+export interface OutOptions extends ComponentOptions {
   output?: (value: number) => void;
   reports: HIDReportHodler;
   io: BytePosOut;
 }
 
-export interface ControlComponentOutOptions<TGroup extends MixxxGroup>
-  extends ComponentOutOptions,
-    ControlComponentOptions<TGroup> {
+export interface ControlOutOptions<TGroup extends MixxxGroup>
+  extends OutOptions,
+    ControlOptions<TGroup> {
   outKey: MixxxKey[TGroup];
 }
 
-export interface ControlComponentInOutOptions<TGroup extends MixxxGroup>
-  extends ControlComponentInOptions<TGroup>,
-    ControlComponentOutOptions<TGroup> {
+export interface ControlInOutOptions<TGroup extends MixxxGroup>
+  extends ControlInOptions<TGroup>,
+    ControlOutOptions<TGroup> {
   io: BytePosInOut;
 }
 

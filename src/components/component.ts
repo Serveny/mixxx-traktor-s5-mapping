@@ -5,13 +5,13 @@
 import { HIDInputReport, HIDOutputReport } from '../hid-report';
 import type {
   ComponentConstructor,
-  ControlComponentInOptions,
-  ComponentInOptions,
-  ControlComponentOutOptions,
-  ComponentOutOptions,
+  ControlInOptions,
+  InOptions,
+  ControlOutOptions,
+  OutOptions,
   ControlComponentConstructor,
   ComponentOptions,
-  ControlComponentOptions,
+  ControlOptions,
 } from '../types/component';
 import type { BytePosIn, BytePosOut } from '../types/mapping';
 import type {
@@ -26,7 +26,7 @@ export class Component<P extends ComponentOptions> {
 
 export class ControlComponent<
   TGroup extends MixxxGroup,
-  P extends ControlComponentOptions<TGroup>
+  P extends ControlOptions<TGroup>
 > extends Component<P> {
   group: TGroup;
   constructor(...args: [P]) {
@@ -45,7 +45,7 @@ export function InMixin<TBase extends ComponentConstructor>(Base: TBase) {
 
     constructor(...args: any[]) {
       super(...args);
-      const opts: ComponentInOptions = args[0];
+      const opts: InOptions = args[0];
       this.inReport = opts.reports.in[opts.io.inReportId];
       this.io = opts.io;
       if (opts.input) this.input = opts.input;
@@ -79,7 +79,7 @@ export function OutMixin<TBase extends ComponentConstructor>(Base: TBase) {
 
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ComponentOutOptions;
+      const opts = args[0] as OutOptions;
 
       this.outReport = opts.reports.out[opts.io.outReportId];
       this.io = opts.io;
@@ -115,7 +115,7 @@ export function ControlInMixin<TBase extends ControlComponentConstructor>(
 
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ControlComponentInOptions<any>;
+      const opts = args[0] as ControlInOptions<any>;
 
       this.inKey = opts.inKey;
     }
@@ -147,7 +147,7 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
     outConnection: ScriptConnection;
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ControlComponentOutOptions<any>;
+      const opts = args[0] as ControlOutOptions<any>;
 
       this.outKey = opts.outKey;
       this.outConnection = this.outConnect();

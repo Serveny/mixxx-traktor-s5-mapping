@@ -1,5 +1,5 @@
 import { settings } from '../settings';
-import type { ControlComponentOutOptions } from '../types/component';
+import type { ControlOutOptions } from '../types/component';
 import type { BlueRedLeds, TouchStripMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import {
@@ -82,10 +82,7 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
 }
 
 class TouchStripPhase extends ControlOutMixin(
-  ControlComponent<
-    MixxxChannelGroup,
-    ControlComponentOutOptions<MixxxChannelGroup>
-  >
+  ControlComponent<MixxxChannelGroup, ControlOutOptions<MixxxChannelGroup>>
 ) {
   private oldPlayIdx = 0;
 

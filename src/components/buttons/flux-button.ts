@@ -1,5 +1,5 @@
 import { wheelModes } from '../../settings';
-import type { ControlComponentInOutOptions } from '../../types/component';
+import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
 import type { MixxxChannelGroup, MixxxKey } from '../../types/mixxx-controls';
 import {
@@ -21,7 +21,7 @@ export class FluxButton extends SetInOutKeyMixin(
           ControlInMixin(
             ControlComponent<
               MixxxChannelGroup,
-              ControlComponentInOutOptions<MixxxChannelGroup>
+              ControlInOutOptions<MixxxChannelGroup>
             >
           )
         )

@@ -1,5 +1,5 @@
 import type { HIDReportHodler } from '../../hid-report';
-import type { ControlComponentInOutOptions } from '../../types/component';
+import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
 import {
   ControlComponent,
@@ -17,9 +17,7 @@ export class FxButton extends SingleColorOutMixin(
   LongPressMixin(
     ShiftMixin(
       ControlOutMixin(
-        ControlInMixin(
-          ControlComponent<Group, ControlComponentInOutOptions<Group>>
-        )
+        ControlInMixin(ControlComponent<Group, ControlInOutOptions<Group>>)
       )
     )
   )

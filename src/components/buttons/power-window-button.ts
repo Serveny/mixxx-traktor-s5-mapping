@@ -1,5 +1,5 @@
 import type { HIDReportHodler } from '../../hid-report';
-import type { ControlComponentInOutOptions } from '../../types/component';
+import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
 import {
   ControlComponent,
@@ -15,9 +15,7 @@ type Group = `[EffectRack1_EffectUnit${number}]`;
 export class PowerWindowButton extends IndicatorMixin(
   ShiftMixin(
     ControlOutMixin(
-      ControlInMixin(
-        ControlComponent<Group, ControlComponentInOutOptions<Group>>
-      )
+      ControlInMixin(ControlComponent<Group, ControlInOutOptions<Group>>)
     )
   )
 ) {

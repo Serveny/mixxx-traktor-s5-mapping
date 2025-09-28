@@ -3,7 +3,7 @@ import type {
   Encoder as EncoderMapping,
   TouchEncoder as TouchEncoderMapping,
 } from '../../types/mapping';
-import type { ComponentInOptions } from '../../types/component';
+import type { InOptions } from '../../types/component';
 import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
 import {
   Component,
@@ -86,8 +86,8 @@ export abstract class TouchEncoder<
   abstract onTouch(value: number): void;
 }
 
-class EncoderPress extends InMixin(Component<ComponentInOptions>) {
-  constructor(private encoder: Encoder<MixxxGroup>, opts: ComponentInOptions) {
+class EncoderPress extends InMixin(Component<InOptions>) {
+  constructor(private encoder: Encoder<MixxxGroup>, opts: InOptions) {
     super(opts);
   }
   input(value: number) {
@@ -95,11 +95,8 @@ class EncoderPress extends InMixin(Component<ComponentInOptions>) {
   }
 }
 
-class EncoderTouch extends InMixin(Component<ComponentInOptions>) {
-  constructor(
-    private encoder: TouchEncoder<MixxxGroup>,
-    opts: ComponentInOptions
-  ) {
+class EncoderTouch extends InMixin(Component<InOptions>) {
+  constructor(private encoder: TouchEncoder<MixxxGroup>, opts: InOptions) {
     super(opts);
   }
   input(value: number) {

@@ -1,13 +1,11 @@
-import type { ControlComponentOptions } from '../types/component';
+import type { ControlOptions } from '../types/component';
 import type { MixxxGroup } from '../types/mixxx-controls';
 import { Button } from './buttons/button';
 import { ShiftMixin, ControlComponent } from './component';
 
 export abstract class ComponentContainer<
   TGroup extends MixxxGroup
-> extends ShiftMixin(
-  ControlComponent<MixxxGroup, ControlComponentOptions<MixxxGroup>>
-) {
+> extends ShiftMixin(ControlComponent<MixxxGroup, ControlOptions<MixxxGroup>>) {
   constructor(group: TGroup) {
     super({ group });
   }
