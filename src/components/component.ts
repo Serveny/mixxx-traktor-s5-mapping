@@ -4,10 +4,12 @@
 
 import { HIDInputReport, HIDOutputReport } from '../hid-report';
 import type {
+  ComponentConstructor,
   ComponentInGroupOptions,
   ComponentInOptions,
-  ComponentOutGroupOptions,
+  ControlComponentOutOptions,
   ComponentOutOptions,
+  ControlComponentConstructor,
 } from '../types/component';
 import type { BytePosIn, BytePosOut } from '../types/mapping';
 import type {
@@ -19,16 +21,14 @@ import type {
 export class Component {
   constructor(..._: any[]) {}
 }
-type ComponentConstructor = new (...args: any[]) => Component;
 
-export class GroupComponent<TGroup extends MixxxGroup> extends Component {
+export class ControlComponent<TGroup extends MixxxGroup> extends Component {
   group: TGroup;
   constructor(...args: any[]) {
-    super();
+    super(args[0]);
     this.group = (args[0] as { group: TGroup }).group;
   }
 }
-type GroupComponentConstructor = new (...args: any[]) => GroupComponent<any>;
 
 // Register input from controller
 export function InMixin<TBase extends ComponentConstructor>(Base: TBase) {
@@ -100,7 +100,7 @@ export function OutMixin<TBase extends ComponentConstructor>(Base: TBase) {
 
 // Interact with mixxx input control
 // input() is called on controller or GUI input
-export function ControlInMixin<TBase extends GroupComponentConstructor>(
+export function ControlInMixin<TBase extends ControlComponentConstructor>(
   Base: TBase
 ) {
   const BaseIn = InMixin(Base);
@@ -132,7 +132,7 @@ export function ControlInMixin<TBase extends GroupComponentConstructor>(
 
 // Interact with mixxx output control
 // output() is called on mixxx control change
-export function ControlOutMixin<TBase extends GroupComponentConstructor>(
+export function ControlOutMixin<TBase extends ControlComponentConstructor>(
   Base: TBase
 ) {
   const BaseOut = OutMixin(Base);
@@ -142,7 +142,7 @@ export function ControlOutMixin<TBase extends GroupComponentConstructor>(
     outConnection: ScriptConnection;
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ComponentOutGroupOptions<any>;
+      const opts = args[0] as ControlComponentOutOptions<any>;
 
       this.outKey = opts.outKey;
       this.outConnection = this.outConnect();
@@ -201,7 +201,7 @@ export function ShiftMixin<TBase extends ComponentConstructor>(Base: TBase) {
   };
 }
 
-export function LongPressMixin<TBase extends GroupComponentConstructor>(
+export function LongPressMixin<TBase extends ControlComponentConstructor>(
   Base: TBase
 ) {
   return class extends Base {
@@ -278,7 +278,7 @@ export function IndicatorMixin<TBase extends ComponentConstructor>(
   };
 }
 
-export function SetInOutKeyMixin<TBase extends GroupComponentConstructor>(
+export function SetInOutKeyMixin<TBase extends ControlComponentConstructor>(
   Base: TBase
 ) {
   const BaseOut = ControlOutMixin(ControlInMixin(Base));

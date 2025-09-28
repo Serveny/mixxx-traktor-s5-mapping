@@ -4,6 +4,7 @@ import { Pot } from './pot';
 import type { S5MixerColumnMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { VolumeMeter } from './volume-meter';
+import { ToggleButton } from './buttons/button';
 
 type EqualizerGroup = `[EqualizerRack1_[Channel${number}]_Effect1]`;
 const CompContainer = createCompContainer<MixxxChannelGroup>();
@@ -13,14 +14,17 @@ export class S5MixerColumn extends CompContainer {
   eqHigh: Pot<EqualizerGroup>;
   eqMid: Pot<EqualizerGroup>;
   eqLow: Pot<EqualizerGroup>;
-  quickEffectKnob: Pot<`[QuickEffectRack1_[Channel${number}]]`>;
+  filterKnob: Pot<`[QuickEffectRack1_[Channel${number}]]`>;
+  filterButton: ToggleButton;
   volume: Pot<MixxxChannelGroup>;
-  loudnessMeter: VolumeMeter;
+  volumeMeter: VolumeMeter;
+  pfl: ToggleButton; // Channel cue button
 
   constructor(private deckNum: number, s5: S5, io: S5MixerColumnMapping) {
     super(`[Channel${deckNum}]`);
 
     this.gain = new Pot(this.group, 'pregain', s5.reports, io.gain);
+
     this.eqHigh = new Pot(
       `[EqualizerRack1_${this.group}_Effect1]`,
       'parameter3',
@@ -39,14 +43,23 @@ export class S5MixerColumn extends CompContainer {
       s5.reports,
       io.eqLow
     );
-    this.quickEffectKnob = new Pot(
+
+    this.filterKnob = new Pot(
       `[QuickEffectRack1_${this.group}]`,
       'super1',
       s5.reports,
       io.filter
     );
+    this.filterButton = new ToggleButton({
+      group: `[QuickEffectRack1_${this.group}]`,
+      inKey: 'enabled',
+      outKey: 'enabled',
+      reports: s5.reports,
+      io: io.filterBtn,
+    });
+
     this.volume = new Pot(this.group, 'volume', s5.reports, io.volume);
-    this.loudnessMeter = new VolumeMeter(deckNum, 'volume', s5, io.volumeLevel);
+    this.volumeMeter = new VolumeMeter(deckNum, 'volume', s5, io.volumeLevel);
     //input: settings.mixerControlsMixAuxOnShift
     //? function (this: S5, value) {
     //if (this.mixer.isShifted && this.group !== `[Channel${idx}]`) {
@@ -66,10 +79,13 @@ export class S5MixerColumn extends CompContainer {
     //: undefined,
     //});
 
-    //this.pfl = new ToggleButton({
-    //inKey: 'pfl',
-    //outKey: 'pfl',
-    //});
+    this.pfl = new ToggleButton({
+      group: this.group,
+      inKey: 'pfl',
+      outKey: 'pfl',
+      reports: s5.reports,
+      io: io.cue,
+    });
 
     //this.effectUnit1Assign = new PowerWindowButton({
     //group: '[EffectRack1_EffectUnit1]',
@@ -141,6 +157,7 @@ export class S5MixerColumn extends CompContainer {
     //s5,
     //io.volumeLevel
     //);
+    this.triggerComponents();
   }
 
   updateGroup(shifted: boolean) {

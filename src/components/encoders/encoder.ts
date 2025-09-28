@@ -9,12 +9,12 @@ import {
   Component,
   InMixin,
   ShiftMixin,
-  GroupComponent,
+  ControlComponent,
   ControlInMixin,
 } from '../component';
 
 export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
-  ControlInMixin(GroupComponent)
+  ControlInMixin(ControlComponent)
 ) {
   inBitLength = 4;
   lastValue: number | null = null;

@@ -3,7 +3,7 @@ import type { Btn } from '../../types/mapping';
 import {
   LongPressMixin,
   ShiftMixin,
-  GroupComponent,
+  ControlComponent,
   ControlInMixin,
   ControlOutMixin,
   SingleColorOutMixin,
@@ -11,7 +11,7 @@ import {
 import type { S5Deck } from '../s5-deck';
 
 export class PlayButton extends SingleColorOutMixin(
-  LongPressMixin(ShiftMixin(ControlOutMixin(ControlInMixin(GroupComponent))))
+  LongPressMixin(ShiftMixin(ControlOutMixin(ControlInMixin(ControlComponent))))
 ) {
   constructor(deck: S5Deck, reports: HIDReportHodler, io: Btn) {
     super({

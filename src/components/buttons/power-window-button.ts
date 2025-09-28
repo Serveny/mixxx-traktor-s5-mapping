@@ -1,7 +1,7 @@
 import type { HIDReportHodler } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
 import {
-  GroupComponent,
+  ControlComponent,
   ControlInMixin,
   ControlOutMixin,
   ShiftMixin,
@@ -12,7 +12,7 @@ import type { S5EffectUnit } from '../s5-effect-unit';
 export class PowerWindowButton extends IndicatorMixin(
   ShiftMixin(
     ControlOutMixin(
-      ControlInMixin(GroupComponent<`[EffectRack1_EffectUnit${number}]`>)
+      ControlInMixin(ControlComponent<`[EffectRack1_EffectUnit${number}]`>)
     )
   )
 ) {

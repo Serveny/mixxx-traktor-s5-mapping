@@ -44,10 +44,10 @@ export class S5 {
     );
 
     const volumeMeter = [
-      this.mixer.channelA.loudnessMeter,
-      this.mixer.channelC.loudnessMeter,
-      this.mixer.channelB.loudnessMeter,
-      this.mixer.channelD.loudnessMeter,
+      this.mixer.channelA.volumeMeter,
+      this.mixer.channelC.volumeMeter,
+      this.mixer.channelB.volumeMeter,
+      this.mixer.channelD.volumeMeter,
     ];
 
     engine.makeConnection('[App]', 'gui_tick_50ms_period_s', (_value) => {
@@ -69,7 +69,7 @@ export class S5 {
   }
 
   init() {
-    // get state of knobs and faders
+    // get state of knobs & faders
     this.reports.in[2].handleInput(controller.getInputReport(2));
   }
 

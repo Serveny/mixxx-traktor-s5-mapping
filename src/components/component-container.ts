@@ -1,9 +1,9 @@
 import type { MixxxGroup } from '../types/mixxx-controls';
 import { Button } from './buttons/button';
-import { ShiftMixin, GroupComponent } from './component';
+import { ShiftMixin, ControlComponent } from './component';
 
 export abstract class ComponentContainer<TGroup> extends ShiftMixin(
-  GroupComponent<MixxxGroup>
+  ControlComponent<MixxxGroup>
 ) {
   constructor(group: TGroup) {
     super({ group });
@@ -34,6 +34,10 @@ export abstract class ComponentContainer<TGroup> extends ShiftMixin(
       component.outTrigger?.();
       component.unshift?.();
     }
+  }
+
+  triggerComponents() {
+    for (const component of this) component.outTrigger?.();
   }
 
   onUnshift() {

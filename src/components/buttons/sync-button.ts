@@ -3,7 +3,7 @@ import type { Btn as ButtonMapping } from '../../types/mapping';
 import { settings } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import {
-  GroupComponent,
+  ControlComponent,
   ControlInMixin,
   ControlOutMixin,
   IndicatorMixin,
@@ -15,7 +15,9 @@ import type { S5Deck } from '../s5-deck';
 
 export class SyncButton extends IndicatorMixin(
   SetInOutKeyMixin(
-    LongPressMixin(ShiftMixin(ControlInMixin(ControlOutMixin(GroupComponent))))
+    LongPressMixin(
+      ShiftMixin(ControlInMixin(ControlOutMixin(ControlComponent)))
+    )
   )
 ) {
   constructor(deck: S5Deck, reports: HIDReportHodler, io: ButtonMapping) {
