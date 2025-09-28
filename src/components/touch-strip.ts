@@ -1,4 +1,5 @@
 import { settings } from '../settings';
+import type { ControlComponentOutOptions } from '../types/component';
 import type { BlueRedLeds, TouchStripMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import {
@@ -81,7 +82,10 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
 }
 
 class TouchStripPhase extends ControlOutMixin(
-  ControlComponent<MixxxChannelGroup>
+  ControlComponent<
+    MixxxChannelGroup,
+    ControlComponentOutOptions<MixxxChannelGroup>
+  >
 ) {
   private oldPlayIdx = 0;
 
@@ -90,7 +94,7 @@ class TouchStripPhase extends ControlOutMixin(
   constructor(private strip: TouchStrip, private brIo: BlueRedLeds) {
     super({
       group: strip.deck.group,
-      outKey: 'jog',
+      outKey: 'scratch2',
       io: brIo.blue,
       reports: strip.deck.reports,
     });
@@ -100,6 +104,7 @@ class TouchStripPhase extends ControlOutMixin(
 
   output(value: number) {
     if (this.strip.isShifted) this.showPlayPositon(value);
+    else console.log('scratch2', value);
   }
 
   // Light 3 red LEDs at the track play position

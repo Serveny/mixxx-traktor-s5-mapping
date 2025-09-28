@@ -1,4 +1,4 @@
-import type { BytePosInOut } from '../../types/mapping';
+import type { ControlComponentInOutOptions } from '../../types/component';
 import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
 import {
   ControlInMixin,
@@ -9,7 +9,13 @@ import {
 } from '../component';
 
 export abstract class Button extends SingleColorOutMixin(
-  ShiftMixin(ControlInMixin(ControlOutMixin(ControlComponent)))
+  ShiftMixin(
+    ControlInMixin(
+      ControlOutMixin(
+        ControlComponent<MixxxGroup, ControlComponentInOutOptions<MixxxGroup>>
+      )
+    )
+  )
 ) {}
 
 export class PushButton extends Button {

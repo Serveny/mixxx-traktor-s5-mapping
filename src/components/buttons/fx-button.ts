@@ -1,4 +1,5 @@
 import type { HIDReportHodler } from '../../hid-report';
+import type { ControlComponentInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
 import {
   ControlComponent,
@@ -10,17 +11,21 @@ import {
 } from '../component';
 import type { S5EffectUnit } from '../s5-effect-unit';
 
+type Group = `[EffectRack1_EffectUnit${number}_Effect${number}]`;
+
 export class FxButton extends SingleColorOutMixin(
   LongPressMixin(
     ShiftMixin(
       ControlOutMixin(
-        ControlInMixin(ControlComponent<`[EffectRack1_EffectUnit${number}]`>)
+        ControlInMixin(
+          ControlComponent<Group, ControlComponentInOutOptions<Group>>
+        )
       )
     )
   )
 ) {
   constructor(
-    group: `[EffectRack1_EffectUnit${number}_Effect${number}]`,
+    group: Group,
     private unit: S5EffectUnit,
     reports: HIDReportHodler,
     private index: number,

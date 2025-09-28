@@ -1,4 +1,5 @@
 import type { S5 } from '../s5';
+import type { ControlComponentOutOptions } from '../types/component';
 import type { Meter } from '../types/mapping';
 import type { MixxxChannelGroup, MixxxKey } from '../types/mixxx-controls';
 import { ControlComponent, ControlOutMixin } from './component';
@@ -9,7 +10,9 @@ type Group =
   | `[Microphone${number}]`
   | `[Microphone]`;
 
-export class VolumeMeter extends ControlOutMixin(ControlComponent)<Group> {
+export class VolumeMeter extends ControlOutMixin(
+  ControlComponent<Group, ControlComponentOutOptions<Group>>
+) {
   // Each column has 11 segments, I could reserve the top one specially for the clip indicator,
   // but in my opinion it looks irritating if the top blinks and the one under is not on
   private deckSegments = 11;

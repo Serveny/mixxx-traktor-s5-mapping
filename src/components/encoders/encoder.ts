@@ -86,7 +86,7 @@ export abstract class TouchEncoder<
   abstract onTouch(value: number): void;
 }
 
-class EncoderPress extends InMixin(Component) {
+class EncoderPress extends InMixin(Component<ComponentInOptions>) {
   constructor(private encoder: Encoder<MixxxGroup>, opts: ComponentInOptions) {
     super(opts);
   }
@@ -95,7 +95,7 @@ class EncoderPress extends InMixin(Component) {
   }
 }
 
-class EncoderTouch extends InMixin(Component) {
+class EncoderTouch extends InMixin(Component<ComponentInOptions>) {
   constructor(
     private encoder: TouchEncoder<MixxxGroup>,
     opts: ComponentInOptions

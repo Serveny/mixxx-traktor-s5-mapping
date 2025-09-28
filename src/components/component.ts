@@ -5,11 +5,13 @@
 import { HIDInputReport, HIDOutputReport } from '../hid-report';
 import type {
   ComponentConstructor,
-  ComponentInGroupOptions,
+  ControlComponentInOptions,
   ComponentInOptions,
   ControlComponentOutOptions,
   ComponentOutOptions,
   ControlComponentConstructor,
+  ComponentOptions,
+  ControlComponentOptions,
 } from '../types/component';
 import type { BytePosIn, BytePosOut } from '../types/mapping';
 import type {
@@ -18,14 +20,17 @@ import type {
   MixxxKey,
 } from '../types/mixxx-controls';
 
-export class Component {
-  constructor(..._: any[]) {}
+export class Component<P extends ComponentOptions> {
+  constructor(..._: [P]) {}
 }
 
-export class ControlComponent<TGroup extends MixxxGroup> extends Component {
+export class ControlComponent<
+  TGroup extends MixxxGroup,
+  P extends ControlComponentOptions<TGroup>
+> extends Component<P> {
   group: TGroup;
-  constructor(...args: any[]) {
-    super(args[0]);
+  constructor(...args: [P]) {
+    super(...args);
     this.group = (args[0] as { group: TGroup }).group;
   }
 }
@@ -110,7 +115,7 @@ export function ControlInMixin<TBase extends ControlComponentConstructor>(
 
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ComponentInGroupOptions<any>;
+      const opts = args[0] as ControlComponentInOptions<any>;
 
       this.inKey = opts.inKey;
     }

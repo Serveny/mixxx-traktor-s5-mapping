@@ -1,11 +1,15 @@
 import type { HIDReportHodler } from '../hid-report';
+import type {
+  ComponentInOptions,
+  ControlComponentInOptions,
+} from '../types/component';
 import type { Knob } from '../types/mapping';
 import type { MixxxGroup, MixxxKey } from '../types/mixxx-controls';
 import { ControlComponent, ControlInMixin } from './component';
 
 export class Pot<TGroup extends MixxxGroup> extends ControlInMixin(
-  ControlComponent
-)<TGroup> {
+  ControlComponent<MixxxGroup, ControlComponentInOptions<MixxxGroup>>
+) {
   max = 2 ** 12 - 1;
   hardwarePosition: number | null;
   shiftedHardwarePosition: number | null;
