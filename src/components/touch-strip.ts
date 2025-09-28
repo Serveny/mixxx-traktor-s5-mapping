@@ -10,24 +10,14 @@ import {
 } from './component';
 import type { S5Deck } from './s5-deck';
 
-const wheelRelativeMax = 2 ** 32 - 1;
-const wheelAbsoluteMax = 2879;
-
-const wheelTimerMax = 2 ** 32 - 1;
-const wheelTimerTicksPerSecond = 100000000; // One tick every 10ns
-
-const baseRevolutionsPerSecond = settings.baseRevolutionsPerMinute / 60;
-const wheelTicksPerTimerTicksToRevolutionsPerSecond =
-  wheelTimerTicksPerSecond / wheelAbsoluteMax;
-
 export class TouchStrip extends ShiftMixin(InMixin(Component)) {
-  maxValue = 1024;
-  speed: number = 0;
-  oldValue: [number, number, number] | null = null;
+  private maxValue = 1024;
+  private oldTime = 0;
+  private oldValue = 0;
 
   private phase: TouchStripPhase;
 
-  constructor(public deck: S5Deck, public stripIo: TouchStripMapping) {
+  constructor(public deck: S5Deck, stripIo: TouchStripMapping) {
     super({
       reports: deck.reports,
       io: stripIo.touch,
@@ -36,11 +26,8 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
   }
 
   input(value: number) {
-    if (!value) return;
-    if (this.isShifted) {
-      engine.setValue(this.deck.group, 'playposition', value / this.maxValue);
-      return;
-    }
+    if (this.isShifted) this.jumpToPos(value);
+    else this.scratch(value);
   }
 
   onShift(): void {
@@ -57,19 +44,53 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
     // Light the middle segment red
     this.phase.lightRed(12, 127);
   }
+
+  private jumpToPos(value: number) {
+    if (value)
+      engine.setValue(this.deck.group, 'playposition', value / this.maxValue);
+  }
+
+  private scratch(value: number) {
+    const deckNum = this.deck.decks[this.deck.currentDeckIdx];
+    if (!value) {
+      engine.scratchDisable(deckNum);
+      this.oldTime = 0;
+      this.oldValue = 0;
+      return;
+    }
+    if (!engine.isScratching(deckNum)) {
+      // alpha: how much the input is filtered (higher = less filter, direct response; lower = more smoothing, less shaky)
+      // beta: Weight of the turntable (higher = lighter; lower = heavier)
+      engine.scratchEnable(deckNum, this.maxValue, 33.3, 0.125, 0.004);
+    }
+    const speed = this.calcSpeed(value) * -8;
+    engine.scratchTick(deckNum, speed);
+  }
+
+  private calcSpeed(value: number): number {
+    const time = Date.now();
+    const deltaTime = time - this.oldTime;
+    const deltaValue = value - this.oldValue;
+
+    this.oldTime = time;
+    this.oldValue = value;
+
+    if (deltaTime === 0) return 0;
+    return deltaValue / deltaTime;
+  }
 }
 
 class TouchStripPhase extends ControlOutMixin(
   GroupComponent<MixxxChannelGroup>
 ) {
-  private oldPlPosIdx = 0;
+  private oldPlayIdx = 0;
 
   private stripSegments = 25;
 
   constructor(private strip: TouchStrip, private brIo: BlueRedLeds) {
     super({
       group: strip.deck.group,
-      outKey: 'scratch2',
+      outKey: 'jog',
       io: brIo.blue,
       reports: strip.deck.reports,
     });
@@ -81,16 +102,16 @@ class TouchStripPhase extends ControlOutMixin(
     if (this.strip.isShifted) this.showPlayPositon(value);
   }
 
-  // Light the red LED at the track play position
+  // Light 3 red LEDs at the track play position
   showPlayPositon(value: number) {
-    const plPosIdx = Math.ceil(value * this.stripSegments - 1) - 1;
-    if (plPosIdx === this.oldPlPosIdx) return;
-    [127, 127, 127].forEach((b, i) => this.lightBlue(this.oldPlPosIdx + i, b));
-    [0, 0, 0].forEach((b, i) => this.lightRed(this.oldPlPosIdx + i, b));
-    this.oldPlPosIdx = plPosIdx;
+    const playIdx = Math.ceil(value * this.stripSegments - 1) - 1;
+    if (playIdx === this.oldPlayIdx) return;
+    [127, 127, 127].forEach((b, i) => this.lightBlue(this.oldPlayIdx + i, b));
+    [0, 0, 0].forEach((b, i) => this.lightRed(this.oldPlayIdx + i, b));
+    this.oldPlayIdx = playIdx;
 
-    [0, 0, 0].forEach((b, i) => this.lightBlue(plPosIdx + i, b));
-    [31, 127, 31].forEach((b, i) => this.lightRed(plPosIdx + i, b));
+    [0, 0, 0].forEach((b, i) => this.lightBlue(playIdx + i, b));
+    [31, 127, 31].forEach((b, i) => this.lightRed(playIdx + i, b));
 
     this.outReport.send();
   }

@@ -11,7 +11,7 @@ export class Deck extends createCompContainer<MixxxChannelGroup>() {
   secondDeckModes: DeckModes | null = null;
   keyboardPlayMode: number = 0;
 
-  constructor(private decks: number[], settings: object) {
+  constructor(public decks: number[], settings: object) {
     super(Deck.groupForNumber(decks[0] ?? 1));
     this.settings = settings;
     this.secondDeckModes = null;
