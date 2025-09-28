@@ -1,5 +1,4 @@
 import type { HIDReportHodler } from '../../hid-report';
-import { S5 } from '../../s5';
 import { channels } from '../../settings';
 import type { Btn } from '../../types/mapping';
 import { Button } from './button';

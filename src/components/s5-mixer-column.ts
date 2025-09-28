@@ -11,6 +11,8 @@ const CompContainer = createCompContainer<MixxxChannelGroup>();
 export class S5MixerColumn extends CompContainer {
   declare group: MixxxChannelGroup;
   gain: Pot<MixxxChannelGroup>;
+  fxAssignleft: ToggleButton;
+  fxAssignRight: ToggleButton;
   eqHigh: Pot<EqualizerGroup>;
   eqMid: Pot<EqualizerGroup>;
   eqLow: Pot<EqualizerGroup>;
@@ -60,24 +62,6 @@ export class S5MixerColumn extends CompContainer {
 
     this.volume = new Pot(this.group, 'volume', s5.reports, io.volume);
     this.volumeMeter = new VolumeMeter(deckNum, 'volume', s5, io.volumeLevel);
-    //input: settings.mixerControlsMixAuxOnShift
-    //? function (this: S5, value) {
-    //if (this.mixer.isShifted && this.group !== `[Channel${idx}]`) {
-    //// FIXME only if group != [ChannelX]
-    //const controlKey =
-    //this.group === `[Microphone${idx}]` ||
-    //this.group === '[Microphone]'
-    //? 'talkover'
-    //: 'main_mix';
-    //const isPlaying = engine.getValue(this.group, controlKey);
-    //if ((value !== 0) !== isPlaying) {
-    //engine.setValue(this.group, controlKey, value !== 0);
-    //}
-    //}
-    //this.defaultInput(value);
-    //}
-    //: undefined,
-    //});
 
     this.pfl = new ToggleButton({
       group: this.group,
@@ -87,20 +71,21 @@ export class S5MixerColumn extends CompContainer {
       io: io.cue,
     });
 
-    //this.effectUnit1Assign = new PowerWindowButton({
-    //group: '[EffectRack1_EffectUnit1]',
-    //key: `group_${this.group}_enable`,
-    //});
-
-    //this.effectUnit2Assign = new PowerWindowButton({
-    //group: '[EffectRack1_EffectUnit2]',
-    //key: `group_${this.group}_enable`,
-    //});
-
-    //// FIXME: Why is output not working for these?
-    //this.saveGain = new PushButton({
-    //key: 'update_replaygain_from_pregain',
-    //});
+    const assginKey: `group_[Channel${number}]_enable` = `group_${this.group}_enable`;
+    this.fxAssignleft = new ToggleButton({
+      group: '[EffectRack1_EffectUnit1]',
+      inKey: assginKey,
+      outKey: assginKey,
+      reports: s5.reports,
+      io: io.fxUnitAssignLeft,
+    });
+    this.fxAssignRight = new ToggleButton({
+      group: '[EffectRack1_EffectUnit2]',
+      inKey: assginKey,
+      outKey: assginKey,
+      reports: s5.reports,
+      io: io.fxUnitAssignRight,
+    });
 
     //this.crossfaderSwitch = new Component({
     //inBitLength: 2,
@@ -115,48 +100,6 @@ export class S5MixerColumn extends CompContainer {
     //},
     //});
 
-    //for (const property in this) {
-    //if (Object.prototype.hasOwnProperty.call(this, property)) {
-    //const component = this[property];
-    //if (component instanceof Component) {
-    //Object.assign(component, io[property]);
-    //if (component instanceof Pot) {
-    //component.inReport = inReports[2];
-    //} else {
-    //component.inReport = inReports[1];
-    //}
-    //component.outReport = outReport;
-
-    //if (component.group === undefined) {
-    //component.group = this.group;
-    //}
-
-    //component.inConnect();
-    //component.outConnect();
-    //component.outTrigger();
-    //}
-    //}
-    //}
-
-    //if (settings.mixerControlsMixAuxOnShift) {
-    //this.shift = function () {
-    //engine.setValue('[Microphone]', 'show_microphone', 1);
-    //this.updateGroup(true);
-    //};
-
-    //this.unshift = function () {
-    //engine.setValue('[Microphone]', 'show_microphone', 0);
-    //this.updateGroup(false);
-    //};
-    //}
-
-    //this.loudnessMeter = new LoudnessMeter(
-    //this.idx,
-    //`loudness_meter_${this.idx}`,
-    //this.outReport,
-    //s5,
-    //io.volumeLevel
-    //);
     this.triggerComponents();
   }
 

@@ -3,7 +3,7 @@ import type {
   Encoder as EncoderMapping,
   TouchEncoder as TouchEncoderMapping,
 } from '../../types/mapping';
-import type { InOptions } from '../../types/component';
+import type { ControlInOptions, InOptions } from '../../types/component';
 import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
 import {
   Component,
@@ -14,7 +14,7 @@ import {
 } from '../component';
 
 export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
-  ControlInMixin(ControlComponent)
+  ControlInMixin(ControlComponent<MixxxGroup, ControlInOptions<MixxxGroup>>)
 ) {
   inBitLength = 4;
   lastValue: number | null = null;
