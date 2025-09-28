@@ -15,8 +15,10 @@ import { loopEncoder } from './encoders/loop-encoder';
 import { PerformanceRightButton } from './buttons/performance-right-button';
 import type { S5EffectUnit } from './s5-effect-unit';
 import { TouchStrip } from './touch-strip';
+import { DisplayArea } from './display-area';
 
 export class S5Deck extends Deck {
+  display: DisplayArea;
   shiftButton: ShiftButton;
   syncButton: SyncButton;
   cueButton: CueButton;
@@ -26,7 +28,6 @@ export class S5Deck extends Deck {
   browserEncoder: BrowserEncoder;
   browserBackButton: BrowserBackButton;
   loopEncoder: loopEncoder;
-  perfModeRightButton: PerformanceRightButton;
   touchStrip: TouchStrip;
 
   constructor(
@@ -37,6 +38,8 @@ export class S5Deck extends Deck {
     io: S5DeckMapping
   ) {
     super(decks, settings);
+
+    this.display = new DisplayArea(this, io.displayAreaAndControls);
 
     const transCltr = io.transportControls;
     this.shiftButton = new ShiftButton(this, transCltr.shift);
@@ -54,11 +57,6 @@ export class S5Deck extends Deck {
     );
 
     this.loopEncoder = new loopEncoder(this, io.loop);
-
-    this.perfModeRightButton = new PerformanceRightButton(
-      this,
-      io.displayAreaAndControls.performanceMode2
-    );
 
     this.touchStrip = new TouchStrip(this, io.touchStrip);
 

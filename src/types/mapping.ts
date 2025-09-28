@@ -92,16 +92,7 @@ export interface S5MixerColumnMapping {
 }
 
 export interface S5DeckMapping {
-  displayAreaAndControls: {
-    settings: Btn;
-    display1: Btn;
-    display2: Btn;
-    performanceMode1: Btn;
-    view: Btn;
-    display3: Btn;
-    display4: Btn;
-    performanceMode2: Btn;
-  };
+  displayAreaAndControls: S5DisplayArea;
   browseControls: {
     browse: TouchEncoder;
     back: Btn;
@@ -123,11 +114,11 @@ export interface S5DisplayArea {
   settings: Btn;
   display1: Btn;
   display2: Btn;
-  performanceMode1: Btn;
+  performanceModeLeft: Btn;
   view: Btn;
   display3: Btn;
   display4: Btn;
-  performanceMode2: Btn;
+  performanceModeRight: Btn;
 }
 
 export interface S5FxUnitMapping {

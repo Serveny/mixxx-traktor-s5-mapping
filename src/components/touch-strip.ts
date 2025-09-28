@@ -28,7 +28,8 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
 
   input(value: number) {
     if (this.isShifted) this.jumpToPos(value);
-    else this.scratch(value);
+    else if (!engine.getValue(this.deck.group, 'play_indicator'))
+      this.scratch(value);
   }
 
   onShift(): void {

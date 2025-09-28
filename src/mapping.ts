@@ -36,11 +36,11 @@ export const mapping: S5Mapping = {
       settings        : { inReportId: 1, inByte: 7, inBit: 6, inLengthBit: 1, outReportId: 128, outByte: 28, outLengthByte: 1 },
       display1        : { inReportId: 1, inByte: 7, inBit: 1, inLengthBit: 1, outReportId: 128, outByte: 29, outLengthByte: 1 },
       display2        : { inReportId: 1, inByte: 7, inBit: 7, inLengthBit: 1, outReportId: 128, outByte: 30, outLengthByte: 1 },
-      performanceMode1: { inReportId: 1, inByte: 7, inBit: 0, inLengthBit: 1, outReportId: 128, outByte: 31, outLengthByte: 1 },
+      performanceModeLeft: { inReportId: 1, inByte: 7, inBit: 0, inLengthBit: 1, outReportId: 128, outByte: 31, outLengthByte: 1 },
       view            : { inReportId: 1, inByte: 6, inBit: 4, inLengthBit: 1, outReportId: 128, outByte: 32, outLengthByte: 1 },
       display3        : { inReportId: 1, inByte: 6, inBit: 3, inLengthBit: 1, outReportId: 128, outByte: 33, outLengthByte: 1 },
       display4        : { inReportId: 1, inByte: 6, inBit: 5, inLengthBit: 1, outReportId: 128, outByte: 34, outLengthByte: 1 },
-      performanceMode2: { inReportId: 1, inByte: 6, inBit: 2, inLengthBit: 1, outReportId: 128, outByte: 35, outLengthByte: 1 },
+      performanceModeRight: { inReportId: 1, inByte: 6, inBit: 2, inLengthBit: 1, outReportId: 128, outByte: 35, outLengthByte: 1 },
     },
     browseControls: {
       browse: {
@@ -190,11 +190,11 @@ export const mapping: S5Mapping = {
       settings        : { inReportId: 1, inByte: 12, inBit: 4, inLengthBit: 1, outReportId: 129, outByte: 28, outLengthByte: 1 },
       display1        : { inReportId: 1, inByte: 12, inBit: 5, inLengthBit: 1, outReportId: 129, outByte: 29, outLengthByte: 1 },
       display2        : { inReportId: 1, inByte: 12, inBit: 6, inLengthBit: 1, outReportId: 129, outByte: 30, outLengthByte: 1 },
-      performanceMode1: { inReportId: 1, inByte: 12, inBit: 7, inLengthBit: 1, outReportId: 129, outByte: 31, outLengthByte: 1 },
+      performanceModeLeft: { inReportId: 1, inByte: 12, inBit: 7, inLengthBit: 1, outReportId: 129, outByte: 31, outLengthByte: 1 },
       view            : { inReportId: 1, inByte: 16, inBit: 5, inLengthBit: 1, outReportId: 129, outByte: 32, outLengthByte: 1 },
       display3        : { inReportId: 1, inByte: 16, inBit: 2, inLengthBit: 1, outReportId: 129, outByte: 33, outLengthByte: 1 },
       display4        : { inReportId: 1, inByte: 16, inBit: 6, inLengthBit: 1, outReportId: 129, outByte: 34, outLengthByte: 1 },
-      performanceMode2: { inReportId: 1, inByte: 16, inBit: 1, inLengthBit: 1, outReportId: 129, outByte: 35, outLengthByte: 1 },
+      performanceModeRight: { inReportId: 1, inByte: 16, inBit: 1, inLengthBit: 1, outReportId: 129, outByte: 35, outLengthByte: 1 },
     },
     browseControls: {
       browse: {
