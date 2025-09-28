@@ -37,5 +37,7 @@ export class DisplayArea extends ComponentContainer<MixxxChannelGroup> {
       deck,
       io.performanceModeRight
     );
+
+    this.triggerComponents();
   }
 }

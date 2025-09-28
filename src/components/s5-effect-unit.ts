@@ -47,6 +47,8 @@ export class S5EffectUnit extends createCompContainer<Group>() {
         io.buttons
       );
     }
+
+    this.triggerComponents();
   }
 
   indicatorLoop() {

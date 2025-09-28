@@ -26,21 +26,6 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
         'sort_column',
         settings.librarySortableColumns()[this.currentSortedColumnIdx]
       );
-    } else if (this.starButtonPressed) {
-      if (this.isShifted) {
-        // FIXME doesn't exist, feature request needed
-        script.triggerControl(
-          this.group,
-          isRight ? 'track_color_prev' : 'track_color_next',
-          50
-        );
-      } else {
-        script.triggerControl(
-          this.group,
-          isRight ? 'stars_up' : 'stars_down',
-          50
-        );
-      }
     } else if (this.gridButtonPressed) {
       script.triggerControl(
         this.group,

@@ -3,6 +3,7 @@
  */
 
 import { HIDInputReport, HIDOutputReport } from '../hid-report';
+import { ButtonBrightnessOff, ButtonBrightnessOn } from '../settings';
 import type {
   ComponentConstructor,
   ControlInOptions,
@@ -255,14 +256,14 @@ export function IndicatorMixin<TBase extends ComponentConstructor>(
     indicatorTimer: number = 0;
     indicatorState: boolean = false;
 
-    output(value: number) {
+    output(pressed: number) {
       if (this.indicatorTimer !== 0) return;
-      this.send(value * 127);
+      this.send(pressed ? ButtonBrightnessOn : ButtonBrightnessOff);
     }
 
     indicatorCallback() {
       this.indicatorState = !this.indicatorState;
-      this.send(this.indicatorState ? 127 : 0);
+      this.send(this.indicatorState ? ButtonBrightnessOn : ButtonBrightnessOff);
     }
 
     indicator(on: boolean) {
@@ -303,7 +304,21 @@ export function SingleColorOutMixin<TBase extends ComponentConstructor>(
 
   return class extends BaseOut {
     output(value: number) {
-      this.send(value * 127);
+      this.send(value ? ButtonBrightnessOn : ButtonBrightnessOff);
+    }
+  };
+}
+
+export function DoubleColorOutMixin<TBase extends ComponentConstructor>(
+  Base: TBase
+) {
+  const BaseOut = OutMixin(Base);
+
+  return class extends BaseOut {
+    outputDoubleColor(brightness1: number, brightness2: number) {
+      this.outReport.data[this.io.outByte] = brightness1;
+      this.outReport.data[this.io.outByte + 1] = brightness2;
+      this.outReport.send();
     }
   };
 }

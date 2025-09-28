@@ -9,6 +9,9 @@ export const DefaultPadLayoutKeyboard = 'keyboard';
 // assign samplers to the crossfader on startup
 export const SamplerCrossfaderAssign = true;
 
+export const ButtonBrightnessOn = 127;
+export const ButtonBrightnessOff = 9;
+
 /*
  * Kontrol S5 hardware-specific constants
  */

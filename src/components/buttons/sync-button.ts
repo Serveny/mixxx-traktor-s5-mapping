@@ -6,14 +6,14 @@ import {
   ControlComponent,
   ControlInMixin,
   ControlOutMixin,
-  IndicatorMixin,
+  DoubleColorOutMixin,
   LongPressMixin,
   SetInOutKeyMixin,
   ShiftMixin,
 } from '../component';
 import type { S5Deck } from '../s5-deck';
 
-export class SyncButton extends IndicatorMixin(
+export class SyncButton extends DoubleColorOutMixin(
   SetInOutKeyMixin(
     LongPressMixin(
       ShiftMixin(ControlInMixin(ControlOutMixin(ControlComponent)))

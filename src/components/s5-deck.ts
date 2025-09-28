@@ -60,6 +60,8 @@ export class S5Deck extends Deck {
 
     this.touchStrip = new TouchStrip(this, io.touchStrip);
 
+    this.triggerComponents();
+
     // FIXME there is no feature about playlist at the moment, so we use this button to control the context menu, which has playlist control
     //this.libraryPlaylistButton = new Button({
     //group: '[Library]',
