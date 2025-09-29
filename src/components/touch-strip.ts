@@ -13,38 +13,41 @@ import type { S5Deck } from './s5-deck';
 
 export class TouchStrip extends ShiftMixin(InMixin(Component)) {
   private maxValue = 1024;
+  private center = this.maxValue / 2;
   private oldTime = 0;
   private oldValue = 0;
+  private bpm = 0;
 
-  private phase: TouchStripPhase;
+  private leds: TouchStripLEDs;
 
   constructor(public deck: S5Deck, stripIo: TouchStripMapping) {
     super({
       reports: deck.reports,
       io: stripIo.touch,
     });
-    this.phase = new TouchStripPhase(this, stripIo.phase);
+    this.leds = new TouchStripLEDs(this, stripIo.leds);
   }
 
   input(value: number) {
     if (this.isShifted) this.jumpToPos(value);
     else if (!engine.getValue(this.deck.group, 'play_indicator'))
       this.scratch(value);
+    else this.adjustPlaybackSpeed(value);
   }
 
   onShift(): void {
-    this.phase.setOutKey('playposition');
-    this.phase.lightAll(127, 0); // light bar blue
+    this.leds.setOutKey('playposition');
+    this.leds.lightAll(127, 0); // light bar blue
     const playPos = engine.getValue(this.deck.group, 'playposition');
-    this.phase.showPlayPositon(playPos);
+    this.leds.showPlayPositon(playPos);
   }
 
   onUnshift(): void {
-    this.phase.setOutKey('scratch2');
-    this.phase.lightAll(0, 0); // unlight bar
+    this.leds.setOutKey('scratch2');
+    this.leds.lightAll(0, 0); // unlight bar
 
     // Light the middle segment red
-    this.phase.lightRed(12, 127);
+    this.leds.lightRed(12, 127);
   }
 
   private jumpToPos(value: number) {
@@ -69,6 +72,17 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
     engine.scratchTick(deckNum, speed);
   }
 
+  private adjustPlaybackSpeed(value: number) {
+    if (this.bpm === 0) this.bpm = engine.getValue(this.deck.group, 'bpm');
+    if (!value) {
+      engine.setValue(this.deck.group, 'bpm', this.bpm);
+      this.bpm = 0;
+    } else {
+      const bpmToAdd = ((value - this.center) * 8) / this.center;
+      engine.setValue(this.deck.group, 'bpm', this.bpm + bpmToAdd);
+    }
+  }
+
   private calcSpeed(value: number): number {
     const time = Date.now();
     const deltaTime = time - this.oldTime;
@@ -82,7 +96,7 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
   }
 }
 
-class TouchStripPhase extends ControlOutMixin(
+class TouchStripLEDs extends ControlOutMixin(
   ControlComponent<MixxxChannelGroup, ControlOutOptions<MixxxChannelGroup>>
 ) {
   private oldPlayIdx = 0;

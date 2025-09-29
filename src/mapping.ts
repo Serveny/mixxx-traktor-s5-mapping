@@ -66,7 +66,7 @@ export const mapping: S5Mapping = {
       { inReportId: 1, inByte: 8, inBit: 0, inLengthBit: 1, outReportId: 128, outByte: 21, outLengthByte: 3 },
     ],
     touchStrip: {
-      phase: { 
+      leds: { 
         blue: { outReportId: 128, outByte: 54, outLengthByte: 25 },
         red : { outReportId: 128, outByte: 79, outLengthByte: 25 },
       },
@@ -220,7 +220,7 @@ export const mapping: S5Mapping = {
       { inReportId: 1, inByte: 16, inBit: 3, inLengthBit: 1, outReportId: 129, outByte: 21, outLengthByte: 3 },
     ],
     touchStrip: {
-      phase: { 
+      leds: { 
         blue: { outReportId: 129, outByte: 54, outLengthByte: 25 },
         red : { outReportId: 129, outByte: 79, outLengthByte: 25 },
       },

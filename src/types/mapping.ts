@@ -127,7 +127,7 @@ export interface S5FxUnitMapping {
 }
 
 export interface TouchStripMapping {
-  phase: BlueRedLeds;
+  leds: BlueRedLeds;
   touch: BytePosIn;
 }
 
