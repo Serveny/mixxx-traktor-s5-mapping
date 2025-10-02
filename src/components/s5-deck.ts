@@ -12,7 +12,6 @@ import { SyncButton } from './buttons/sync-button';
 import { Deck } from './deck';
 import type { Mixer } from './mixer';
 import { loopEncoder } from './encoders/loop-encoder';
-import { PerformanceRightButton } from './buttons/performance-right-button';
 import type { S5EffectUnit } from './s5-effect-unit';
 import { TouchStrip } from './touch-strip';
 import { DisplayArea } from './display-area';
@@ -53,6 +52,7 @@ export class S5Deck extends Deck {
     this.browserEncoder = new BrowserEncoder(this, io.browseControls.browse);
     this.browserBackButton = new BrowserBackButton(
       reports,
+      this.browserEncoder,
       io.browseControls.back
     );
 

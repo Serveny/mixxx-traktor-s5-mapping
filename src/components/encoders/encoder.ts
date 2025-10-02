@@ -18,7 +18,7 @@ export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
 ) {
   inBitLength = 4;
   lastValue: number | null = null;
-  max: number = 0;
+  max: number = 15;
   isPressed: boolean = false;
 
   press: EncoderPress;
