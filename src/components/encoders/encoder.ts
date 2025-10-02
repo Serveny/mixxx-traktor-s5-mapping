@@ -50,7 +50,7 @@ export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
     const oldValue = this.lastValue;
     this.lastValue = value;
 
-    if (oldValue === null || typeof this.onChange !== 'function') {
+    if (oldValue === null) {
       // This scenario happens at the controller initialisation. No real input to proceed
       return;
     }

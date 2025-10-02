@@ -26,14 +26,12 @@ export abstract class ComponentContainer<
       }
     }
   }
-  reconnectComponents(callback: (component: Button) => void) {
+  reconnectComponents(callback?: (component: Button) => void) {
     for (const component of this) {
       component.outDisconnect?.();
-      callback.call(this, component);
-
+      if (callback) callback.call(this, component);
       component.outConnect?.();
       component.outTrigger?.();
-      component.unshift?.();
     }
   }
 

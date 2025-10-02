@@ -1,5 +1,5 @@
 import { settings } from '../../settings';
-import { Encoder, TouchEncoder } from './encoder';
+import { TouchEncoder } from './encoder';
 import type { S5Deck } from '../s5-deck';
 import type { TouchEncoder as EncoderMapping } from '../../types/mapping';
 
@@ -70,7 +70,8 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
     // TODO
   }
 
-  onPress(): void {
+  onPress(pressed: number): void {
+    if (!pressed) return;
     if (this.libraryViewButtonPressed) {
       script.toggleControl('[Library]', 'sort_order');
     } else {
