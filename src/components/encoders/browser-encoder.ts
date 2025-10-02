@@ -76,8 +76,18 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
     //}
   }
 
-  onTouch(): void {
-    // TODO
+  onTouch(pressed: number): void {
+    const focused = engine.getValue('[Library]', 'focused_widget');
+    this.isPlaylistSelected = focused === 3;
+
+    if (
+      !pressed ||
+      this.isPlaylistSelected ||
+      focused === 2 ||
+      !settings.autoOpenBrowserOnTouch
+    )
+      return;
+    engine.setValue('[Library]', 'focused_widget', 3);
   }
 
   onPress(pressed: number): void {

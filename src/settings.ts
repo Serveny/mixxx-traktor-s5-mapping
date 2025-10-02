@@ -188,4 +188,6 @@ export const settings = {
   // Define custom default layout used by the pads, instead of intro/outro  and first 4 hotcues.
 
   defaultPadLayout: engine.getSetting('defaultPadLayout'),
+
+  autoOpenBrowserOnTouch: engine.getSetting('autoOpenBrowserOnTouch'),
 };
