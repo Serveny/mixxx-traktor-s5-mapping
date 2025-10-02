@@ -4,7 +4,7 @@ import type { S5Deck } from '../s5-deck';
 import type { TouchEncoder as EncoderMapping } from '../../types/mapping';
 
 export class BrowserEncoder extends TouchEncoder<'[Library]'> {
-  libraryPlayButtonPressed = false;
+  isPressedPreviewButton = false;
   gridButtonPressed = false;
   starButtonPressed = false;
   libraryViewButtonPressed = false;
@@ -90,18 +90,21 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
     engine.setValue('[Library]', 'focused_widget', 3);
   }
 
+  // -- 🚜 S5 Docs 2.1.2
   onPress(pressed: number): void {
     if (!pressed) return;
 
-    this.isPlaylistSelected =
-      engine.getValue('[Library]', 'focused_widget') === 3;
+    this.setPlaylistStatus(
+      engine.getValue('[Library]', 'focused_widget') === 3
+    );
 
-    if (this.isPlaylistSelected)
+    if (this.isPlaylistSelected) {
       engine.setValue(this.deck.group, 'LoadSelectedTrack', 1);
-    else {
+      this.setPlaylistStatus(false);
+    } else {
       // engine.setValue('[Playlist]', 'SelectPlaylist', 1);
       engine.setValue('[Library]', 'focused_widget', 3);
-      this.isPlaylistSelected = true;
+      this.setPlaylistStatus(true);
     }
 
     //const currentlyFocusWidget = engine.getValue('[Library]', 'focused_widget');
@@ -120,5 +123,14 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
     //} else {
     //script.triggerControl('[Library]', 'GoToItem', 50);
     //}
+  }
+
+  setPlaylistStatus(isActive: boolean) {
+    if (!isActive) {
+      this.deck.display.perfModeLeftButton.isSorting = false;
+      this.deck.display.perfModeLeftButton.output(0);
+      engine.setValue('[Skin]', 'show_maximized_library', 0);
+    }
+    this.isPlaylistSelected = isActive;
   }
 }

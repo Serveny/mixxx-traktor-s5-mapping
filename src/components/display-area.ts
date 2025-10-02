@@ -1,6 +1,7 @@
 import type { S5DisplayArea as DisplayAreaMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { PushButton, ToggleButton } from './buttons/button';
+import { PerformanceLeftButton } from './buttons/performance-left-button';
 import { PerformanceRightButton } from './buttons/performance-right-button';
 import { ComponentContainer } from './component-container';
 import type { S5Deck } from './s5-deck';
@@ -9,7 +10,7 @@ export class DisplayArea extends ComponentContainer<MixxxChannelGroup> {
   // settingsButton: PushButton;
   displayButton1: PushButton;
   // displayButton2: PushButton;
-  // perfModeRightLeftButton: PerformanceRightButton;
+  perfModeLeftButton: PerformanceLeftButton;
   viewButton: ToggleButton;
   // displayButton3: PushButton;
   // displayButton4: PushButton;
@@ -25,6 +26,12 @@ export class DisplayArea extends ComponentContainer<MixxxChannelGroup> {
       io: io.display1,
     });
 
+    this.perfModeLeftButton = new PerformanceLeftButton(
+      deck,
+      io.performanceModeLeft
+    );
+
+    // -- 🚜 S5 Docs 2.1.2
     this.viewButton = new ToggleButton({
       group: '[Skin]',
       inKey: 'show_maximized_library',

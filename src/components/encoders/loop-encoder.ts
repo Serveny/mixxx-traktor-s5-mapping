@@ -5,12 +5,21 @@ import { settings, wheelModes } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 
 export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
+  // -- 🚜 S5 Docs 2.1.5
+  // TITLE, ARTIST, BPM, IMPORT DATE, #, and KEY
+  sortCategories = [2, 1, 15, 17, 9, 20];
+  sortCategoryIdx = 0;
+
   constructor(private deck: S5Deck, io: EncoderMapping) {
     super(deck.group, 'loop_in', deck.reports, io);
   }
 
   onChange(isRight: boolean) {
-    if (
+    if (this.deck.display.perfModeLeftButton.isSorting)
+      this.switchSortCategory(isRight);
+    if (this.deck.browserEncoder.isPlaylistSelected) {
+      this.browsePreviewTrack(isRight);
+    } else if (
       this.deck.wheelMode === wheelModes.loopIn ||
       this.deck.wheelMode === wheelModes.loopOut
     ) {
@@ -40,6 +49,24 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
     }
   }
 
+  // -- 🚜 S5 Docs 2.1.4
+  private browsePreviewTrack(isRight: boolean) {
+    engine.setValue('[PreviewDeck1]', 'beatjump', isRight ? 16 : -16);
+  }
+
+  // -- 🚜 S5 Docs 2.1.5
+  private switchSortCategory(isRight: boolean) {
+    this.sortCategoryIdx = Math.abs(
+      (isRight ? this.sortCategoryIdx + 1 : this.sortCategoryIdx - 1) %
+        this.sortCategories.length
+    );
+    engine.setValue(
+      '[Library]',
+      'sort_column',
+      this.sortCategories[this.sortCategoryIdx]
+    );
+  }
+
   onTouch(): void {
     // TODO
   }
@@ -49,16 +76,22 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
     if (!pressed) {
       return;
     }
-    // const loopEnabled = engine.getValue(this.group, 'loop_enabled');
-    if (!this.isShifted) {
+    if (this.deck.browserEncoder.isPlaylistSelected) this.previewTrack();
+    else if (!this.isShifted) {
       script.triggerControl(this.group, 'beatloop_activate', 50);
     } else {
       script.triggerControl(this.group, 'reloop_toggle', 50);
     }
   }
 
-  // FIXME not supported, feature request
-  // onLongPress: function(){
-  //     script.triggerControl("[Library]", "search_related_track", engine.getValue("[Library]", "sort_column"));
-  // }
+  // -- 🚜 S5 Docs 2.1.4
+  private previewTrack() {
+    // TODO: Check original behavior in Traktor Pro
+    const isPlaying = engine.getValue('[PreviewDeck1]', 'play');
+    script.triggerControl(
+      '[PreviewDeck1]',
+      isPlaying ? 'stop' : 'LoadSelectedTrackAndPlay',
+      50
+    );
+  }
 }

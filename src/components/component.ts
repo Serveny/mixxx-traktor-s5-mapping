@@ -303,6 +303,7 @@ export function SingleColorOutMixin<TBase extends ComponentConstructor>(
   const BaseOut = OutMixin(Base);
 
   return class extends BaseOut {
+    // IMPORTANT: This output function excepts ZERO or ONE
     output(value: number) {
       this.send(value ? ButtonBrightnessOn : ButtonBrightnessOff);
     }

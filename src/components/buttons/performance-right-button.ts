@@ -21,6 +21,6 @@ export class PerformanceRightButton extends Button {
       script.triggerControl(this.group, 'eject', 50);
     }
 
-    this.deck.browserEncoder.libraryPlayButtonPressed = pressed > 0;
+    this.deck.browserEncoder.isPressedPreviewButton = pressed > 0;
   }
 }

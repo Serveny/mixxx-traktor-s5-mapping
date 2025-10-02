@@ -189,5 +189,6 @@ export const settings = {
 
   defaultPadLayout: engine.getSetting('defaultPadLayout'),
 
+  // -- 🚜 S5 Docs 2.1.3
   autoOpenBrowserOnTouch: engine.getSetting('autoOpenBrowserOnTouch'),
 };
