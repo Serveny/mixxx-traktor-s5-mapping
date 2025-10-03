@@ -15,9 +15,13 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
   }
 
   onChange(isRight: boolean) {
-    if (this.deck.display.perfModeLeftButton.isSorting)
+    // -- 🚜 S5 Docs 2.1.5
+    if (this.deck.display.perfModeLeftButton.isSorting) {
       this.switchSortCategory(isRight);
-    if (this.deck.browserEncoder.isPlaylistSelected) {
+    }
+
+    // -- 🚜 S5 Docs 2.1.4
+    else if (this.deck.browserEncoder.isPlaylistSelected) {
       this.browsePreviewTrack(isRight);
     } else if (
       this.deck.wheelMode === wheelModes.loopIn ||
@@ -49,22 +53,16 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
     }
   }
 
-  // -- 🚜 S5 Docs 2.1.4
   private browsePreviewTrack(isRight: boolean) {
     engine.setValue('[PreviewDeck1]', 'beatjump', isRight ? 16 : -16);
   }
 
-  // -- 🚜 S5 Docs 2.1.5
   private switchSortCategory(isRight: boolean) {
-    this.sortCategoryIdx = Math.abs(
-      (isRight ? this.sortCategoryIdx + 1 : this.sortCategoryIdx - 1) %
-        this.sortCategories.length
-    );
-    engine.setValue(
-      '[Library]',
-      'sort_column',
-      this.sortCategories[this.sortCategoryIdx]
-    );
+    const len = this.sortCategories.length;
+    const change = isRight ? 1 : -1;
+    this.sortCategoryIdx = (this.sortCategoryIdx + change + len) % len;
+    const newCat = this.sortCategories[this.sortCategoryIdx];
+    engine.setValue('[Library]', 'sort_column', newCat);
   }
 
   onTouch(): void {
