@@ -1,4 +1,4 @@
-import type { Component, ControlComponent } from '../components/component';
+import type { ControlComponent } from '../components/component';
 import type { HIDReportHodler } from '../hid-report';
 import type { BytePosIn, BytePosInOut, BytePosOut } from './mapping';
 import type { MixxxGroup, MixxxKey } from './mixxx-controls';

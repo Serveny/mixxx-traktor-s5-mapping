@@ -32,7 +32,7 @@ export class ControlComponent<
   group: TGroup;
   constructor(...args: [P]) {
     super(...args);
-    this.group = (args[0] as { group: TGroup }).group;
+    this.group = args[0].group;
   }
 }
 
