@@ -4,19 +4,23 @@ import { settings } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import {
   ControlComponent,
-  ControlInMixin,
-  ControlOutMixin,
-  DoubleColorOutMixin,
   LongPressMixin,
   SetInOutKeyMixin,
   ShiftMixin,
+  SingleColorOutMixin,
 } from '../component';
 import type { S5Deck } from '../s5-deck';
+import type { ControlInOutOptions } from '../../types/component';
 
-export class SyncButton extends DoubleColorOutMixin(
-  SetInOutKeyMixin(
+export class SyncButton extends SingleColorOutMixin(
+  ShiftMixin(
     LongPressMixin(
-      ShiftMixin(ControlInMixin(ControlOutMixin(ControlComponent)))
+      SetInOutKeyMixin(
+        ControlComponent<
+          MixxxChannelGroup,
+          ControlInOutOptions<MixxxChannelGroup>
+        >
+      )
     )
   )
 ) {
@@ -30,19 +34,20 @@ export class SyncButton extends DoubleColorOutMixin(
       io,
     });
   }
-  onLongPress() {
-    if (this.isShifted) {
-      engine.setValue(this.group, 'sync_key', 1);
-      engine.setValue(this.group, 'sync_key', 0);
-    } else {
-      script.triggerControl(this.group, 'beatsync', 50);
-    }
-  }
 
   onShortRelease() {
     script.toggleControl(this.group, this.inKey);
     if (!this.isShifted) {
       engine.softTakeover(this.group, 'rate', true);
+    }
+  }
+
+  onLongPress() {
+    if (this.isShifted) {
+      engine.setValue(this.group, 'sync_key', 1);
+      engine.setValue(this.group, 'sync_key', 0);
+    } else {
+      script.toggleControl(this.group, 'sync_enabled');
     }
   }
 
