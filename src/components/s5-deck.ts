@@ -15,22 +15,26 @@ import { loopEncoder } from './encoders/loop-encoder';
 import type { S5EffectUnit } from './s5-effect-unit';
 import { TouchStrip } from './touch-strip';
 import { DisplayArea } from './display-area';
-import { HotcueButton } from './buttons/hotcue-button';
+import { PadButton } from './buttons/pad-button';
+import { HotcueModeButton } from './buttons/hotcue-mode-button';
+import type { MixxxChannelGroup } from '../types/mixxx-controls';
+import { FreezeButton } from './buttons/freeze-button';
 
 export class S5Deck extends Deck {
   display: DisplayArea;
+  browserEncoder: BrowserEncoder;
+  browserBackButton: BrowserBackButton;
+  deckButton: DeckButton;
+  loopEncoder: loopEncoder;
+  hotcueModeButton: HotcueModeButton;
+  freezeButton: FreezeButton;
+  fluxButton: FluxButton;
+  pads: PadButton[] = [];
+  touchStrip: TouchStrip;
   shiftButton: ShiftButton;
   syncButton: SyncButton;
   cueButton: CueButton;
   playButton: PlayButton;
-  fluxButton: FluxButton;
-  deckButton: DeckButton;
-  browserEncoder: BrowserEncoder;
-  browserBackButton: BrowserBackButton;
-  loopEncoder: loopEncoder;
-  pads: HotcueButton[] = [];
-  touchStrip: TouchStrip;
-
   constructor(
     decks: number[],
     public effectUnit: S5EffectUnit,
@@ -42,25 +46,30 @@ export class S5Deck extends Deck {
 
     this.display = new DisplayArea(this, io.displayAreaAndControls);
 
-    const transCltr = io.transportControls;
-    this.shiftButton = new ShiftButton(this, transCltr.shift);
-    this.syncButton = new SyncButton(this, reports, transCltr.sync);
-    this.cueButton = new CueButton(this, transCltr.cue);
-    this.playButton = new PlayButton(this, reports, transCltr.play);
-
-    this.fluxButton = new FluxButton(this, io.flux);
-    this.deckButton = new DeckButton(this, io.deck);
-
     this.browserEncoder = new BrowserEncoder(this, io.browseControls.browse);
     this.browserBackButton = new BrowserBackButton(
       this.display,
       this.reports,
       io.browseControls.back
     );
-
+    this.deckButton = new DeckButton(this, io.deck);
     this.loopEncoder = new loopEncoder(this, io.loop);
+    this.freezeButton = new FreezeButton(this, io.modeSelect.freeze);
+
+    this.hotcueModeButton = new HotcueModeButton(
+      this,
+      io.modeSelect.hotcueMode
+    );
+
+    this.fluxButton = new FluxButton(this, io.flux);
 
     this.touchStrip = new TouchStrip(this, io.touchStrip);
+
+    const transCltr = io.transportControls;
+    this.shiftButton = new ShiftButton(this, transCltr.shift);
+    this.syncButton = new SyncButton(this, reports, transCltr.sync);
+    this.cueButton = new CueButton(this, transCltr.cue);
+    this.playButton = new PlayButton(this, reports, transCltr.play);
 
     this.triggerComponents();
 
@@ -135,7 +144,7 @@ export class S5Deck extends Deck {
     //this.keyboardOffset = 9;
 
     for (let padNum = 1; padNum < 9; padNum++) {
-      this.pads.push(new HotcueButton(padNum, this, io.pads[padNum - 1]));
+      this.pads.push(new PadButton(padNum, this, io.pads[padNum - 1]));
     }
     //const hotcuePage2 = Array(8).fill({});
     //const hotcuePage3 = Array(8).fill({});
@@ -177,33 +186,6 @@ export class S5Deck extends Deck {
     //});
     //i++;
     //}
-
-    //const switchPadLayer = (deck, newLayer) => {
-    //let index = 0;
-    //for (let pad of deck.pads) {
-    //pad.outDisconnect();
-    //pad.inDisconnect();
-
-    //pad = newLayer[index];
-    //Object.assign(pad, io.pads[index]);
-    //if (!(pad instanceof HotcueButton)) {
-    //pad.color = deck.color;
-    //}
-    //// don't change the group of SamplerButtons
-    //if (!(pad instanceof SamplerButton)) {
-    //pad.group = deck.group;
-    //}
-    //if (pad.inReport === undefined) {
-    //pad.inReport = inReports[1];
-    //}
-    //pad.outReport = outReport;
-    //pad.inConnect();
-    //pad.outConnect();
-    //pad.outTrigger();
-    //deck.pads[index] = pad;
-    //index++;
-    //}
-    //};
 
     //this.padLayers = {
     //defaultLayer: 0,
@@ -664,4 +646,37 @@ export class S5Deck extends Deck {
     //}
     //}
   }
+
+  switchDeck(newGroup: MixxxChannelGroup) {
+    this.hotcueModeButton.output(0);
+    this.freezeButton.output(0);
+    super.switchDeck(newGroup);
+  }
+
+  //switchPadLayer(deck, newLayer) {
+  //let index = 0;
+  //for (let pad of deck.pads) {
+  //pad.outDisconnect();
+  //pad.inDisconnect();
+
+  //pad = newLayer[index];
+  //Object.assign(pad, io.pads[index]);
+  //if (!(pad instanceof HotcueButton)) {
+  //pad.color = deck.color;
+  //}
+  //// don't change the group of SamplerButtons
+  //if (!(pad instanceof SamplerButton)) {
+  //pad.group = deck.group;
+  //}
+  //if (pad.inReport === undefined) {
+  //pad.inReport = inReports[1];
+  //}
+  //pad.outReport = outReport;
+  //pad.inConnect();
+  //pad.outConnect();
+  //pad.outTrigger();
+  //deck.pads[index] = pad;
+  //index++;
+  //}
+  //};
 }

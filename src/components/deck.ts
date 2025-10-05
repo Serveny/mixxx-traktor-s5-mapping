@@ -1,7 +1,7 @@
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { createCompContainer } from './component-container';
 
-export class Deck extends createCompContainer<MixxxChannelGroup>() {
+export abstract class Deck extends createCompContainer<MixxxChannelGroup>() {
   declare group: MixxxChannelGroup;
   currentDeckIdx: number = 0;
   settings?: object;
@@ -22,7 +22,7 @@ export class Deck extends createCompContainer<MixxxChannelGroup>() {
   switchDeck(newGroup: MixxxChannelGroup) {
     engine.setValue(this.group, 'scratch2_enable', 0);
     this.group = newGroup;
-    this.reconnectComponents()
+    this.reconnectComponents();
   }
 
   static groupForNumber(deckNumber: number): MixxxChannelGroup {

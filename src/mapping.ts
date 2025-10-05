@@ -51,7 +51,7 @@ export const mapping: S5Mapping = {
       back: { inReportId: 1, inByte: 6, inBit: 0, inLengthBit: 1, outReportId: 128, outByte: 36, outLengthByte: 1 },
     },
     modeSelect: {
-      hotcue: { inReportId: 1, inByte: 9, inBit: 6, inLengthBit: 1, outReportId: 128, outByte: 42, outLengthByte: 2 },
+      hotcueMode: { inReportId: 1, inByte: 9, inBit: 6, inLengthBit: 1, outReportId: 128, outByte: 42, outLengthByte: 2 },
       freeze: { inReportId: 1, inByte: 9, inBit: 1, inLengthBit: 1, outReportId: 128, outByte: 44, outLengthByte: 2 },
       remix : { inReportId: 1, inByte: 9, inBit: 7, inLengthBit: 1, outReportId: 128, outByte: 46, outLengthByte: 2 },
     },
@@ -205,7 +205,7 @@ export const mapping: S5Mapping = {
       back: { inReportId: 1, inByte: 14, inBit: 1, inLengthBit: 1, outReportId: 129, outByte: 36, outLengthByte: 1 },
     },
     modeSelect: {
-      hotcue: { inReportId: 1, inByte: 16, inBit: 0, inLengthBit: 1, outReportId: 129, outByte: 42, outLengthByte: 2 },
+      hotcueMode: { inReportId: 1, inByte: 16, inBit: 0, inLengthBit: 1, outReportId: 129, outByte: 42, outLengthByte: 2 },
       freeze: { inReportId: 1, inByte: 16, inBit: 7, inLengthBit: 1, outReportId: 129, outByte: 44, outLengthByte: 2 },
       remix : { inReportId: 1, inByte: 15, inBit: 7, inLengthBit: 1, outReportId: 129, outByte: 46, outLengthByte: 2 },
     },

@@ -16,6 +16,8 @@ export class DeckButton extends OutMixin(InMixin(Component)) {
     this.output();
   }
 
+  // -- 🚜 S5 Docs 2.5:
+  // "If Deck A,B is focused the DECK button will be lit in blue. If Deck C,D is focused, the DECK button be lit in white."
   output() {
     if (this.deck.currentDeckIdx === 0) {
       this.outReport.data[this.io.outByte] = 0;

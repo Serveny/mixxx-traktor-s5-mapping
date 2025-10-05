@@ -8,6 +8,10 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 - ✅ Created basic TypeScript code foundation & types
 - ✅ Working components: Loop encoder, crossfader, cue button, play button, volume meter
 
+### Known bugs
+
+- 🤬 Shift function broken
+
 ## How to use
 
 1. Install dev dependencies: `npm install`

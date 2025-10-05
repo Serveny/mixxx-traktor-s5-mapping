@@ -207,7 +207,7 @@ export function ShiftMixin<TBase extends ComponentConstructor>(Base: TBase) {
   };
 }
 
-export function LongPressMixin<TBase extends ControlComponentConstructor>(
+export function LongPressMixin<TBase extends ComponentConstructor>(
   Base: TBase
 ) {
   return class extends Base {

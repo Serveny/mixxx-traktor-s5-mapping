@@ -15,7 +15,7 @@ import type { S5Deck } from '../s5-deck';
 /*
  * Represent a pad button that interact with a hotcue (set, activate or clear)
  */
-export class HotcueButton extends RgbOutMixin(
+export class PadButton extends RgbOutMixin(
   ShiftMixin(
     ControlInMixin(
       ControlOutMixin(

@@ -98,7 +98,7 @@ export interface S5DeckMapping {
     back: Btn;
   };
   modeSelect: {
-    hotcue: Btn;
+    hotcueMode: Btn;
     freeze: Btn;
     remix: Btn;
   };
