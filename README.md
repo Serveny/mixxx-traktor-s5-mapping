@@ -14,10 +14,12 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 
 ## How to use
 
-1. Install dev dependencies: `npm install`
-2. Check if the files referenced to in tsconfig.json exits or change paths to your mixxx files folder
-3. Add symlink from `../attic/mappings/controllers/`to your mixxx controllers folder (f.e: `/home/[user]/software/mixxx/res/controllers`)
-4. Build JS: `vite build` (The buildscript will copy the builded JS into the controllers folder)
+1. Install the <a href="https://mixxx.org/">Mixxx</a> software
+2. Clone the repository: `git clone git@github.com:Serveny/mixxx-traktor-s5-mapping.git`
+3. Open repository directory and install dev dependencies: `npm install`
+4. Check if the files referenced to in tsconfig.json exits or change paths to your mixxx files folder
+5. Add symlink from `../attic/mappings/controllers/`to your mixxx controllers folder (f.e: `/home/[user]/software/mixxx/res/controllers`)
+6. Build JS: `vite build` (The buildscript will copy the builded JS into the controllers folder)
 
 Mixxx debug command on linux: `mixxx --controller-debug`
 

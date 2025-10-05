@@ -99,6 +99,11 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
     // "Press the BROWSE encoder to load a track"
     if (this.deck.display.isPlaylistSelected) {
       engine.setValue(this.deck.group, 'LoadSelectedTrack', 1);
+
+      // -- 🚜 S5 Docs 2.7
+      // "On a Track Deck in HOTCUE mode, pad 1 always represents the Start Cue Point that will be assigned automatically as soon as a track is loaded."
+      if (engine.getValue(this.deck.group, 'hotcue_1_status') === 0)
+        engine.setValue(this.deck.group, 'hotcue_1_activate', 1);
       this.deck.display.setPlaylistStatus(false);
     }
 

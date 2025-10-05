@@ -116,7 +116,7 @@ export function ControlInMixin<TBase extends ControlComponentConstructor>(
 
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ControlInOptions<any>;
+      const opts = args[0] as ControlInOptions<MixxxGroup>;
 
       this.inKey = opts.inKey;
     }
@@ -148,7 +148,7 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
     outConnection: ScriptConnection;
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ControlOutOptions<any>;
+      const opts = args[0] as ControlOutOptions<MixxxGroup>;
 
       this.outKey = opts.outKey;
       this.outConnection = this.outConnect();
