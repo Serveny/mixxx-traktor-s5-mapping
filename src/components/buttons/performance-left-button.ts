@@ -2,23 +2,29 @@ import type { Btn as ButtonMapping } from '../../types/mapping';
 import type { S5Deck } from '../s5-deck';
 import { Component, InMixin, SingleColorOutMixin } from '../component';
 import type { ComponentOptions } from '../../types/component';
+import type { DisplayArea } from '../display-area';
+import type { HIDReportHodler } from '../../hid-report';
 
 export class PerformanceLeftButton extends SingleColorOutMixin(
   InMixin(Component<ComponentOptions>)
 ) {
-  isSorting = false;
-
-  constructor(private deck: S5Deck, io: ButtonMapping) {
+  constructor(
+    private display: DisplayArea,
+    reports: HIDReportHodler,
+    io: ButtonMapping
+  ) {
     super({
-      reports: deck.reports,
+      reports,
       io,
     });
+    this.output(0);
   }
 
   // -- 🚜 S5 Docs 2.1.5
+  // "Press the left Performance Mode button to enable SORT BY in the left bottom on the display"
   input(pressed: number) {
-    if (!pressed || !this.deck.browserEncoder.isPlaylistSelected) return;
-    this.isSorting = !this.isSorting;
-    this.output(this.isSorting ? 1 : 0);
+    if (!pressed || !this.display.isPlaylistSelected) return;
+    this.display.isSorting = !this.display.isSorting;
+    this.output(this.display.isSorting ? 1 : 0);
   }
 }

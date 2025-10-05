@@ -51,8 +51,8 @@ export class S5Deck extends Deck {
 
     this.browserEncoder = new BrowserEncoder(this, io.browseControls.browse);
     this.browserBackButton = new BrowserBackButton(
-      reports,
-      this.browserEncoder,
+      this.display,
+      this.reports,
       io.browseControls.back
     );
 

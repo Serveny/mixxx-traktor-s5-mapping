@@ -189,6 +189,7 @@ export const settings = {
 
   defaultPadLayout: engine.getSetting('defaultPadLayout'),
 
-  // -- 🚜 S5 Docs 2.1.3
+  // -- 🚜 S5 Docs 2.1.3:
+  // "to use touch interactions when browsing, the touch sensitivity for the BROWSE encoder has to be enabled"
   autoOpenBrowserOnTouch: engine.getSetting('autoOpenBrowserOnTouch'),
 };

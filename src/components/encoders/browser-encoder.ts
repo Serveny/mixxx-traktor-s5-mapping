@@ -10,15 +10,12 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
   libraryViewButtonPressed = false;
   libraryPlaylistButtonPressed = false;
   currentSortedColumnIdx = -1;
-  isPlaylistSelected = false;
   constructor(private deck: S5Deck, io: EncoderMapping) {
     super('[Library]', 'MoveFocus', deck.reports, io);
   }
 
   onChange(isRight: boolean) {
-    const focusedWidget = engine.getValue('[Library]', 'focused_widget');
-
-    if (this.isPlaylistSelected) {
+    if (this.deck.display.isPlaylistSelected) {
       engine.setValue(
         '[Playlist]',
         isRight ? 'SelectNextTrack' : 'SelectPrevTrack',
@@ -78,11 +75,11 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 
   onTouch(pressed: number): void {
     const focused = engine.getValue('[Library]', 'focused_widget');
-    this.isPlaylistSelected = focused === 3;
+    this.deck.display.isPlaylistSelected = focused === 3;
 
     if (
       !pressed ||
-      this.isPlaylistSelected ||
+      this.deck.display.isPlaylistSelected ||
       focused === 2 ||
       !settings.autoOpenBrowserOnTouch
     )
@@ -90,21 +87,27 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
     engine.setValue('[Library]', 'focused_widget', 3);
   }
 
-  // -- 🚜 S5 Docs 2.1.2
   onPress(pressed: number): void {
     if (!pressed) return;
 
-    this.setPlaylistStatus(
-      engine.getValue('[Library]', 'focused_widget') === 3
-    );
+    const isFocusTrackTable =
+      engine.getValue('[Library]', 'focused_widget') === 3;
 
-    if (this.isPlaylistSelected) {
+    this.deck.display.setPlaylistStatus(isFocusTrackTable);
+
+    // -- 🚜 S5 Docs 2.1.2
+    // "Press the BROWSE encoder to load a track"
+    if (this.deck.display.isPlaylistSelected) {
       engine.setValue(this.deck.group, 'LoadSelectedTrack', 1);
-      this.setPlaylistStatus(false);
-    } else {
-      // engine.setValue('[Playlist]', 'SelectPlaylist', 1);
+      this.deck.display.setPlaylistStatus(false);
+    }
+
+    // -- 🚜 S5 Docs 2.1.2
+    // "Press the BROWSE encoder to open a folder."
+    else {
       engine.setValue('[Library]', 'focused_widget', 3);
-      this.setPlaylistStatus(true);
+      this.deck.display.setPlaylistStatus(true);
+      // engine.setValue('[Playlist]', 'SelectPlaylist', 1);
     }
 
     //const currentlyFocusWidget = engine.getValue('[Library]', 'focused_widget');
@@ -123,14 +126,5 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
     //} else {
     //script.triggerControl('[Library]', 'GoToItem', 50);
     //}
-  }
-
-  setPlaylistStatus(isActive: boolean) {
-    if (!isActive) {
-      this.deck.display.perfModeLeftButton.isSorting = false;
-      this.deck.display.perfModeLeftButton.output(0);
-      engine.setValue('[Skin]', 'show_maximized_library', 0);
-    }
-    this.isPlaylistSelected = isActive;
   }
 }

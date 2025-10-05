@@ -3,10 +3,11 @@ import type { TouchEncoder as EncoderMapping } from '../../types/mapping';
 import { S5Deck } from '../s5-deck';
 import { settings, wheelModes } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
+import type { DisplayArea } from '../display-area';
 
 export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
   // -- 🚜 S5 Docs 2.1.5
-  // TITLE, ARTIST, BPM, IMPORT DATE, #, and KEY
+  // "you can sort the tracks by categories TITLE, ARTIST, BPM, IMPORT DATE, #, and KEY"
   sortCategories = [2, 1, 15, 17, 9, 20];
   sortCategoryIdx = 0;
 
@@ -16,12 +17,14 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 
   onChange(isRight: boolean) {
     // -- 🚜 S5 Docs 2.1.5
-    if (this.deck.display.perfModeLeftButton.isSorting) {
+    // "Rotate the LOOP encoder until the desired category is selected in the SORT BY pop-up window. The tracks will then be resorted."
+    if (this.deck.display.isSorting) {
       this.switchSortCategory(isRight);
     }
 
     // -- 🚜 S5 Docs 2.1.4
-    else if (this.deck.browserEncoder.isPlaylistSelected) {
+    // "Press the LOOP encoder to start preview of the selected track."
+    else if (this.deck.display.isPlaylistSelected) {
       this.browsePreviewTrack(isRight);
     } else if (
       this.deck.wheelMode === wheelModes.loopIn ||
@@ -74,15 +77,25 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
     if (!pressed) {
       return;
     }
-    if (this.deck.browserEncoder.isPlaylistSelected) this.previewTrack();
-    else if (!this.isShifted) {
+    if (this.deck.display.isPlaylistSelected) {
+      // -- 🚜 S5 Docs 2.1.5:
+      // "Press the LOOP encoder to switch between ascending and descending order"
+      if (this.deck.display.isSorting) {
+        script.toggleControl('[Library]', 'sort_order');
+      }
+
+      // -- 🚜 S5 Docs 2.1.4:
+      // "Press the LOOP encoder to start preview of the selected track."
+      else {
+        this.previewTrack();
+      }
+    } else if (!this.isShifted) {
       script.triggerControl(this.group, 'beatloop_activate', 50);
     } else {
       script.triggerControl(this.group, 'reloop_toggle', 50);
     }
   }
 
-  // -- 🚜 S5 Docs 2.1.4
   private previewTrack() {
     // TODO: Check original behavior in Traktor Pro
     const isPlaying = engine.getValue('[PreviewDeck1]', 'play');
