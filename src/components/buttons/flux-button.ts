@@ -1,7 +1,10 @@
 import { wheelModes } from '../../settings';
 import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
-import type { MixxxChannelGroup, MixxxKey } from '../../types/mixxx-controls';
+import type {
+  MixxxChannelGroup,
+  MixxxControlName,
+} from '../../types/mixxx-controls';
 import {
   ControlComponent,
   ControlInMixin,

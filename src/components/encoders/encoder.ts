@@ -4,7 +4,7 @@ import type {
   TouchEncoder as TouchEncoderMapping,
 } from '../../types/mapping';
 import type { ControlInOptions, InOptions } from '../../types/component';
-import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
+import type { MixxxGroup, MixxxControlName } from '../../types/mixxx-controls';
 import {
   Component,
   InMixin,
@@ -25,7 +25,7 @@ export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
 
   constructor(
     group: TGroup,
-    inKey: MixxxKey[TGroup],
+    inKey: MixxxControlName[TGroup],
     reports: HIDReportHodler,
     io: EncoderMapping
   ) {
@@ -72,7 +72,7 @@ export abstract class TouchEncoder<
   touch: EncoderTouch;
   constructor(
     group: TGroup,
-    inKey: MixxxKey[TGroup],
+    inKey: MixxxControlName[TGroup],
     reports: HIDReportHodler,
     io: TouchEncoderMapping
   ) {

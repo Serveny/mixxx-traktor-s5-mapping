@@ -1,7 +1,7 @@
 import type { ControlComponent } from '../components/component';
 import type { HIDReportHodler } from '../hid-report';
 import type { BytePosIn, BytePosInOut, BytePosOut } from './mapping';
-import type { MixxxGroup, MixxxKey } from './mixxx-controls';
+import type { MixxxGroup, MixxxControlName } from './mixxx-controls';
 
 // export type ComponentConstructor<T extends any[] = any[], R = {}> = new (...args: T) => R;
 export type ComponentConstructor<T = {}> = new (...args: any[]) => T;
@@ -27,7 +27,7 @@ export interface ControlOptions<TGroup extends MixxxGroup>
 export interface ControlInOptions<TGroup extends MixxxGroup>
   extends InOptions,
     ControlOptions<TGroup> {
-  inKey: MixxxKey[TGroup];
+  inKey: MixxxControlName[TGroup];
 }
 
 export interface OutOptions extends ComponentOptions {
@@ -39,7 +39,7 @@ export interface OutOptions extends ComponentOptions {
 export interface ControlOutOptions<TGroup extends MixxxGroup>
   extends OutOptions,
     ControlOptions<TGroup> {
-  outKey: MixxxKey[TGroup];
+  outKey: MixxxControlName[TGroup];
 }
 
 export interface ControlInOutOptions<TGroup extends MixxxGroup>

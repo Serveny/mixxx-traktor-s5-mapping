@@ -15,6 +15,7 @@ import { loopEncoder } from './encoders/loop-encoder';
 import type { S5EffectUnit } from './s5-effect-unit';
 import { TouchStrip } from './touch-strip';
 import { DisplayArea } from './display-area';
+import { HotcueButton } from './buttons/hotcue-button';
 
 export class S5Deck extends Deck {
   display: DisplayArea;
@@ -27,6 +28,7 @@ export class S5Deck extends Deck {
   browserEncoder: BrowserEncoder;
   browserBackButton: BrowserBackButton;
   loopEncoder: loopEncoder;
+  pads: HotcueButton[] = [];
   touchStrip: TouchStrip;
 
   constructor(
@@ -132,33 +134,9 @@ export class S5Deck extends Deck {
     //this.keyboardPlayMode = null;
     //this.keyboardOffset = 9;
 
-    //this.pads = Array(8).fill(new Component());
-    //const defaultPadLayer = [
-    //new IntroOutroButton({
-    //cueBaseName: 'intro_start',
-    //}),
-    //new IntroOutroButton({
-    //cueBaseName: 'intro_end',
-    //}),
-    //new IntroOutroButton({
-    //cueBaseName: 'outro_start',
-    //}),
-    //new IntroOutroButton({
-    //cueBaseName: 'outro_end',
-    //}),
-    //new HotcueButton({
-    //number: 1,
-    //}),
-    //new HotcueButton({
-    //number: 2,
-    //}),
-    //new HotcueButton({
-    //number: 3,
-    //}),
-    //new HotcueButton({
-    //number: 4,
-    //}),
-    //];
+    for (let padNum = 1; padNum < 9; padNum++) {
+      this.pads.push(new HotcueButton(padNum, this, io.pads[padNum - 1]));
+    }
     //const hotcuePage2 = Array(8).fill({});
     //const hotcuePage3 = Array(8).fill({});
     //const samplerOrBeatloopRollPage = Array(8).fill({});

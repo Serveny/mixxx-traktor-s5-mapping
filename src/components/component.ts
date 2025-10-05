@@ -18,7 +18,7 @@ import type { BytePosIn, BytePosOut } from '../types/mapping';
 import type {
   MixxxChannelGroup,
   MixxxGroup,
-  MixxxKey,
+  MixxxControlName,
 } from '../types/mixxx-controls';
 
 export class Component<P extends ComponentOptions> {
@@ -112,7 +112,7 @@ export function ControlInMixin<TBase extends ControlComponentConstructor>(
   const BaseIn = InMixin(Base);
 
   return class extends BaseIn {
-    inKey: MixxxKey[keyof MixxxKey];
+    inKey: MixxxControlName[keyof MixxxControlName];
 
     constructor(...args: any[]) {
       super(...args);
@@ -125,7 +125,7 @@ export function ControlInMixin<TBase extends ControlComponentConstructor>(
       engine.setValue(this.group, this.inKey, pressed);
     }
 
-    setInKey(key: MixxxKey[MixxxChannelGroup]) {
+    setInKey(key: MixxxControlName[MixxxChannelGroup]) {
       if (key === this.inKey) {
         return;
       }
@@ -144,7 +144,7 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
   const BaseOut = OutMixin(Base);
 
   return class extends BaseOut {
-    outKey: MixxxKey[keyof MixxxKey];
+    outKey: MixxxControlName[keyof MixxxControlName];
     outConnection: ScriptConnection;
     constructor(...args: any[]) {
       super(...args);
@@ -175,7 +175,7 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
       this.outConnection.disconnect();
     }
 
-    setOutKey(key: MixxxKey[MixxxChannelGroup]) {
+    setOutKey(key: MixxxControlName[MixxxChannelGroup]) {
       if (key === this.outKey) {
         return;
       }
@@ -290,7 +290,7 @@ export function SetInOutKeyMixin<TBase extends ControlComponentConstructor>(
   const BaseOut = ControlOutMixin(ControlInMixin(Base));
 
   return class extends BaseOut {
-    setKey(key: MixxxKey[MixxxChannelGroup]) {
+    setKey(key: MixxxControlName[MixxxChannelGroup]) {
       this.setInKey(key);
       this.setOutKey(key);
     }
@@ -319,6 +319,19 @@ export function DoubleColorOutMixin<TBase extends ComponentConstructor>(
     outputDoubleColor(brightness1: number, brightness2: number) {
       this.outReport.data[this.io.outByte] = brightness1;
       this.outReport.data[this.io.outByte + 1] = brightness2;
+      this.outReport.send();
+    }
+  };
+}
+
+export function RgbOutMixin<TBase extends ComponentConstructor>(Base: TBase) {
+  const BaseOut = OutMixin(Base);
+
+  return class extends BaseOut {
+    outputRgb(r: number, g: number, b: number) {
+      this.outReport.data[this.io.outByte] = r;
+      this.outReport.data[this.io.outByte + 1] = g;
+      this.outReport.data[this.io.outByte + 2] = b;
       this.outReport.send();
     }
   };

@@ -1,6 +1,6 @@
-export type MixxxKey = {
-  '': '';
+export type MixxxControlName = {
   '[App]': MixxxAppControl;
+  '[Main]': MixxxMainControl;
   '[Master]': MixxxMasterControl;
   '[Microphone]': MixxxMicrophoneControl;
   '[VinylControl]': MixxxVinylControl;
@@ -40,7 +40,7 @@ export type MixxxKey = {
 
 export type MixxxChannelGroup = `[Channel${number}]`;
 
-export type MixxxGroup = keyof MixxxKey;
+export type MixxxGroup = keyof MixxxControlName;
 
 /*
  * Values
@@ -69,6 +69,14 @@ export type MixxxAppControl =
   | 'num_auxiliaries'
   | 'samplerate';
 
+export type MixxxMainControl =
+  | 'peak_indicator'
+  | 'peak_indicator_l'
+  | 'peak_indicator_r'
+  | 'vu_meter'
+  | 'vu_meter_l'
+  | 'vu_meter_r';
+
 export type MixxxMasterControl =
   | 'audio_latency_usage'
   | 'audio_latency_overload'
@@ -90,13 +98,7 @@ export type MixxxMasterControl =
   | 'headSplit'
   | 'latency'
   | 'num_effectsavailable'
-  | 'PeakIndicator'
-  | 'PeakIndicatorL'
-  | 'PeakIndicatorR'
-  | 'talkoverDucking'
-  | 'VuMeter'
-  | 'VuMeterL'
-  | 'VuMeterR';
+  | 'talkoverDucking';
 
 export type MixxxChannelDeckSamplerControl =
   | 'back'
@@ -110,17 +112,17 @@ export type MixxxChannelDeckSamplerControl =
   | 'beatjump_size_double'
   | 'beatjump_forward'
   | 'beatjump_backward'
-  | 'beatjump_X_forward'
-  | 'beatjump_X_backward'
+  | `beatjump_${number}_forward`
+  | `beatjump_${number}_backward`
   | 'beatloop_activate'
-  | 'beatloop_X_activate'
-  | 'beatloop_rX_activate'
+  | `beatloop_${number}_activate`
+  | `beatloop_r${number}_activate`
   | 'beatloop_size'
-  | 'beatloop_X_toggle'
-  | 'beatloop_X_enabled'
+  | `beatloop_${number}_toggle`
+  | `beatloop_${number}_enabled`
   | 'beatlooproll_activate'
-  | 'beatlooproll_X_activate'
-  | 'beatlooproll_rX_activate'
+  | `beatlooproll_${number}_activate`
+  | `beatlooproll_r${number}_activate`
   | 'beats_adjust_faster'
   | 'beats_adjust_slower'
   | 'beats_translate_curpos'
@@ -162,22 +164,22 @@ export type MixxxChannelDeckSamplerControl =
   | 'file_bpm'
   | 'file_key'
   | 'fwd'
-  | 'hotcue_X_activate'
-  | 'hotcue_X_activatecue'
-  | 'hotcue_X_activateloop'
-  | 'hotcue_X_cueloop'
-  | 'hotcue_X_clear'
-  | 'hotcue_X_color'
-  | 'hotcue_X_status'
-  | 'hotcue_X_type'
-  | 'hotcue_X_goto'
-  | 'hotcue_X_gotoandplay'
-  | 'hotcue_X_gotoandloop'
-  | 'hotcue_X_gotoandstop'
-  | 'hotcue_X_position'
-  | 'hotcue_X_set'
-  | 'hotcue_X_setcue'
-  | 'hotcue_X_setloop'
+  | `hotcue_${number}_activate`
+  | `hotcue_${number}_activatecue`
+  | `hotcue_${number}_activateloop`
+  | `hotcue_${number}_cueloop`
+  | `hotcue_${number}_clear`
+  | `hotcue_${number}_color`
+  | `hotcue_${number}_status`
+  | `hotcue_${number}_export type`
+  | `hotcue_${number}_goto`
+  | `hotcue_${number}_gotoandplay`
+  | `hotcue_${number}_gotoandloop`
+  | `hotcue_${number}_gotoandstop`
+  | `hotcue_${number}_position`
+  | `hotcue_${number}_set`
+  | `hotcue_${number}_setcue`
+  | `hotcue_${number}_setloop`
   | 'hotcue_focus'
   | 'hotcue_focus_color_prev'
   | 'hotcue_focus_color_next'
@@ -207,8 +209,8 @@ export type MixxxChannelDeckSamplerControl =
   | 'loop_out'
   | 'loop_out_goto'
   | 'loop_move'
-  | 'loop_move_X_forward'
-  | 'loop_move_X_backward'
+  | `loop_move_${number}_forward`
+  | `loop_move_${number}_backward`
   | 'loop_scale'
   | 'loop_start_position'
   | 'orientation'
@@ -226,9 +228,9 @@ export type MixxxChannelDeckSamplerControl =
   | 'outro_start_position'
   | 'outro_start_set'
   | 'passthrough'
-  | 'PeakIndicator'
-  | 'PeakIndicatorL'
-  | 'PeakIndicatorR'
+  | 'peak_indicator'
+  | 'peak_indicator_l'
+  | 'peak_indicator_r'
   | 'pfl'
   | 'pitch'
   | 'pitch_up'
@@ -288,9 +290,9 @@ export type MixxxChannelDeckSamplerControl =
   | 'visual_bpm'
   | 'visual_key'
   | 'visual_key_distance'
-  | 'VuMeter'
-  | 'VuMeterL'
-  | 'VuMeterR'
+  | 'vu_meter'
+  | 'vu_meter_l'
+  | 'vu_meter_r'
   | 'waveform_zoom'
   | 'waveform_zoom_up'
   | 'waveform_zoom_down'
@@ -307,17 +309,17 @@ export type MixxxSamplerControl =
 export type MixxxMicrophoneAuxiliaryControl =
   | 'input_configured'
   | 'main_mix'
-  | 'PeakIndicator'
-  | 'PeakIndicatorL'
-  | 'PeakIndicatorR'
+  | 'peak_indicator'
+  | 'peak_indicator_l'
+  | 'peak_indicator_r'
   | 'pfl'
   | 'talkover'
   | 'volume'
   | 'pregain'
   | 'mute'
-  | 'VuMeter'
-  | 'VuMeterL'
-  | 'VuMeterR';
+  | 'vu_meter'
+  | 'vu_meter_l'
+  | 'vu_meter_r';
 
 export type MixxxChannelControl =
   | MixxxChannelDeckSamplerControl
@@ -425,12 +427,12 @@ export type MixxxEffectEqualizerQuickEffectRack1EffectControl =
   | 'prev_effect'
   | `parameter${number}`
   | `parameter${number}_link_inverse`
-  | `parameter${number}_link_type`
+  | `parameter${number}_link_export type`
   | `parameter${number}_loaded`
-  | `parameter${number}_type`
+  | `parameter${number}_export type`
   | `button_parameter${number}`
   | `button_parameter${number}_loaded`
-  | `button_parameter${number}_type`;
+  | `button_parameter${number}_export type`;
 
 export type MixxxSkinControl =
   | 'show_effectrack'

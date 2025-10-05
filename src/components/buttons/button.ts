@@ -1,5 +1,5 @@
 import type { ControlInOutOptions } from '../../types/component';
-import type { MixxxGroup, MixxxKey } from '../../types/mixxx-controls';
+import type { MixxxGroup, MixxxControlName } from '../../types/mixxx-controls';
 import {
   ControlInMixin,
   ControlOutMixin,

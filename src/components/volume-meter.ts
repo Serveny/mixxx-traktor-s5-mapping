@@ -1,7 +1,10 @@
 import type { S5 } from '../s5';
 import type { ControlOutOptions } from '../types/component';
 import type { Meter } from '../types/mapping';
-import type { MixxxChannelGroup, MixxxKey } from '../types/mixxx-controls';
+import type {
+  MixxxChannelGroup,
+  MixxxControlName,
+} from '../types/mixxx-controls';
 import { ControlComponent, ControlOutMixin } from './component';
 
 type Group =
@@ -24,7 +27,7 @@ export class VolumeMeter extends ControlOutMixin(
 
   constructor(
     private deckNum: number,
-    outKey: MixxxKey[Group],
+    outKey: MixxxControlName[Group],
     private s5: S5,
     io: Meter
   ) {
