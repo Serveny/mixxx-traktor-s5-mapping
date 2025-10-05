@@ -12,8 +12,8 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
   // displayButton2: PushButton;
   perfModeLeftButton: PerformanceLeftButton;
   viewButton: ToggleButton;
-  // displayButton3: PushButton;
-  // displayButton4: PushButton;
+  displayButton3: PushButton;
+  displayButton4: PushButton;
   perfModeRightButton: PerformanceRightButton;
 
   // Runtime variables
@@ -47,6 +47,25 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
       io: io.view,
     });
 
+    // -- 🚜 S5 Docs 2.6
+    // "To zoom into the waveform press Display Button 3"
+    this.displayButton3 = new PushButton({
+      group: this.group,
+      inKey: 'waveform_zoom_down',
+      outKey: 'waveform_zoom_down',
+      reports: deck.reports,
+      io: io.display3,
+    });
+
+    // -- 🚜 S5 Docs 2.6
+    // "To zoom out of the waveform press Display Button 4"
+    this.displayButton4 = new PushButton({
+      group: this.group,
+      inKey: 'waveform_zoom_up',
+      outKey: 'waveform_zoom_up',
+      reports: deck.reports,
+      io: io.display4,
+    });
     this.perfModeRightButton = new PerformanceRightButton(
       deck,
       io.performanceModeRight
