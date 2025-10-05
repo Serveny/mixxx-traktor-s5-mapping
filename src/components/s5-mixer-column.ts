@@ -87,18 +87,12 @@ export class S5MixerColumn extends CompContainer {
       io: io.fxUnitAssignRight,
     });
 
-    //this.crossfaderSwitch = new Component({
-    //inBitLength: 2,
-    //input: function (value) {
-    //if (value === 0) {
-    //engine.setValue(this.group, 'orientation', 2);
-    //} else if (value === 1) {
-    //engine.setValue(this.group, 'orientation', 1);
-    //} else if (value === 2) {
-    //engine.setValue(this.group, 'orientation', 0);
-    //}
-    //},
-    //});
+    // Assign to crossfader left/right
+    engine.setValue(
+      this.group,
+      'orientation',
+      this.deckNum === 1 || this.deckNum === 3 ? 0 : 2
+    );
 
     this.triggerComponents();
   }
