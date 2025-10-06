@@ -2,6 +2,7 @@
  * Components library
  */
 
+import type { RgbColor } from '../color';
 import { HIDInputReport, HIDOutputReport } from '../hid-report';
 import { ButtonBrightnessOff, ButtonBrightnessOn } from '../settings';
 import type {
@@ -328,10 +329,10 @@ export function RgbOutMixin<TBase extends ComponentConstructor>(Base: TBase) {
   const BaseOut = OutMixin(Base);
 
   return class extends BaseOut {
-    outputRgb(r: number, g: number, b: number) {
-      this.outReport.data[this.io.outByte] = r;
-      this.outReport.data[this.io.outByte + 1] = g;
-      this.outReport.data[this.io.outByte + 2] = b;
+    outputRgb(color: RgbColor) {
+      this.outReport.data[this.io.outByte] = color.r();
+      this.outReport.data[this.io.outByte + 1] = color.g();
+      this.outReport.data[this.io.outByte + 2] = color.b();
       this.outReport.send();
     }
   };

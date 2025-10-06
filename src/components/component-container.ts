@@ -12,16 +12,12 @@ export abstract class ComponentContainer<
   *[Symbol.iterator]() {
     // can't use for...of here because it would create an infinite loop
     for (const property in this) {
-      if (Object.prototype.hasOwnProperty.call(this, property)) {
-        const obj: any = this[property];
-        if (obj?.shift != null) {
-          yield obj;
-        } else if (Array.isArray(obj)) {
-          for (const objectInArray of obj) {
-            if (objectInArray?.shift != null) {
-              yield objectInArray;
-            }
-          }
+      if (!Object.prototype.hasOwnProperty.call(this, property)) continue;
+      const obj: any = this[property];
+      if (obj?.shift != null) yield obj;
+      else if (Array.isArray(obj)) {
+        for (const objectInArray of obj) {
+          if (objectInArray?.shift != null) yield objectInArray;
         }
       }
     }
@@ -36,15 +32,23 @@ export abstract class ComponentContainer<
   }
 
   triggerComponents() {
-    for (const component of this) component.outTrigger?.();
-  }
-
-  onUnshift() {
-    for (const component of this) component.unshift();
+    this.callAll('outTrigger');
   }
 
   onShift() {
-    for (const component of this) component.shift();
+    this.callAll('shift');
+  }
+
+  onUnshift() {
+    this.callAll('unshift');
+  }
+
+  private callAll(fnName: string) {
+    for (const component of this) {
+      if (component[fnName] !== undefined) component[fnName]();
+      else if (Array.isArray(component))
+        component.forEach((c) => c[fnName]?.());
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import { debug } from '../../tools';
+import { RgbColor } from '../../color';
 import type {
   ControlInOutOptions,
   ControlOutOptions,
@@ -30,6 +30,8 @@ export class PadButton extends RgbOutMixin(
   )
 ) {
   colorComp: ColorComponent;
+  isActive = false;
+  isPressed = false;
 
   constructor(public number: number, public deck: S5Deck, io: BytePosInOut) {
     super({
@@ -45,7 +47,10 @@ export class PadButton extends RgbOutMixin(
       );
     }
 
-    this.colorComp = new ColorComponent(this);
+    this.colorComp = new ColorComponent(
+      number === 1 ? RgbColor.white() : RgbColor.blue(),
+      this
+    );
     this.output(0);
   }
 
@@ -58,23 +63,16 @@ export class PadButton extends RgbOutMixin(
   }
 
   input(pressed: number) {
-    this.colorComp.colorOutput(pressed !== 0);
+    this.isPressed = pressed !== 0;
+    this.colorComp.colorOutput(this.isActive, this.isPressed);
     if (!pressed) return;
     engine.setValue(this.group, 'scratch2_enable', 0);
     engine.setValue(this.group, this.inKey, 1);
   }
 
   output(isActive: number) {
-    const offOnMulit = isActive ? 1 : 0.1;
-    const rgbNumber = engine.getValue(
-      this.group,
-      `hotcue_${this.number}_color`
-    );
-    const r = ((rgbNumber >> 16) & 0xff) * offOnMulit;
-    const g = (rgbNumber >> 8) & (0xff * offOnMulit);
-    const b = rgbNumber & (0xff * offOnMulit);
-    debug('COLOR', rgbNumber, r, g, b);
-    this.outputRgb(r, g, b);
+    this.isActive = isActive !== 0;
+    this.colorComp.colorOutput(this.isActive, this.isPressed);
   }
 }
 
@@ -83,9 +81,7 @@ class ColorComponent extends RgbOutMixin(
     ControlComponent<MixxxChannelGroup, ControlOutOptions<MixxxChannelGroup>>
   )
 ) {
-  color = 0;
-
-  constructor(padBtn: PadButton) {
+  constructor(private color: RgbColor, private padBtn: PadButton) {
     super({
       group: padBtn.group,
       outKey: `hotcue_${padBtn.number}_color`,
@@ -95,15 +91,11 @@ class ColorComponent extends RgbOutMixin(
   }
 
   output(rgbNumber: number) {
-    this.color = rgbNumber;
-    this.colorOutput(false);
+    this.color = new RgbColor(rgbNumber);
+    this.colorOutput(this.padBtn.isActive, false);
   }
 
-  colorOutput(isPressed: boolean) {
-    const offOnMulit = isPressed ? 1 : 0.1;
-    const r = ((this.color >> 16) & 0xff) * offOnMulit;
-    const g = ((this.color >> 8) & 0xff) * offOnMulit;
-    const b = (this.color & 0xff) * offOnMulit;
-    this.outputRgb(r, g, b);
+  colorOutput(isActive: boolean, isPressed: boolean) {
+    this.outputRgb(this.color.brightness(!isActive ? 0 : isPressed ? 1 : 0.1));
   }
 }

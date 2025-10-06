@@ -1,29 +1,48 @@
-# Mixxx Traktor S5 Mapping
+# 📀 Mixxx Traktor S5 Mapping
 
 Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeScript.
 
-## Current status
+## 🗿 Current status
 
 - ✅ Reverse engineered Traktor S5 HID mapping
 - ✅ Created basic TypeScript code foundation & types
-- ✅ Working components: Loop encoder, crossfader, cue button, play button, volume meter
 
-### Known bugs
+### ✅ Working components
 
-- 🤬 Shift function broken
+- Mixer (All faders, knobs and buttons in the middle)
+- FX Unit
+- Loop encoder
+- Cue button
+- Play button
+- VU meter
 
-## How to use
+### 🚧 Work in progress components
+
+- Touch strip (with LED animations)
+- Deck switch button
+- Hotcue button
+- Freeze button
+- Remix button
+- Flux button
+- Display area buttons
+- Displays
+
+### 🤬 Known bugs
+
+- Shift function broken
+- Track/Playlist browse functions only working if GUI is in focus
+
+## 👩‍💻 How to setup development
 
 1. Install the <a href="https://mixxx.org/">Mixxx</a> software
 2. Clone the repository: `git clone git@github.com:Serveny/mixxx-traktor-s5-mapping.git`
 3. Open repository directory and install dev dependencies: `npm install`
 4. Check if the files referenced to in tsconfig.json exits or change paths to your mixxx files folder
 5. Add symlink from `../attic/mappings/controllers/`to your mixxx controllers folder (f.e: `/home/[username]/.mixxx/controllers/`): `ln -s "Your mixxx folder" "repository path/attic/mappings/controllers/"`
-6. Build JS: `vite build` (The buildscript will copy the builded JS into the controllers folder)
+6. Run dev mode: `npm run dev` (The buildscript will copy the builded JS into the controllers folder on each change)
+7. Run Mixxx debug command (on Linux): `mixxx --controller-debug --developer`
 
-Mixxx debug command on linux: `mixxx --controller-debug`
-
-## HID IN/OUT-PUTS
+## 🖱️ HID IN/OUT-PUTS
 
 Reverse engineered HID mapping. Some bits/byte in the reports are empty between (or I didn't found out the usage).
 
@@ -271,7 +290,7 @@ Touch strip phase LEDS: 25 bit for blue, then 25 bit for red
 |   41 |   0 |           88 | mixer.channelB.**volumeLevel**       |
 |   52 |   0 |           88 | mixer.channelD.**volumeLevel**       |
 
-## Displays
+## 🖥️ Displays
 
 - prop. Bulk/Isochronous endpoint
 - layout with QML
