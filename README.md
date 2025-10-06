@@ -44,7 +44,7 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 
 ## 🖱️ HID IN/OUT-PUTS
 
-Reverse engineered HID mapping. Some bits/byte in the reports are empty between (or I didn't found out the usage).
+Reverse engineered HID mapping. Some bits/byte in the reports are empty between (or I didn't find out the usage).
 
 ### Report-ID 1 (IN)
 

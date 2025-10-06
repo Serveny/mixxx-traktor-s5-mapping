@@ -1,10 +1,8 @@
 import { Mixer } from './components/mixer';
 import { S5Deck } from './components/s5-deck';
 import type { S5Mapping } from './types/mapping';
-import { settings } from './settings';
 import { HIDReportHodler } from './hid-report';
 import { S5EffectUnit } from './components/s5-effect-unit';
-import type { MixxxChannelGroup } from './types/mixxx-controls';
 
 export class S5 {
   reports = new HIDReportHodler();

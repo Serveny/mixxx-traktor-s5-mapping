@@ -27,7 +27,7 @@
     "/usr/share/mixxx/controllers/common-hid-packet-parser.js",
     // "/usr/share/mixxx/controllers/engine-api.d.ts",
     "../mixxx/res/controllers/engine-api.d.ts",
-    "../mixxx/res/controllers/mixx-controls.d.ts",
+    "../mixxx/res/controllers/mixxx-controls.d.ts",
     // -------------------------------------------
     "/usr/share/mixxx/controllers/color-mapper-api.d.ts",
     "/usr/share/mixxx/controllers/console-api.d.ts",
