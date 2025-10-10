@@ -15,11 +15,11 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 - Cue button
 - Play button
 - VU meter
+- Deck switch button
 
 ### 🚧 Work in progress components
 
 - Touch strip (with LED animations)
-- Deck switch button
 - Hotcue button
 - Freeze button
 - Remix button

@@ -22,10 +22,10 @@ export abstract class ComponentContainer<
       }
     }
   }
-  reconnectComponents(callback?: (component: Button) => void) {
+  reconnectComponents(callback?: (component: Button) => boolean) {
     for (const component of this) {
+      if (callback) if (!callback.call(this, component)) continue;
       component.outDisconnect?.();
-      if (callback) callback.call(this, component);
       component.outConnect?.();
       component.outTrigger?.();
     }
