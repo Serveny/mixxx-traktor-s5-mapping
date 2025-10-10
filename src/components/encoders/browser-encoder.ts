@@ -15,13 +15,8 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
   }
 
   onChange(isRight: boolean) {
-    if (this.deck.display.isPlaylistSelected) {
-      engine.setValue(
-        '[Playlist]',
-        isRight ? 'SelectNextTrack' : 'SelectPrevTrack',
-        1
-      );
-    } else engine.setValue('[Library]', isRight ? 'MoveDown' : 'MoveUp', 1);
+    engine.setValue('[Library]', isRight ? 'MoveDown' : 'MoveUp', 1);
+
     //if (this.libraryViewButtonPressed) {
     //this.currentSortedColumnIdx =
     //(settings.librarySortableColumns.length +

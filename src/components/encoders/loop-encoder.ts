@@ -24,9 +24,10 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 
     // -- 🚜 S5 Docs 2.1.4
     // "Press the LOOP encoder to start preview of the selected track."
-    else if (this.deck.display.isPlaylistSelected) {
-      this.browsePreviewTrack(isRight);
-    } else if (
+    // TODO: Disabled because this should only work in combination with the displays
+    //else if (this.deck.display.isPlaylistSelected)
+    //this.browsePreviewTrack(isRight);
+    else if (
       this.deck.wheelMode === wheelModes.loopIn ||
       this.deck.wheelMode === wheelModes.loopOut
     ) {
