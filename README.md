@@ -3,8 +3,8 @@
 Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeScript.
 
 > [!NOTE]
-> This project uses Mixxx control types from [this Pull Request](https://github.com/mixxxdj/mixxx/pull/15441) (not yet merged).  
-> To use it chechout the PR branch into a sibling folder and check if the `tsconfig.json` paths are correct
+> This project relies on **Mixxx control types** from [PR #15441](https://github.com/mixxxdj/mixxx/pull/15441), which is currently unmerged.  
+> To use these types, clone the PR branch into a sibling directory and verify the paths configuration in your tsconfig.json.
 
 ## 🗿 Current status
 
