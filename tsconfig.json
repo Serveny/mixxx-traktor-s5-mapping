@@ -19,7 +19,7 @@
     "noUncheckedSideEffectImports": true,
     "allowJs": true,
     "checkJs": false,
-    "declaration": true,
+    "declaration": true
   },
   "include": [
     "src",
@@ -29,6 +29,7 @@
     "../mixxx/res/controllers/engine-api.d.ts",
     "../mixxx/res/controllers/mixxx-controls.d.ts",
     // -------------------------------------------
+    "../mixxx/res/controllers/script-api.d.ts",
     "/usr/share/mixxx/controllers/color-mapper-api.d.ts",
     "/usr/share/mixxx/controllers/console-api.d.ts",
     "/usr/share/mixxx/controllers/hid-controller-api.d.ts"

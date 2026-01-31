@@ -2,6 +2,10 @@
 
 Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeScript.
 
+> [!NOTE]
+> This project uses Mixxx control types from [this Pull Request](https://github.com/mixxxdj/mixxx/pull/15441) (not yet merged).  
+> To use it chechout the PR branch into a sibling folder and check if the `tsconfig.json` paths are correct
+
 ## 🗿 Current status
 
 - ✅ Reverse engineered Traktor S5 HID mapping
