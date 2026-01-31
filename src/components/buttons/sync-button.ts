@@ -24,6 +24,10 @@ export class SyncButton extends SingleColorOutMixin(
     )
   )
 ) {
+  declare group: MixxxChannelGroup;
+  declare inKey: MixxxControls.CtrlRW<MixxxChannelGroup>;
+  declare outKey: MixxxControls.Ctrl<MixxxChannelGroup>;
+
   constructor(deck: S5Deck, reports: HIDReportHodler, io: ButtonMapping) {
     const key = 'sync_enabled';
     super({

@@ -1,9 +1,8 @@
-import { Encoder, TouchEncoder } from './encoder';
+import { TouchEncoder } from './encoder';
 import type { TouchEncoder as EncoderMapping } from '../../types/mapping';
 import { S5Deck } from '../s5-deck';
 import { settings, wheelModes } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
-import type { DisplayArea } from '../display-area';
 
 export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
   // -- 🚜 S5 Docs 2.1.5
@@ -11,7 +10,10 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
   sortCategories = [2, 1, 15, 17, 9, 20];
   sortCategoryIdx = 0;
 
-  constructor(private deck: S5Deck, io: EncoderMapping) {
+  constructor(
+    private deck: S5Deck,
+    io: EncoderMapping
+  ) {
     super(deck.group, 'loop_in', deck.reports, io);
   }
 

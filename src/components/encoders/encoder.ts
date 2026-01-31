@@ -19,6 +19,9 @@ export abstract class Encoder<
     ControlComponent<MixxxControls.Group, ControlInOptions<MixxxControls.Group>>
   )
 ) {
+  declare group: TGroup;
+  declare inKey: MixxxControls.CtrlRW<TGroup>;
+
   inBitLength = 4;
   lastValue: number | null = null;
   max: number = 15;

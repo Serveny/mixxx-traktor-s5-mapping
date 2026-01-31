@@ -6,6 +6,9 @@ import { ControlComponent, ControlInMixin } from './component';
 export class Pot<TGroup extends MixxxControls.Group> extends ControlInMixin(
   ControlComponent<MixxxControls.Group, ControlInOptions<MixxxControls.Group>>
 ) {
+  declare group: TGroup;
+  declare inKey: MixxxControls.CtrlRW<TGroup>;
+
   max = 2 ** 12 - 1;
   hardwarePosition: number | null;
   shiftedHardwarePosition: number | null;

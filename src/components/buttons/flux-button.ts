@@ -29,6 +29,10 @@ export class FluxButton extends SetInOutKeyMixin(
     )
   )
 ) {
+  declare group: MixxxChannelGroup;
+  declare inKey: MixxxControls.CtrlRW<MixxxChannelGroup>;
+  declare outKey: MixxxControls.Ctrl<MixxxChannelGroup>;
+
   private previousWheelMode: number | null = null;
   private loopModeConnection: ScriptConnection | null = null;
 

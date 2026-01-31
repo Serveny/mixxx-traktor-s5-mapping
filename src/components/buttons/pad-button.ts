@@ -29,11 +29,19 @@ export class PadButton extends RgbOutMixin(
     )
   )
 ) {
+  declare group: MixxxChannelGroup;
+  declare inKey: MixxxControls.CtrlRW<MixxxChannelGroup>;
+  declare outKey: MixxxControls.Ctrl<MixxxChannelGroup>;
+
   colorComp: ColorComponent;
   isActive = false;
   isPressed = false;
 
-  constructor(public number: number, public deck: S5Deck, io: BytePosInOut) {
+  constructor(
+    public number: number,
+    public deck: S5Deck,
+    io: BytePosInOut
+  ) {
     super({
       group: deck.group,
       inKey: `hotcue_${number}_activate`,
@@ -81,7 +89,10 @@ class ColorComponent extends RgbOutMixin(
     ControlComponent<MixxxChannelGroup, ControlOutOptions<MixxxChannelGroup>>
   )
 ) {
-  constructor(private color: RgbColor, private padBtn: PadButton) {
+  constructor(
+    private color: RgbColor,
+    private padBtn: PadButton
+  ) {
     super({
       group: padBtn.group,
       outKey: `hotcue_${padBtn.number}_color`,

@@ -11,6 +11,7 @@ import {
 import type { S5EffectUnit } from '../s5-effect-unit';
 
 type Group = `[EffectRack1_EffectUnit${number}]`;
+type EffectGroup = `[EffectRack1_EffectUnit${number}_Effect${number}]`;
 
 export class PowerWindowButton extends IndicatorMixin(
   ShiftMixin(
@@ -51,7 +52,7 @@ export class PowerWindowButton extends IndicatorMixin(
       for (const index of [0, 1, 2]) {
         const effectGroup = `[EffectRack1_EffectUnit${
           this.unit.unitNumber
-        }_Effect${index + 1}]`;
+        }_Effect${index + 1}]` as EffectGroup;
         engine.setValue(effectGroup, 'enabled', pressed);
       }
       this.output(pressed);

@@ -18,7 +18,9 @@ export abstract class Button extends SingleColorOutMixin(
       )
     )
   )
-) {}
+) {
+  declare group: MixxxControls.Group;
+}
 
 export class PushButton extends Button {
   input(pressed: number) {

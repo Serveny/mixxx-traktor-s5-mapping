@@ -1,5 +1,7 @@
 import type { HIDReportHodler } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
+import type { ControlInOutOptions } from '../../types/component';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import {
   ShiftMixin,
   ControlComponent,
@@ -10,8 +12,21 @@ import {
 import type { S5Deck } from '../s5-deck';
 
 export class PlayButton extends SingleColorOutMixin(
-  ShiftMixin(ControlOutMixin(ControlInMixin(ControlComponent)))
+  ShiftMixin(
+    ControlOutMixin(
+      ControlInMixin(
+        ControlComponent<
+          MixxxChannelGroup,
+          ControlInOutOptions<MixxxChannelGroup>
+        >
+      )
+    )
+  )
 ) {
+  declare group: MixxxChannelGroup;
+  declare inKey: MixxxControls.CtrlRW<MixxxChannelGroup>;
+  declare outKey: MixxxControls.Ctrl<MixxxChannelGroup>;
+
   constructor(deck: S5Deck, reports: HIDReportHodler, io: Btn) {
     super({
       group: deck.group,

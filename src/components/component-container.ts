@@ -6,6 +6,8 @@ export abstract class ComponentContainer<
 > extends ShiftMixin(
   ControlComponent<MixxxControls.Group, ControlOptions<MixxxControls.Group>>
 ) {
+  declare group: TGroup;
+
   constructor(group: TGroup) {
     super({ group });
   }
