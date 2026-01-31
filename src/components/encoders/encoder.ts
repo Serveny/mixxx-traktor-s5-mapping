@@ -4,7 +4,6 @@ import type {
   TouchEncoder as TouchEncoderMapping,
 } from '../../types/mapping';
 import type { ControlInOptions, InOptions } from '../../types/component';
-import type { MixxxGroup, MixxxControlName } from '../../types/mixxx-controls';
 import {
   Component,
   InMixin,
@@ -13,8 +12,12 @@ import {
   ControlInMixin,
 } from '../component';
 
-export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
-  ControlInMixin(ControlComponent<MixxxGroup, ControlInOptions<MixxxGroup>>)
+export abstract class Encoder<
+  TGroup extends MixxxControls.Group,
+> extends ShiftMixin(
+  ControlInMixin(
+    ControlComponent<MixxxControls.Group, ControlInOptions<MixxxControls.Group>>
+  )
 ) {
   inBitLength = 4;
   lastValue: number | null = null;
@@ -25,7 +28,7 @@ export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
 
   constructor(
     group: TGroup,
-    inKey: MixxxControlName[TGroup],
+    inKey: MixxxControls.CtrlRW<TGroup>,
     reports: HIDReportHodler,
     io: EncoderMapping
   ) {
@@ -67,12 +70,12 @@ export abstract class Encoder<TGroup extends MixxxGroup> extends ShiftMixin(
 }
 
 export abstract class TouchEncoder<
-  TGroup extends MixxxGroup
+  TGroup extends MixxxControls.Group,
 > extends Encoder<TGroup> {
   touch: EncoderTouch;
   constructor(
     group: TGroup,
-    inKey: MixxxControlName[TGroup],
+    inKey: MixxxControls.CtrlRW<TGroup>,
     reports: HIDReportHodler,
     io: TouchEncoderMapping
   ) {
@@ -87,7 +90,10 @@ export abstract class TouchEncoder<
 }
 
 class EncoderPress extends InMixin(Component<InOptions>) {
-  constructor(private encoder: Encoder<MixxxGroup>, opts: InOptions) {
+  constructor(
+    private encoder: Encoder<MixxxControls.Group>,
+    opts: InOptions
+  ) {
     super(opts);
   }
   input(value: number) {
@@ -96,7 +102,10 @@ class EncoderPress extends InMixin(Component<InOptions>) {
 }
 
 class EncoderTouch extends InMixin(Component<InOptions>) {
-  constructor(private encoder: TouchEncoder<MixxxGroup>, opts: InOptions) {
+  constructor(
+    private encoder: TouchEncoder<MixxxControls.Group>,
+    opts: InOptions
+  ) {
     super(opts);
   }
   input(value: number) {

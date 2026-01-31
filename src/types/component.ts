@@ -1,7 +1,6 @@
 import type { ControlComponent } from '../components/component';
 import type { HIDReportHodler } from '../hid-report';
 import type { BytePosIn, BytePosInOut, BytePosOut } from './mapping';
-import type { MixxxGroup, MixxxControlName } from './mixxx-controls';
 
 // export type ComponentConstructor<T extends any[] = any[], R = {}> = new (...args: T) => R;
 export type ComponentConstructor<T = {}> = new (...args: any[]) => T;
@@ -19,15 +18,15 @@ export interface InOptions extends ComponentOptions {
   oldDataDefault?: number;
 }
 
-export interface ControlOptions<TGroup extends MixxxGroup>
-  extends ComponentOptions {
+export interface ControlOptions<
+  TGroup extends MixxxControls.Group,
+> extends ComponentOptions {
   group: TGroup;
 }
 
-export interface ControlInOptions<TGroup extends MixxxGroup>
-  extends InOptions,
-    ControlOptions<TGroup> {
-  inKey: MixxxControlName[TGroup];
+export interface ControlInOptions<TGroup extends MixxxControls.Group>
+  extends InOptions, ControlOptions<TGroup> {
+  inKey: MixxxControls.CtrlRW<TGroup>;
 }
 
 export interface OutOptions extends ComponentOptions {
@@ -36,15 +35,13 @@ export interface OutOptions extends ComponentOptions {
   io: BytePosOut;
 }
 
-export interface ControlOutOptions<TGroup extends MixxxGroup>
-  extends OutOptions,
-    ControlOptions<TGroup> {
-  outKey: MixxxControlName[TGroup];
+export interface ControlOutOptions<TGroup extends MixxxControls.Group>
+  extends OutOptions, ControlOptions<TGroup> {
+  outKey: MixxxControls.Ctrl<TGroup>;
 }
 
-export interface ControlInOutOptions<TGroup extends MixxxGroup>
-  extends ControlInOptions<TGroup>,
-    ControlOutOptions<TGroup> {
+export interface ControlInOutOptions<TGroup extends MixxxControls.Group>
+  extends ControlInOptions<TGroup>, ControlOutOptions<TGroup> {
   io: BytePosInOut;
 }
 

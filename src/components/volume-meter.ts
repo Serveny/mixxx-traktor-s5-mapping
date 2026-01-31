@@ -1,17 +1,13 @@
 import type { S5 } from '../s5';
 import type { ControlOutOptions } from '../types/component';
 import type { Meter } from '../types/mapping';
-import type {
-  MixxxChannelGroup,
-  MixxxControlName,
-} from '../types/mixxx-controls';
+import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { ControlComponent, ControlOutMixin } from './component';
 
 type Group =
   | MixxxChannelGroup
   | `[Auxiliary${number}]`
-  | `[Microphone${number}]`
-  | `[Microphone]`;
+  | `[Microphone${number}]`;
 
 export class VolumeMeter extends ControlOutMixin(
   ControlComponent<Group, ControlOutOptions<Group>>
@@ -21,13 +17,13 @@ export class VolumeMeter extends ControlOutMixin(
   private deckSegments = 11;
   private channelGroup: MixxxChannelGroup;
   private auxGroup: `[Auxiliary${number}]`;
-  private micGroup: `[Microphone${number}]` | `[Microphone]`;
+  private micGroup: `[Microphone${number}]`;
   private oldDeckLevel = 0;
   isChange = false;
 
   constructor(
     private deckNum: number,
-    outKey: MixxxControlName[Group],
+    outKey: MixxxControls.Ctrl<Group>,
     private s5: S5,
     io: Meter
   ) {
@@ -39,7 +35,7 @@ export class VolumeMeter extends ControlOutMixin(
     });
     this.channelGroup = `[Channel${deckNum}]`;
     this.auxGroup = `[Auxiliary${deckNum}]`;
-    this.micGroup = deckNum !== 1 ? `[Microphone${deckNum}]` : '[Microphone]';
+    this.micGroup = `[Microphone${deckNum}]`;
   }
 
   output() {
@@ -48,13 +44,8 @@ export class VolumeMeter extends ControlOutMixin(
     if (this.s5.deckLeft.isShifted || this.s5.deckRight.isShifted) {
       if (engine.getValue(this.auxGroup, 'input_configured')) {
         deckGroup = this.auxGroup;
-      } else if (
-        engine.getValue(
-          deckNum !== 1 ? this.micGroup : '[Microphone]',
-          'input_configured'
-        )
-      ) {
-        deckGroup = deckNum !== 1 ? this.micGroup : '[Microphone]';
+      } else if (engine.getValue(this.micGroup, 'input_configured')) {
+        deckGroup = this.micGroup;
       }
     }
     const deckLevel = engine.getValue(deckGroup, 'vu_meter');

@@ -22,7 +22,11 @@ export class S5MixerColumn extends CompContainer {
   volumeMeter: VolumeMeter;
   pfl: ToggleButton; // Channel cue button
 
-  constructor(private deckNum: number, s5: S5, io: S5MixerColumnMapping) {
+  constructor(
+    private deckNum: number,
+    s5: S5,
+    io: S5MixerColumnMapping
+  ) {
     super(`[Channel${deckNum}]`);
 
     this.gain = new Pot(this.group, 'pregain', s5.reports, io.gain);
@@ -102,10 +106,7 @@ export class S5MixerColumn extends CompContainer {
     if (engine.getValue(`[Auxiliary${this.deckNum}]`, 'input_configured')) {
       alternativeInput = `[Auxiliary${this.deckNum}]`;
     } else if (
-      engine.getValue(
-        this.deckNum !== 1 ? `[Microphone${this.deckNum}]` : '[Microphone]',
-        'input_configured'
-      )
+      engine.getValue(`[Microphone${this.deckNum}]`, 'input_configured')
     ) {
       alternativeInput =
         this.deckNum !== 1 ? `[Microphone${this.deckNum}]` : '[Microphone]';

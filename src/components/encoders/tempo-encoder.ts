@@ -1,9 +1,6 @@
 import { Encoder } from './encoder';
 import type { Encoder as EncoderMapping } from '../../types/mapping';
-import type {
-  MixxxChannelControl,
-  MixxxChannelGroup,
-} from '../../types/mixxx-controls';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import type { HIDReportHodler } from '../../hid-report';
 import { channels } from '../../settings';
 
@@ -23,7 +20,7 @@ export class TempoEncoder extends Encoder<MixxxChannelGroup> {
     // TODO
   }
 
-  private triggerAllChannels(control: MixxxChannelControl) {
+  private triggerAllChannels(control: MixxxControls.Ctrl<MixxxChannelGroup>) {
     for (const channel of channels) script.triggerControl(channel, control, 50);
   }
 }

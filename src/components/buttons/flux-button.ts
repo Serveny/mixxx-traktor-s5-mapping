@@ -1,10 +1,7 @@
 import { wheelModes } from '../../settings';
 import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
-import type {
-  MixxxChannelGroup,
-  MixxxControlName,
-} from '../../types/mixxx-controls';
+import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import {
   ControlComponent,
   ControlInMixin,
@@ -35,7 +32,10 @@ export class FluxButton extends SetInOutKeyMixin(
   private previousWheelMode: number | null = null;
   private loopModeConnection: ScriptConnection | null = null;
 
-  constructor(private deck: S5Deck, io: Btn) {
+  constructor(
+    private deck: S5Deck,
+    io: Btn
+  ) {
     const key = 'slip_enabled';
     super({
       group: deck.group,

@@ -1,5 +1,4 @@
 import type { ControlInOutOptions } from '../../types/component';
-import type { MixxxGroup, MixxxControlName } from '../../types/mixxx-controls';
 import {
   ControlInMixin,
   ControlOutMixin,
@@ -12,7 +11,10 @@ export abstract class Button extends SingleColorOutMixin(
   ShiftMixin(
     ControlInMixin(
       ControlOutMixin(
-        ControlComponent<MixxxGroup, ControlInOutOptions<MixxxGroup>>
+        ControlComponent<
+          MixxxControls.Group,
+          ControlInOutOptions<MixxxControls.Group>
+        >
       )
     )
   )

@@ -78,19 +78,21 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
     if (!pressed) {
       return;
     }
-    if (this.deck.display.isPlaylistSelected) {
-      // -- 🚜 S5 Docs 2.1.5:
-      // "Press the LOOP encoder to switch between ascending and descending order"
-      if (this.deck.display.isSorting) {
-        script.toggleControl('[Library]', 'sort_order');
-      }
+    //if (this.deck.display.isPlaylistSelected) {
+    // -- 🚜 S5 Docs 2.1.5:
+    // "Press the LOOP encoder to switch between ascending and descending order"
+    if (this.deck.display.isSorting) {
+      script.toggleControl('[Library]', 'sort_order');
+    }
 
-      // -- 🚜 S5 Docs 2.1.4:
-      // "Press the LOOP encoder to start preview of the selected track."
-      else {
-        this.previewTrack();
-      }
-    } else if (!this.isShifted) {
+    // -- 🚜 S5 Docs 2.1.4:
+    // "Press the LOOP encoder to start preview of the selected track."
+    // TODO: Disabled until solution for library focus was found
+    //  else {
+    //this.previewTrack();
+    //}
+    //}
+    else if (!this.isShifted) {
       script.triggerControl(this.group, 'beatloop_activate', 50);
     } else {
       script.triggerControl(this.group, 'reloop_toggle', 50);

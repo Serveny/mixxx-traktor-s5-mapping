@@ -1,3 +1,9 @@
+declare namespace MixxxControls {
+  interface Config {
+    strict: true;
+  }
+}
+
 declare var script: {
   LIBRARY_COLUMNS: Readonly<{
     ARTIST: 1;

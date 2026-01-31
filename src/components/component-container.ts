@@ -1,11 +1,11 @@
 import type { ControlOptions } from '../types/component';
-import type { MixxxGroup } from '../types/mixxx-controls';
-import { Button } from './buttons/button';
 import { ShiftMixin, ControlComponent } from './component';
 
 export abstract class ComponentContainer<
-  TGroup extends MixxxGroup
-> extends ShiftMixin(ControlComponent<MixxxGroup, ControlOptions<MixxxGroup>>) {
+  TGroup extends MixxxControls.Group,
+> extends ShiftMixin(
+  ControlComponent<MixxxControls.Group, ControlOptions<MixxxControls.Group>>
+) {
   constructor(group: TGroup) {
     super({ group });
   }
@@ -22,8 +22,12 @@ export abstract class ComponentContainer<
       }
     }
   }
-  reconnectComponents(callback?: (component: Button) => boolean) {
+  reconnectComponents(callback?: (component: any) => boolean) {
     for (const component of this) {
+      //if (component.reconnectComponents != null) {
+      //component.reconnectComponents(callback);
+      //continue;
+      //}
       if (callback) if (!callback.call(this, component)) continue;
       component.outDisconnect?.();
       component.outConnect?.();
@@ -53,6 +57,6 @@ export abstract class ComponentContainer<
 }
 
 // Factory to keep TGroup (can't give TGroup into GroupComponent)
-export function createCompContainer<TGroup extends MixxxGroup>() {
+export function createCompContainer<TGroup extends MixxxControls.Group>() {
   return ComponentContainer<TGroup>;
 }

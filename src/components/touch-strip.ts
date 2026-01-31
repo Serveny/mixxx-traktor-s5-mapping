@@ -1,4 +1,3 @@
-import { settings } from '../settings';
 import type { ControlOutOptions } from '../types/component';
 import type { BlueRedLeds, TouchStripMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';

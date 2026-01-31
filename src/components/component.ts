@@ -16,19 +16,15 @@ import type {
   ControlOptions,
 } from '../types/component';
 import type { BytePosIn, BytePosOut } from '../types/mapping';
-import type {
-  MixxxChannelGroup,
-  MixxxGroup,
-  MixxxControlName,
-} from '../types/mixxx-controls';
+import type { MixxxChannelGroup } from '../types/mixxx-controls';
 
 export class Component<P extends ComponentOptions> {
   constructor(..._: [P]) {}
 }
 
 export class ControlComponent<
-  TGroup extends MixxxGroup,
-  P extends ControlOptions<TGroup>
+  TGroup extends MixxxControls.Group,
+  P extends ControlOptions<TGroup>,
 > extends Component<P> {
   group: TGroup;
   constructor(...args: [P]) {
@@ -113,20 +109,20 @@ export function ControlInMixin<TBase extends ControlComponentConstructor>(
   const BaseIn = InMixin(Base);
 
   return class extends BaseIn {
-    inKey: MixxxControlName[keyof MixxxControlName];
+    inKey: MixxxControls.CtrlRW<MixxxControls.Group>;
 
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ControlInOptions<MixxxGroup>;
+      const opts = args[0] as ControlInOptions<MixxxControls.Group>;
 
       this.inKey = opts.inKey;
     }
 
     input(pressed: number) {
-      engine.setValue(this.group, this.inKey, pressed);
+      engine.setValue(this.group as MixxxControls.Group, this.inKey, pressed);
     }
 
-    setInKey(key: MixxxControlName[MixxxChannelGroup]) {
+    setInKey(key: MixxxControls.CtrlRW<MixxxChannelGroup>) {
       if (key === this.inKey) {
         return;
       }
@@ -145,11 +141,11 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
   const BaseOut = OutMixin(Base);
 
   return class extends BaseOut {
-    outKey: MixxxControlName[keyof MixxxControlName];
+    outKey: MixxxControls.Ctrl<MixxxControls.Group>;
     outConnection: ScriptConnection;
     constructor(...args: any[]) {
       super(...args);
-      const opts = args[0] as ControlOutOptions<MixxxGroup>;
+      const opts = args[0] as ControlOutOptions<MixxxControls.Group>;
 
       this.outKey = opts.outKey;
       this.outConnection = this.outConnect();
@@ -157,7 +153,7 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
 
     outConnect(): ScriptConnection {
       const outCon = engine.makeConnection(
-        this.group,
+        this.group as MixxxControls.Group,
         this.outKey,
         this.output.bind(this)
       );
@@ -176,7 +172,7 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
       this.outConnection.disconnect();
     }
 
-    setOutKey(key: MixxxControlName[MixxxChannelGroup]) {
+    setOutKey(key: MixxxControls.Ctrl<MixxxChannelGroup>) {
       if (key === this.outKey) {
         return;
       }
@@ -291,7 +287,7 @@ export function SetInOutKeyMixin<TBase extends ControlComponentConstructor>(
   const BaseOut = ControlOutMixin(ControlInMixin(Base));
 
   return class extends BaseOut {
-    setKey(key: MixxxControlName[MixxxChannelGroup]) {
+    setKey(key: MixxxControls.CtrlRW<MixxxChannelGroup>) {
       this.setInKey(key);
       this.setOutKey(key);
     }
