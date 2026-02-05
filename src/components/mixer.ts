@@ -9,53 +9,53 @@ import { Pot } from './pot';
 import { S5MixerColumn } from './s5-mixer-column';
 
 export class Mixer extends ComponentContainer<'[Master]'> {
-  channelC: S5MixerColumn;
-  channelA: S5MixerColumn;
-  channelB: S5MixerColumn;
-  channelD: S5MixerColumn;
-  // fxSelects: FXSelect[] = [];
-  quantizeButton: QuantizeButton;
-  tempoEncoder: TempoEncoder;
-  crossfader: Pot<'[Master]'>;
-  master?: Pot<'[Master]'>;
-  booth?: Pot<'[Master]'>;
-  cue?: Pot<'[Master]'>;
-  cueGain?: Pot<'[Master]'>;
+	channelC: S5MixerColumn;
+	channelA: S5MixerColumn;
+	channelB: S5MixerColumn;
+	channelD: S5MixerColumn;
+	// fxSelects: FXSelect[] = [];
+	quantizeButton: QuantizeButton;
+	tempoEncoder: TempoEncoder;
+	crossfader: Pot<'[Master]'>;
+	master?: Pot<'[Master]'>;
+	booth?: Pot<'[Master]'>;
+	cue?: Pot<'[Master]'>;
+	cueGain?: Pot<'[Master]'>;
 
-  constructor(s5: S5, io: S5MixerMapping) {
-    super('[Master]');
+	constructor(s5: S5, io: S5MixerMapping) {
+		super('[Master]');
 
-    this.channelC = new S5MixerColumn(3, s5, io.channelC);
-    this.channelA = new S5MixerColumn(1, s5, io.channelA);
-    this.channelB = new S5MixerColumn(2, s5, io.channelB);
-    this.channelD = new S5MixerColumn(4, s5, io.channelD);
+		this.channelC = new S5MixerColumn(3, s5, io.channelC);
+		this.channelA = new S5MixerColumn(1, s5, io.channelA);
+		this.channelB = new S5MixerColumn(2, s5, io.channelB);
+		this.channelD = new S5MixerColumn(4, s5, io.channelD);
 
-    this.quantizeButton = new QuantizeButton(s5.reports, io.quantize);
-    this.tempoEncoder = new TempoEncoder(s5.reports, io.tempo);
+		this.quantizeButton = new QuantizeButton(s5.reports, io.quantize);
+		this.tempoEncoder = new TempoEncoder(s5.reports, io.tempo);
 
-    this.crossfader = new Pot('[Master]', 'crossfader', s5.reports, io.cross);
+		this.crossfader = new Pot('[Master]', 'crossfader', s5.reports, io.cross);
 
-    if (settings.softwareMixerMain) {
-      this.master = new Pot('[Master]', 'gain', s5.reports, io.mainGain);
-    }
-    if (settings.softwareMixerBooth) {
-      this.booth = new Pot('[Master]', 'booth_gain', s5.reports, io.boothGain);
-    }
-    if (settings.softwareMixerHeadphone) {
-      this.cue = new Pot('[Master]', 'headMix', s5.reports, io.cueMix);
+		if (settings.softwareMixerMain) {
+			this.master = new Pot('[Master]', 'gain', s5.reports, io.mainGain);
+		}
+		if (settings.softwareMixerBooth) {
+			this.booth = new Pot('[Master]', 'booth_gain', s5.reports, io.boothGain);
+		}
+		if (settings.softwareMixerHeadphone) {
+			this.cue = new Pot('[Master]', 'headMix', s5.reports, io.cueMix);
 
-      this.cueGain = new Pot('[Master]', 'headGain', s5.reports, io.cueGain);
-    }
+			this.cueGain = new Pot('[Master]', 'headGain', s5.reports, io.cueGain);
+		}
 
-    // TODO: Find out why?
-    //for (const component of this) {
-    //if (component.inReport === undefined) {
-    //component.inReport = inReports[1];
-    //}
-    //component.outReport = this.outReport;
-    //component.inConnect();
-    //component.outConnect();
-    //component.outTrigger();
-    //}
-  }
+		// TODO: Find out why?
+		//for (const component of this) {
+		//if (component.inReport === undefined) {
+		//component.inReport = inReports[1];
+		//}
+		//component.outReport = this.outReport;
+		//component.inConnect();
+		//component.outConnect();
+		//component.outTrigger();
+		//}
+	}
 }

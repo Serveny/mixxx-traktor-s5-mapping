@@ -4,32 +4,35 @@ import type { S5Deck } from '../s5-deck';
 import { PushButton } from './button';
 
 export class CueButton extends PushButton {
-  constructor(private deck: S5Deck, io: BytePosInOut) {
-    super({
-      group: deck.group,
-      inKey: 'cue_default',
-      outKey: 'cue_indicator',
-      reports: deck.reports,
-      io,
-    });
-  }
+	constructor(
+		private deck: S5Deck,
+		io: BytePosInOut
+	) {
+		super({
+			group: deck.group,
+			inKey: 'cue_default',
+			outKey: 'cue_indicator',
+			reports: deck.reports,
+			io,
+		});
+	}
 
-  onUnshift() {
-    this.inKey = 'cue_default';
-  }
+	onUnshift() {
+		this.inKey = 'cue_default';
+	}
 
-  onShift() {
-    this.inKey = 'start_stop';
-  }
+	onShift() {
+		this.inKey = 'start_stop';
+	}
 
-  input(pressed: number) {
-    if (
-      this.deck.moveMode === moveModes.keyboard &&
-      !this.deck.keyboardPlayMode
-    ) {
-      // this.deck.assignKeyboardPlayMode(this.group, this.inKey);
-    } else {
-      engine.setValue(this.group, this.inKey, pressed);
-    }
-  }
+	input(pressed: number) {
+		if (
+			this.deck.moveMode === moveModes.keyboard &&
+			!this.deck.keyboardPlayMode
+		) {
+			// this.deck.assignKeyboardPlayMode(this.group, this.inKey);
+		} else {
+			engine.setValue(this.group, this.inKey, pressed);
+		}
+	}
 }

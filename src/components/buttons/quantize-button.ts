@@ -4,31 +4,31 @@ import type { Btn } from '../../types/mapping';
 import { Button } from './button';
 
 export class QuantizeButton extends Button {
-  isGlobalQuantize: boolean = this.checkGlobalQuantize();
-  constructor(reports: HIDReportHodler, io: Btn) {
-    const key = 'quantize';
-    super({
-      group: `[Channel1]`,
-      inKey: key,
-      outKey: key,
-      reports,
-      io,
-    });
+	isGlobalQuantize: boolean = this.checkGlobalQuantize();
+	constructor(reports: HIDReportHodler, io: Btn) {
+		const key = 'quantize';
+		super({
+			group: `[Channel1]`,
+			inKey: key,
+			outKey: key,
+			reports,
+			io,
+		});
 
-    this.output(this.isGlobalQuantize ? 1 : 0);
-  }
+		this.output(this.isGlobalQuantize ? 1 : 0);
+	}
 
-  input(pressed: number) {
-    if (pressed) {
-      this.isGlobalQuantize = !this.isGlobalQuantize;
-      for (const channel of channels) {
-        engine.setValue(channel, 'quantize', this.isGlobalQuantize ? 1 : 0);
-      }
-      this.output(this.isGlobalQuantize ? 127 : 0);
-    }
-  }
+	input(pressed: number) {
+		if (pressed) {
+			this.isGlobalQuantize = !this.isGlobalQuantize;
+			for (const channel of channels) {
+				engine.setValue(channel, 'quantize', this.isGlobalQuantize ? 1 : 0);
+			}
+			this.output(this.isGlobalQuantize ? 127 : 0);
+		}
+	}
 
-  private checkGlobalQuantize(): boolean {
-    return !channels.some((c) => !engine.getValue(c, 'quantize'));
-  }
+	private checkGlobalQuantize(): boolean {
+		return !channels.some((c) => !engine.getValue(c, 'quantize'));
+	}
 }

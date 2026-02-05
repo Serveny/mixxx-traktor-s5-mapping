@@ -1,117 +1,117 @@
 import type { HIDReportHodler } from '../../hid-report';
 import type {
-  Encoder as EncoderMapping,
-  TouchEncoder as TouchEncoderMapping,
+	Encoder as EncoderMapping,
+	TouchEncoder as TouchEncoderMapping,
 } from '../../types/mapping';
 import type { ControlInOptions, InOptions } from '../../types/component';
 import {
-  Component,
-  InMixin,
-  ShiftMixin,
-  ControlComponent,
-  ControlInMixin,
+	Component,
+	InMixin,
+	ShiftMixin,
+	ControlComponent,
+	ControlInMixin,
 } from '../component';
 
 export abstract class Encoder<
-  TGroup extends MixxxControls.Group,
+	TGroup extends MixxxControls.Group,
 > extends ShiftMixin(
-  ControlInMixin(
-    ControlComponent<MixxxControls.Group, ControlInOptions<MixxxControls.Group>>
-  )
+	ControlInMixin(
+		ControlComponent<MixxxControls.Group, ControlInOptions<MixxxControls.Group>>
+	)
 ) {
-  declare group: TGroup;
-  declare inKey: MixxxControls.CtrlRW<TGroup>;
+	declare group: TGroup;
+	declare inKey: MixxxControls.CtrlRW<TGroup>;
 
-  inBitLength = 4;
-  lastValue: number | null = null;
-  max: number = 15;
-  isPressed: boolean = false;
+	inBitLength = 4;
+	lastValue: number | null = null;
+	max: number = 15;
+	isPressed: boolean = false;
 
-  press: EncoderPress;
+	press: EncoderPress;
 
-  constructor(
-    group: TGroup,
-    inKey: MixxxControls.CtrlRW<TGroup>,
-    reports: HIDReportHodler,
-    io: EncoderMapping
-  ) {
-    super({
-      group,
-      inKey,
-      reports,
-      io: io.fade,
-    });
+	constructor(
+		group: TGroup,
+		inKey: MixxxControls.CtrlRW<TGroup>,
+		reports: HIDReportHodler,
+		io: EncoderMapping
+	) {
+		super({
+			group,
+			inKey,
+			reports,
+			io: io.fade,
+		});
 
-    // TODO
-    this.press = new EncoderPress(this, {
-      reports,
-      io: io.press,
-    });
-  }
+		// TODO
+		this.press = new EncoderPress(this, {
+			reports,
+			io: io.press,
+		});
+	}
 
-  abstract onChange(isRight: boolean): void;
-  abstract onPress(value: number): void;
+	abstract onChange(isRight: boolean): void;
+	abstract onPress(value: number): void;
 
-  input(value: number) {
-    const oldValue = this.lastValue;
-    this.lastValue = value;
+	input(value: number) {
+		const oldValue = this.lastValue;
+		this.lastValue = value;
 
-    if (oldValue === null) {
-      // This scenario happens at the controller initialisation. No real input to proceed
-      return;
-    }
-    let isRight;
-    if (oldValue === this.max && value === 0) {
-      isRight = true;
-    } else if (oldValue === 0 && value === this.max) {
-      isRight = false;
-    } else {
-      isRight = value > oldValue;
-    }
-    this.onChange(isRight);
-  }
+		if (oldValue === null) {
+			// This scenario happens at the controller initialisation. No real input to proceed
+			return;
+		}
+		let isRight;
+		if (oldValue === this.max && value === 0) {
+			isRight = true;
+		} else if (oldValue === 0 && value === this.max) {
+			isRight = false;
+		} else {
+			isRight = value > oldValue;
+		}
+		this.onChange(isRight);
+	}
 }
 
 export abstract class TouchEncoder<
-  TGroup extends MixxxControls.Group,
+	TGroup extends MixxxControls.Group,
 > extends Encoder<TGroup> {
-  touch: EncoderTouch;
-  constructor(
-    group: TGroup,
-    inKey: MixxxControls.CtrlRW<TGroup>,
-    reports: HIDReportHodler,
-    io: TouchEncoderMapping
-  ) {
-    super(group, inKey, reports, io);
+	touch: EncoderTouch;
+	constructor(
+		group: TGroup,
+		inKey: MixxxControls.CtrlRW<TGroup>,
+		reports: HIDReportHodler,
+		io: TouchEncoderMapping
+	) {
+		super(group, inKey, reports, io);
 
-    this.touch = new EncoderTouch(this, {
-      reports,
-      io: io.touch,
-    });
-  }
-  abstract onTouch(value: number): void;
+		this.touch = new EncoderTouch(this, {
+			reports,
+			io: io.touch,
+		});
+	}
+	abstract onTouch(value: number): void;
 }
 
 class EncoderPress extends InMixin(Component<InOptions>) {
-  constructor(
-    private encoder: Encoder<MixxxControls.Group>,
-    opts: InOptions
-  ) {
-    super(opts);
-  }
-  input(value: number) {
-    this.encoder.onPress(value);
-  }
+	constructor(
+		private encoder: Encoder<MixxxControls.Group>,
+		opts: InOptions
+	) {
+		super(opts);
+	}
+	input(value: number) {
+		this.encoder.onPress(value);
+	}
 }
 
 class EncoderTouch extends InMixin(Component<InOptions>) {
-  constructor(
-    private encoder: TouchEncoder<MixxxControls.Group>,
-    opts: InOptions
-  ) {
-    super(opts);
-  }
-  input(value: number) {
-    this.encoder.onTouch(value);
-  }
+	constructor(
+		private encoder: TouchEncoder<MixxxControls.Group>,
+		opts: InOptions
+	) {
+		super(opts);
+	}
+	input(value: number) {
+		this.encoder.onTouch(value);
+	}
 }

@@ -1,5 +1,5 @@
 declare namespace MixxxControls {
-  interface Config {
-    strict: true;
-  }
+	interface Config {
+		strict: true;
+	}
 }

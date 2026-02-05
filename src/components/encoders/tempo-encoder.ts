@@ -5,22 +5,22 @@ import type { HIDReportHodler } from '../../hid-report';
 import { channels } from '../../settings';
 
 export class TempoEncoder extends Encoder<MixxxChannelGroup> {
-  constructor(reports: HIDReportHodler, io: EncoderMapping) {
-    super('[Channel1]', 'rate_perm_down', reports, io);
-  }
-  onChange(isRight: boolean) {
-    if (this.isShifted)
-      this.triggerAllChannels(isRight ? 'rate_perm_up' : 'rate_perm_down');
-    else
-      this.triggerAllChannels(
-        isRight ? 'rate_perm_up_small' : 'rate_perm_down_small'
-      );
-  }
-  onPress(): void {
-    // TODO
-  }
+	constructor(reports: HIDReportHodler, io: EncoderMapping) {
+		super('[Channel1]', 'rate_perm_down', reports, io);
+	}
+	onChange(isRight: boolean) {
+		if (this.isShifted)
+			this.triggerAllChannels(isRight ? 'rate_perm_up' : 'rate_perm_down');
+		else
+			this.triggerAllChannels(
+				isRight ? 'rate_perm_up_small' : 'rate_perm_down_small'
+			);
+	}
+	onPress(): void {
+		// TODO
+	}
 
-  private triggerAllChannels(control: MixxxControls.Ctrl<MixxxChannelGroup>) {
-    for (const channel of channels) script.triggerControl(channel, control, 50);
-  }
+	private triggerAllChannels(control: MixxxControls.CtrlRW<MixxxChannelGroup>) {
+		for (const channel of channels) script.triggerControl(channel, control, 50);
+	}
 }
