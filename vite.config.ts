@@ -8,6 +8,7 @@ const copyTargetDir = path.resolve('attic/mappings/controllers');
 export default defineConfig({
 	build: {
 		outDir,
+		target: 'es6',
 		minify: false,
 
 		lib: {

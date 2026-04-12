@@ -98,9 +98,9 @@ export function installMixxxGlobals() {
 			state.outputReports.push({ reportId, data: new Uint8Array(data) });
 		}),
 		getInputReport: vi.fn((reportId: number) => {
-			// Report 1: 21 bytes (buttons/encoders/touch strip)
+			// Report 1: 27 bytes (buttons/encoders/touch strip, incl. right strip high byte)
 			// Report 2: 80 bytes (knobs/faders, fields up to byte ~66)
-			const defaultSizes: Record<number, number> = { 1: 21, 2: 80 };
+			const defaultSizes: Record<number, number> = { 1: 27, 2: 80 };
 			return state.inputReports.get(reportId) ?? new ArrayBuffer(defaultSizes[reportId] ?? 64);
 		}),
 		send: vi.fn(),

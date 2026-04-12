@@ -8,32 +8,38 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 
 ## 🗿 Current status
 
-- ✅ Reverse engineered Traktor S5 HID mapping
-- ✅ Created basic TypeScript code foundation & types
+- ✅ Reverse engineered core Traktor S5 HID mapping
+- ✅ TypeScript/Vite build and Vitest regression suite
+- ✅ Stable component rebinding for deck switching and shift propagation
 
 ### ✅ Working components
 
-- Mixer (All faders, knobs and buttons in the middle)
+- Mixer controls (channel faders, EQ, filter, cue, FX assign, crossfader)
+- Mixer VU meters
 - FX Unit
-- Loop encoder
-- Cue button
+- Deck switch button with deck-local rebinding
+- Shift layer for play, cue, sync, pads, loop encoder and touch strip
 - Play button
-- VU meter
-- Deck switch button
+- Cue button
+- Sync button
+- Loop encoder
+- Hotcue pads
+- Browser encoder / back button basics
+- Touch strip seek/scratch handling with LED output
+- Flux button basic slip/loop interaction
+- Display-area transport/browser-related buttons
+- LED output for transport, pads, touch strip and mixer
 
 ### 🚧 Work in progress components
 
-- Touch strip (with LED animations)
-- Hotcue button
-- Freeze button
-- Remix button
-- Flux button
-- Display area buttons
-- Displays
+- Freeze mode behavior
+- Remix mode behavior
+- Display rendering
+- Browser/preview behavior that depends on Mixxx GUI focus
+- Remaining S5-specific workflow details from the original hardware manual
 
 ### 🤬 Known bugs
 
-- Shift function broken
 - Track/Playlist browse functions only working if GUI is in focus
 
 ## 👩‍💻 How to setup development
@@ -41,10 +47,10 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 1. Install the <a href="https://mixxx.org/">Mixxx</a> software
 2. Clone the repository: `git clone git@github.com:Serveny/mixxx-traktor-s5-mapping.git`
 3. Open repository directory and install dev dependencies: `npm install`
-4. Check if the files referenced to in tsconfig.json exits or change paths to your mixxx files folder
-5. Add symlink from `../attic/mappings/controllers/`to your mixxx controllers folder (f.e: `/home/[username]/.mixxx/controllers/`): `ln -s "Your mixxx folder" "repository path/attic/mappings/controllers/"`
-6. Run dev mode: `npm run dev` (The buildscript will copy the builded JS into the controllers folder on each change)
-7. Run Mixxx debug command (on Linux): `mixxx --controller-debug --developer`
+4. Check that the Mixxx type-definition paths referenced in `tsconfig.json` exist on your machine, or adjust them to your local Mixxx checkout / installation
+5. Point `attic/mappings/controllers/` at your Mixxx controllers directory, for example: `ln -s "/home/[username]/.mixxx/controllers" "attic/mappings/controllers"`
+6. Run `npm run build` for a one-off build or `npm run dev` for watch mode. The generated `dist/Traktor-Kontrol-S5.js` is copied to `attic/mappings/controllers/` after a successful Vite build
+7. Start Mixxx in debug mode. On Linux the package script is `npm run start`, which expands to `../mixxx/build/mixxx --controller-debug --developer`
 
 ## Tests
 
@@ -56,6 +62,9 @@ The automated suite currently focuses on:
 
 - component rebinding and shift propagation
 - deck-switch regression coverage
+- HID input regressions for deck/shift/touch-strip/play flows
+- mixer LED and volume-meter output behavior
+- transport, loop, pad and LED behavior
 - audio preflight handling for scenario tests
 - a manual-derived coverage matrix under `tests/spec/`
 

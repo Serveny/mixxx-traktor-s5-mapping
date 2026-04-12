@@ -113,4 +113,44 @@ describe('LED output', () => {
 
 		expect(outReport.data[playOutByte]).toBe(ButtonBrightnessOn);
 	});
+
+	test('volume meter clears all channel LEDs when vu_meter returns to zero', () => {
+		const s5 = new S5(mapping);
+		const meterOutByte = mapping.mixer.channelA.volumeLevel.outByte;
+		const outReport = s5.reports.out[130];
+
+		setTestValue('[Channel1]', 'vu_meter', 0.7);
+		s5.mixer.channelA.volumeMeter.output();
+
+		setTestValue('[Channel1]', 'vu_meter', 0);
+		s5.mixer.channelA.volumeMeter.output();
+
+		const meterBytes = Array.from(
+			outReport.data.slice(
+				meterOutByte,
+				meterOutByte + mapping.mixer.channelA.volumeLevel.outLengthByte
+			)
+		);
+		expect(meterBytes.every((value) => value === 0)).toBe(true);
+	});
+
+	test('volume meter renders consecutive full and partial segments', () => {
+		const s5 = new S5(mapping);
+		const meterOutByte = mapping.mixer.channelA.volumeLevel.outByte;
+		const outReport = s5.reports.out[130];
+
+		setTestValue('[Channel1]', 'vu_meter', 1.6 / 11);
+		s5.mixer.channelA.volumeMeter.output();
+
+		const meterBytes = Array.from(
+			outReport.data.slice(
+				meterOutByte,
+				meterOutByte + mapping.mixer.channelA.volumeLevel.outLengthByte
+			)
+		);
+
+		expect(meterBytes[0]).toBe(127);
+		expect(meterBytes[1]).toBe(125);
+		expect(meterBytes.slice(2).every((value) => value === 0)).toBe(true);
+	});
 });

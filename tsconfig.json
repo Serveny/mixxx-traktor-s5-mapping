@@ -1,9 +1,13 @@
 {
 	"compilerOptions": {
-		"target": "es2020",
-		"types": ["node"],
+		"target": "es6",
+		"types": [
+			"node"
+		],
 		"useDefineForClassFields": false,
-		"module": "es2020",
+		"lib": [
+			"ES2016"
+		],
 		"skipLibCheck": true,
 		/* Bundler mode */
 		"moduleResolution": "bundler",

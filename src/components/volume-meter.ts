@@ -15,6 +15,9 @@ type Group =
 	| AuxiliaryGroup
 	| MicrophoneGroup;
 
+const FullBrightness = 127;
+const DimBrightness = 125;
+
 export class VolumeMeter extends ControlOutMixin(
 	ControlComponent<Group, ControlOutOptions<Group>>
 ) {
@@ -56,30 +59,22 @@ export class VolumeMeter extends ControlOutMixin(
 				deckGroup = this.micGroup;
 			}
 		}
-		const deckLevel = engine.getValue(deckGroup, 'vu_meter');
+		const deckLevel = Math.max(0, Math.min(engine.getValue(deckGroup, 'vu_meter'), 1));
 		this.isChange = deckLevel !== this.oldDeckLevel;
 		if (!this.isChange) return;
 		this.oldDeckLevel = deckLevel;
 
 		const columnBaseIndex = this.io.outByte;
 		const scaledLevel = deckLevel * this.deckSegments;
-		const segmentsToLightFully = Math.floor(scaledLevel);
-		const partialSegmentValue = scaledLevel - segmentsToLightFully;
-		if (segmentsToLightFully > 0) {
-			// There are 3 brightness levels per segment: off, dim, and full.
-			for (let i = 0; i <= segmentsToLightFully; i++) {
-				this.outReport.data[columnBaseIndex + i] = 127;
-			}
-			if (
-				partialSegmentValue > 0.5 &&
-				segmentsToLightFully < this.deckSegments
-			) {
-				this.outReport.data[columnBaseIndex + segmentsToLightFully + 1] = 125;
-			}
+		for (let i = 0; i < this.deckSegments; i++) {
+			const segmentLevel = scaledLevel - i;
+			this.outReport.data[columnBaseIndex + i] =
+				segmentLevel >= 1
+					? FullBrightness
+					: segmentLevel > 0.5
+						? DimBrightness
+						: 0;
 		}
-
-		for (let i = segmentsToLightFully; i < this.deckSegments; i++)
-			this.outReport.data[columnBaseIndex + i] = 0;
 
 		// Peak indicator, but I do not use it
 		//const peak = engine.getValue(deckGroup, 'PeakIndicator') * 127;
