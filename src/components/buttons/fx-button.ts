@@ -29,7 +29,7 @@ export class FxButton extends SingleColorOutMixin(
 		group: Group,
 		private unit: S5EffectUnit,
 		reports: HIDReportHodler,
-		private index: number,
+		index: number,
 		io: Btn[]
 	) {
 		const key = 'enabled';

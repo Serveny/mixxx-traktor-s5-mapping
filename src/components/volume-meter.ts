@@ -28,7 +28,7 @@ export class VolumeMeter extends ControlOutMixin(
 	isChange = false;
 
 	constructor(
-		private deckNum: DeckChannel,
+		deckNum: DeckChannel,
 		outKey: MixxxControls.Ctrl<Group>,
 		private s5: S5,
 		io: Meter
@@ -45,7 +45,6 @@ export class VolumeMeter extends ControlOutMixin(
 	}
 
 	output() {
-		const deckNum = this.deckNum;
 		let deckGroup: Group = this.channelGroup;
 		const isAnyDeckShifted = !!(
 			this.s5.deckLeft?.isShifted || this.s5.deckRight?.isShifted

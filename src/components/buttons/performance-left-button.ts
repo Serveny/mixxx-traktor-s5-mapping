@@ -1,5 +1,4 @@
 import type { Btn as ButtonMapping } from '../../types/mapping';
-import type { S5Deck } from '../s5-deck';
 import { Component, InMixin, SingleColorOutMixin } from '../component';
 import type { ComponentOptions } from '../../types/component';
 import type { DisplayArea } from '../display-area';

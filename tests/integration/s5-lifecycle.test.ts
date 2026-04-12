@@ -36,7 +36,6 @@ describe('S5 lifecycle', () => {
 
 		// Each shutdown report should contain all zeros
 		for (const call of calls) {
-			const reportId = call[0] as number;
 			const data = new Uint8Array(call[1] as ArrayBuffer);
 			expect(data.every((b: number) => b === 0)).toBe(true);
 		}

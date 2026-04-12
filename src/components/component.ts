@@ -16,7 +16,6 @@ import type {
 	ControlOptions,
 } from '../types/component';
 import type { BytePosIn, BytePosOut } from '../types/mapping';
-import type { MixxxChannelGroup } from '../types/mixxx-controls';
 
 export class Component<P extends ComponentOptions> {
 	constructor(..._: [P]) {}
