@@ -1,0 +1,37 @@
+[
+	{
+		"manualSection": "2.1.1 Opening the Browser",
+		"feature": "Open browser with browse encoder press",
+		"component": "BrowserEncoder",
+		"automationLevel": "scenario",
+		"status": "planned"
+	},
+	{
+		"manualSection": "2.2.2 Playing a Track",
+		"feature": "Play loaded track and illuminate play state",
+		"component": "PlayButton",
+		"automationLevel": "integration",
+		"status": "planned"
+	},
+	{
+		"manualSection": "2.3.2 Playing the Second Track",
+		"feature": "Mix between two loaded decks",
+		"component": "Mixer / Crossfader / Decks",
+		"automationLevel": "scenario",
+		"status": "planned"
+	},
+	{
+		"manualSection": "2.1.5 Sorting Tracks",
+		"feature": "Shifted browse and loop encoder interactions during browsing",
+		"component": "BrowserEncoder / loopEncoder / ShiftButton",
+		"automationLevel": "manual-only",
+		"status": "planned"
+	},
+	{
+		"manualSection": "2.5 Deck Switching",
+		"feature": "Switch focused deck without breaking controls",
+		"component": "Deck / DeckButton / group-bound children",
+		"automationLevel": "integration",
+		"status": "covered"
+	}
+]

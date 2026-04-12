@@ -32,7 +32,7 @@ export default defineConfig({
 			targets: [
 				{
 					src: `dist/${fileName}.js`,
-					dest: `../attic/mappings/controllers/`,
+					dest: `attic/mappings/controllers/`,
 				},
 			],
 		}),

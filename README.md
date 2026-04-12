@@ -46,6 +46,21 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 6. Run dev mode: `npm run dev` (The buildscript will copy the builded JS into the controllers folder on each change)
 7. Run Mixxx debug command (on Linux): `mixxx --controller-debug --developer`
 
+## Tests
+
+- `npm run test:run`: Runs the automated Vitest suite.
+- `npm run test:mixxx-smoke`: Starts Mixxx with isolated settings/resources and checks for controller warnings or script errors.
+- `node tests/scenarios/run-visible-dj-set.mjs`: Prints the visible DJ-set validation flow and warns if required audio files are missing.
+
+The automated suite currently focuses on:
+
+- component rebinding and shift propagation
+- deck-switch regression coverage
+- audio preflight handling for scenario tests
+- a manual-derived coverage matrix under `tests/spec/`
+
+The DJ-set scenario uses `tests/assets/tracks-manifest.json` as its track list. If required files are missing, the scenario reports a warning and either degrades to control-only checks or blocks execution.
+
 ## 🖱️ HID IN/OUT-PUTS
 
 Reverse engineered HID mapping. Some bits/byte in the reports are empty between (or I didn't find out the usage).

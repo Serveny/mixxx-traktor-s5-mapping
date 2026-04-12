@@ -47,7 +47,10 @@ export class VolumeMeter extends ControlOutMixin(
 	output() {
 		const deckNum = this.deckNum;
 		let deckGroup: Group = this.channelGroup;
-		if (this.s5.deckLeft.isShifted || this.s5.deckRight.isShifted) {
+		const isAnyDeckShifted = !!(
+			this.s5.deckLeft?.isShifted || this.s5.deckRight?.isShifted
+		);
+		if (isAnyDeckShifted) {
 			if (engine.getValue(this.auxGroup, 'input_configured')) {
 				deckGroup = this.auxGroup;
 			} else if (engine.getValue(this.micGroup, 'input_configured')) {
