@@ -125,4 +125,9 @@ export class FluxButton extends SetInOutKeyMixin(
 			engine.setValue(this.group, this.inKey, 1);
 		}
 	}
+
+	rebindGroup(group: MixxxChannelGroup) {
+		this.loopModeOff(false);
+		super.rebindGroup(group);
+	}
 }
