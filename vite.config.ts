@@ -1,11 +1,13 @@
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-
+import { mkdir, copyFile } from 'node:fs/promises';
+import path from 'node:path';
 const fileName = 'Traktor-Kontrol-S5';
+const outDir = 'dist';
+const copyTargetDir = path.resolve('attic/mappings/controllers');
 
 export default defineConfig({
 	build: {
+		outDir,
 		minify: false,
 
 		lib: {
@@ -25,16 +27,19 @@ export default defineConfig({
 		} as any,
 	},
 	plugins: [
-		//dts({
-		//insertTypesEntry: true,
-		//}),
-		viteStaticCopy({
-			targets: [
-				{
-					src: `dist/${fileName}.js`,
-					dest: `attic/mappings/controllers/`,
-				},
-			],
-		}),
+		{
+			name: 'copy-controller-build-to-attic',
+			async writeBundle() {
+				const source = path.resolve(outDir, `${fileName}.js`);
+				const destination = path.join(copyTargetDir, `${fileName}.js`);
+
+				try {
+					await mkdir(copyTargetDir, { recursive: true });
+					await copyFile(source, destination);
+				} catch (error) {
+					this.warn(`Skipping controller copy to ${destination}: ${error}`);
+				}
+			},
+		},
 	],
 });
