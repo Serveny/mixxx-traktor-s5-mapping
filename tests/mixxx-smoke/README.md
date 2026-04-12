@@ -1,11 +1,24 @@
 # Mixxx Smoke Tests
 
-`npm run test:mixxx-smoke` starts the sibling Mixxx build with an isolated settings directory.
+`npm run test:mixxx-smoke` starts the sibling Mixxx build with an isolated settings directory and the S5 controller mapping installed.
 
-The script is intentionally lightweight:
+## What it does
 
-- it detects `../mixxx/build/mixxx` and `../../../mixxx/build/mixxx`
-- it runs Mixxx with `--controller-debug --controller-abort-on-warning --developer`
-- it treats warnings and exceptions as a visible warning result instead of silently passing
+1. Locates `../mixxx/build/mixxx` (or `../../../mixxx/build/mixxx`)
+2. Ensures `dist/Traktor-Kontrol-S5.js` exists (run `npm run build` first)
+3. Copies the built JS and the HID XML mapping into a temp settings directory
+4. Runs Mixxx with `--controller-debug --controller-abort-on-warning --developer`
+5. Parses the output for controller-specific errors and warnings
 
-This is a smoke test, not a full controller E2E test.
+## Prerequisites
+
+- A built Mixxx binary at `../mixxx/build/mixxx`
+- A built controller mapping at `dist/Traktor-Kontrol-S5.js` (`npm run build`)
+- The HID XML mapping at `~/.mixxx/controllers/Traktor Kontrol S5.hid.xml`
+
+## Exit behavior
+
+- Exits with **1** if controller errors (script exceptions, mapping load failures) are found
+- Exits with **0** on success or if prerequisites are missing (with a WARN message)
+
+This is a smoke test, not a full controller E2E test. It verifies that the mapping loads without crashing in Mixxx's JavaScript engine.

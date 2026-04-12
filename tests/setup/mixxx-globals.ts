@@ -55,6 +55,9 @@ export function installMixxxGlobals() {
 		setValue: vi.fn((group: string, control: string, value: number) => {
 			state.values.set(keyFor(group, control), value);
 		}),
+		setParameter: vi.fn((group: string, control: string, value: number) => {
+			state.values.set(keyFor(group, control), value);
+		}),
 		getSetting: vi.fn(() => 0),
 		makeConnection: vi.fn(
 			(group: string, control: string, callback: (value: number) => void) => {
@@ -95,7 +98,10 @@ export function installMixxxGlobals() {
 			state.outputReports.push({ reportId, data: new Uint8Array(data) });
 		}),
 		getInputReport: vi.fn((reportId: number) => {
-			return state.inputReports.get(reportId) ?? new ArrayBuffer(0);
+			// Report 1: 21 bytes (buttons/encoders/touch strip)
+			// Report 2: 80 bytes (knobs/faders, fields up to byte ~66)
+			const defaultSizes: Record<number, number> = { 1: 21, 2: 80 };
+			return state.inputReports.get(reportId) ?? new ArrayBuffer(defaultSizes[reportId] ?? 64);
 		}),
 		send: vi.fn(),
 		sendFeatureReport: vi.fn(),
@@ -107,6 +113,11 @@ export function installMixxxGlobals() {
 			const current = state.values.get(keyFor(group, control)) ?? 0;
 			state.values.set(keyFor(group, control), current ? 0 : 1);
 		}),
+		triggerControl: vi.fn(
+			(group: string, control: string, _duration?: number) => {
+				state.values.set(keyFor(group, control), 1);
+			}
+		),
 	};
 
 	scope.ColorMapper = class {
