@@ -3,13 +3,20 @@ import type { HIDReportHodler } from '../hid-report';
 import type { BytePosIn, BytePosInOut, BytePosOut } from './mapping';
 
 // export type ComponentConstructor<T extends any[] = any[], R = {}> = new (...args: T) => R;
-export type ComponentConstructor<T = {}> = new (...args: any[]) => T;
-// export type ComponentConstructor<TOptions extends ComponentOptions> = new (...args: any[]) => Component<TOptions>;
-export type ControlComponentConstructor = new (
+export type ComponentConstructor<T extends object = object> = new (
 	...args: any[]
-) => ControlComponent<any, any>;
+) => T;
+// export type ComponentConstructor<TOptions extends ComponentOptions> = new (...args: any[]) => Component<TOptions>;
+export type ControlComponentConstructor<
+	TGroup extends MixxxControls.Group = MixxxControls.Group,
+	P extends ControlOptions<TGroup> = ControlOptions<TGroup>,
+> = new (
+	...args: any[]
+) => ControlComponent<TGroup, P>;
 
 export interface ComponentOptions {}
+
+export type ComponentChild = object;
 
 export interface InOptions extends ComponentOptions {
 	input?: (value: number) => void;

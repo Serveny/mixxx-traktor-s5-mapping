@@ -2,11 +2,18 @@ import type { S5 } from '../s5';
 import { createCompContainer } from './component-container';
 import { Pot } from './pot';
 import type { S5MixerColumnMapping } from '../types/mapping';
-import type { MixxxChannelGroup } from '../types/mixxx-controls';
+import {
+	channelGroup,
+	equalizerGroup,
+	quickEffectGroup,
+	type DeckChannel,
+	type EqualizerGroup,
+	type MixxxChannelGroup,
+	type QuickEffectGroup,
+} from '../types/mixxx-controls';
 import { VolumeMeter } from './volume-meter';
 import { ToggleButton } from './buttons/button';
 
-type EqualizerGroup = `[EqualizerRack1_[Channel${number}]_Effect1]`;
 const CompContainer = createCompContainer<MixxxChannelGroup>();
 export class S5MixerColumn extends CompContainer {
 	declare group: MixxxChannelGroup;
@@ -16,80 +23,84 @@ export class S5MixerColumn extends CompContainer {
 	eqHigh: Pot<EqualizerGroup>;
 	eqMid: Pot<EqualizerGroup>;
 	eqLow: Pot<EqualizerGroup>;
-	filterKnob: Pot<`[QuickEffectRack1_[Channel${number}]]`>;
+	filterKnob: Pot<QuickEffectGroup>;
 	filterButton: ToggleButton;
 	volume: Pot<MixxxChannelGroup>;
 	volumeMeter: VolumeMeter;
 	pfl: ToggleButton; // Channel cue button
 
 	constructor(
-		private deckNum: number,
+		private deckNum: DeckChannel,
 		s5: S5,
 		io: S5MixerColumnMapping
 	) {
-		super(`[Channel${deckNum}]`);
+		super(channelGroup(deckNum));
 
-		this.gain = new Pot(this.group, 'pregain', s5.reports, io.gain);
+		this.gain = this.register(new Pot(this.group, 'pregain', s5.reports, io.gain));
 
-		this.eqHigh = new Pot(
-			`[EqualizerRack1_${this.group}_Effect1]`,
+		this.eqHigh = this.register(new Pot(
+			equalizerGroup(this.group),
 			'parameter3',
 			s5.reports,
 			io.eqHigh
-		);
-		this.eqMid = new Pot(
-			`[EqualizerRack1_${this.group}_Effect1]`,
+		));
+		this.eqMid = this.register(new Pot(
+			equalizerGroup(this.group),
 			'parameter2',
 			s5.reports,
 			io.eqMid
-		);
-		this.eqLow = new Pot(
-			`[EqualizerRack1_${this.group}_Effect1]`,
+		));
+		this.eqLow = this.register(new Pot(
+			equalizerGroup(this.group),
 			'parameter1',
 			s5.reports,
 			io.eqLow
-		);
+		));
 
-		this.filterKnob = new Pot(
-			`[QuickEffectRack1_${this.group}]`,
+		this.filterKnob = this.register(new Pot(
+			quickEffectGroup(this.group),
 			'super1',
 			s5.reports,
 			io.filter
-		);
-		this.filterButton = new ToggleButton({
-			group: `[QuickEffectRack1_${this.group}]`,
+		));
+		this.filterButton = this.register(new ToggleButton({
+			group: quickEffectGroup(this.group),
 			inKey: 'enabled',
 			outKey: 'enabled',
 			reports: s5.reports,
 			io: io.filterBtn,
-		});
+		}));
 
-		this.volume = new Pot(this.group, 'volume', s5.reports, io.volume);
-		this.volumeMeter = new VolumeMeter(deckNum, 'volume', s5, io.volumeLevel);
+		this.volume = this.register(
+			new Pot(this.group, 'volume', s5.reports, io.volume)
+		);
+		this.volumeMeter = this.register(
+			new VolumeMeter(deckNum, 'volume', s5, io.volumeLevel)
+		);
 
-		this.pfl = new ToggleButton({
+		this.pfl = this.register(new ToggleButton({
 			group: this.group,
 			inKey: 'pfl',
 			outKey: 'pfl',
 			reports: s5.reports,
 			io: io.cue,
-		});
+		}));
 
 		const assginKey: `group_[Channel${number}]_enable` = `group_${this.group}_enable`;
-		this.fxAssignleft = new ToggleButton({
+		this.fxAssignleft = this.register(new ToggleButton({
 			group: '[EffectRack1_EffectUnit1]',
 			inKey: assginKey,
 			outKey: assginKey,
 			reports: s5.reports,
 			io: io.fxUnitAssignLeft,
-		});
-		this.fxAssignRight = new ToggleButton({
+		}));
+		this.fxAssignRight = this.register(new ToggleButton({
 			group: '[EffectRack1_EffectUnit2]',
 			inKey: assginKey,
 			outKey: assginKey,
 			reports: s5.reports,
 			io: io.fxUnitAssignRight,
-		});
+		}));
 
 		// Assign to crossfader left/right
 		engine.setValue(

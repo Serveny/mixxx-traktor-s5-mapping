@@ -1,7 +1,7 @@
 import { Mixer } from './components/mixer';
 import { S5Deck } from './components/s5-deck';
 import type { S5Mapping } from './types/mapping';
-import { HIDReportHodler } from './hid-report';
+import { HIDReportHodler, isInputReportId } from './hid-report';
 import { S5EffectUnit } from './components/s5-effect-unit';
 
 export class S5 {
@@ -57,7 +57,7 @@ export class S5 {
 	incomingData(data: Uint8Array) {
 		const reportId = data[0];
 
-		if (reportId in this.reports.in) {
+		if (isInputReportId(reportId)) {
 			this.reports.in[reportId].handleInput(data.buffer.slice(1));
 		} else {
 			console.warn(

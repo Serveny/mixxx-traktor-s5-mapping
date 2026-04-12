@@ -27,9 +27,14 @@ export class ControlComponent<
 	P extends ControlOptions<TGroup>,
 > extends Component<P> {
 	group: TGroup;
+
 	constructor(...args: [P]) {
 		super(...args);
 		this.group = args[0].group;
+	}
+
+	rebindGroup(group: TGroup) {
+		this.group = group;
 	}
 }
 
@@ -122,13 +127,11 @@ export function ControlInMixin<TBase extends ControlComponentConstructor>(
 			engine.setValue(this.group as MixxxControls.Group, this.inKey, pressed);
 		}
 
-		setInKey(key: MixxxControls.CtrlRW<MixxxChannelGroup>) {
+		setInKey(key: MixxxControls.CtrlRW<MixxxControls.Group>) {
 			if (key === this.inKey) {
 				return;
 			}
-			this.inDisconnect();
 			this.inKey = key;
-			this.inConnect();
 		}
 	};
 }
@@ -142,7 +145,8 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
 
 	return class extends BaseOut {
 		outKey: MixxxControls.Ctrl<MixxxControls.Group>;
-		outConnection: ScriptConnection;
+		outConnection: ScriptConnection | null = null;
+
 		constructor(...args: any[]) {
 			super(...args);
 			const opts = args[0] as ControlOutOptions<MixxxControls.Group>;
@@ -161,23 +165,35 @@ export function ControlOutMixin<TBase extends ControlComponentConstructor>(
 				throw Error(
 					`Unable to connect ${this.group}.${this.outKey}' to the controller output. The control appears to be unavailable.`
 				);
+			this.outConnection = outCon;
 			return outCon;
 		}
 
 		outTrigger() {
-			this.outConnection.trigger();
+			this.outConnection?.trigger();
 		}
 
 		outDisconnect() {
-			this.outConnection.disconnect();
+			this.outConnection?.disconnect();
+			this.outConnection = null;
 		}
 
-		setOutKey(key: MixxxControls.Ctrl<MixxxChannelGroup>) {
+		setOutKey(key: MixxxControls.Ctrl<MixxxControls.Group>) {
 			if (key === this.outKey) {
 				return;
 			}
 			this.outDisconnect();
 			this.outKey = key;
+			this.outConnect();
+			this.outTrigger();
+		}
+
+		rebindGroup(group: MixxxControls.Group) {
+			if (group === this.group) {
+				return;
+			}
+			this.group = group;
+			this.outDisconnect();
 			this.outConnect();
 			this.outTrigger();
 		}
@@ -287,7 +303,7 @@ export function SetInOutKeyMixin<TBase extends ControlComponentConstructor>(
 	const BaseOut = ControlOutMixin(ControlInMixin(Base));
 
 	return class extends BaseOut {
-		setKey(key: MixxxControls.CtrlRW<MixxxChannelGroup>) {
+		setKey(key: MixxxControls.CtrlRW<MixxxControls.Group>) {
 			this.setInKey(key);
 			this.setOutKey(key);
 		}

@@ -1,5 +1,5 @@
 import { LedColors } from './color';
-import type { MixxxChannelGroup } from './types/mixxx-controls';
+import { channelGroup, type MixxxChannelGroup } from './types/mixxx-controls';
 
 // Constant used to define custom default pad layout
 export const DefaultPadLayoutHotcue = 'hotcue';
@@ -22,7 +22,7 @@ export const wheelLEDmodes = {
 	ringFlash: 3,
 	dimSpot: 4,
 	individuallyAddressable: 5, // set byte 4 to 0 and set byes 8 - 40 to color values
-};
+} as const;
 
 // The mode available, which the wheel can be used for.
 export const wheelModes = {
@@ -31,21 +31,23 @@ export const wheelModes = {
 	motor: 2,
 	loopIn: 3,
 	loopOut: 4,
-};
+} as const;
+export type WheelMode = (typeof wheelModes)[keyof typeof wheelModes];
 
 export const moveModes = {
 	beat: 0,
 	bpm: 1,
 	grid: 2,
 	keyboard: 3,
-};
+} as const;
+export type MoveMode = (typeof moveModes)[keyof typeof moveModes];
 
-export const channels: MixxxChannelGroup[] = [
-	`[Channel1]`,
-	`[Channel2]`,
-	`[Channel3]`,
-	`[Channel4]`,
-];
+export const channels = [
+	channelGroup(1),
+	channelGroup(2),
+	channelGroup(3),
+	channelGroup(4),
+] as const satisfies readonly MixxxChannelGroup[];
 
 /*
  * USER CONFIGURABLE SETTINGS

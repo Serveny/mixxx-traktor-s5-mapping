@@ -1,6 +1,9 @@
+export type InputReportId = 1 | 2;
+export type OutputReportId = 128 | 129 | 130;
+
 // In: from cotroller to software
 export interface FullBytePosIn {
-	inReportId: number;
+	inReportId: InputReportId;
 	inByte: number;
 }
 
@@ -11,7 +14,7 @@ export interface BytePosIn extends FullBytePosIn {
 
 // Out: from software to controller
 export interface BytePosOut {
-	outReportId: number;
+	outReportId: OutputReportId;
 	outByte: number;
 	outLengthByte: number;
 }

@@ -30,6 +30,10 @@ The project is still work in progress. Preserve existing behavior unless a chang
 - `src/hid-report.ts` contains the low-level HID input/output report helpers.
 - `src/components/` contains the higher-level controller logic for decks, mixer, pads, encoders, and buttons.
 - `src/settings.ts` reads Mixxx runtime settings and exposes controller-specific configuration.
+- `src/components/component.ts` and `src/components/component-container.ts` define the component binding lifecycle. Treat changes there as architecture work, not local cleanup.
+- `ComponentContainer` instances are expected to register child components explicitly via the container API. Do not rely on property iteration/reflection to discover children for shift propagation, reconnects, or deck switching.
+- Deck switching should use explicit `rebindGroup(...)` behavior on group-bound components. Avoid regex- or string-heuristic rewrites of `group` values during runtime.
+- HID report subscriptions and Mixxx control bindings are separate concerns: changing a Mixxx `inKey`/`outKey` must not imply reconnecting HID input callbacks unless the HID report position itself changes.
 
 ## Setup And Common Commands
 
@@ -46,6 +50,7 @@ Run these from the repository root:
 - `tsconfig.json` includes Mixxx controller API files from system paths such as `/usr/share/mixxx/controllers/...`
 - `tsconfig.json` also references a sibling `../mixxx` checkout for `engine-api.d.ts` and `mixxx-controls.d.ts`
 - The development flow assumes a local Mixxx installation and a symlink or copy target for controller files as described in `README.md`
+- `npm run build` may copy the emitted controller file through a local symlink into a Mixxx controllers directory. In sandboxed or read-only environments, the compile step may succeed while the final copy step fails for environmental reasons.
 
 If type-checking fails, first verify that the external Mixxx type definition paths in `tsconfig.json` exist on the local machine.
 
@@ -56,6 +61,10 @@ If type-checking fails, first verify that the external Mixxx type definition pat
 - Do not hand-roll code when a suitable dependency already exists.
 - Keep `mapping.ts` readable and stable; preserve its current formatting style, including deliberate `prettier-ignore` usage.
 - Avoid touching `attic/` unless the task is explicitly about temporary reverse-engineering material or local helper data.
+- Prefer explicit registration and lifecycle wiring over implicit discovery.
+- Prefer local helper functions and constrained template-literal types when building Mixxx group strings.
+- Prefer literal unions or `as const` objects for controller-specific report IDs, deck numbers, and modes instead of untyped `number` values.
+- Keep historical experiments and disabled designs out of active source files when they stop informing the current implementation; move them to `attic/` or documentation instead of leaving large commented blocks in core classes.
 
 ## Testing And Validation
 
@@ -66,6 +75,7 @@ Before finishing a change:
 - Run `npm run check` at minimum
 - Run `npm run build` when the change affects emitted controller code
 - For functional controller changes, validate behavior in Mixxx when possible
+- If `npm run build` fails during the copy step in a sandboxed or read-only environment, distinguish environment failure from TypeScript or bundling failure in the final report.
 
 Review and verification should focus on:
 
@@ -73,6 +83,7 @@ Review and verification should focus on:
 - Correct Traktor Kontrol S5 behavior
 - HID input/output mapping regressions
 - LED behavior and deck/mixer control correctness
+- Binding lifecycle correctness after deck switching, shift state changes, or dynamic key rebinding
 - Changes that may depend on Mixxx window focus, since the README and source mention focus-related issues
 
 ## Git And Delivery Rules
@@ -100,5 +111,7 @@ Small numeric mistakes in these areas can silently break controller behavior.
 ## Project-Specific Notes
 
 - The README documents current working features, work in progress areas, and known bugs; consult it before extending unfinished controls.
+- `docs/traktor_kontrol_s5_manual_english.md` is the structured reference for the original Traktor Kontrol S5 manual. Use it when implementing or refining controller behavior so the mapping follows the device's documented functionality as closely as practical.
+- When the manual and current code diverge, treat the manual as the behavioral reference unless the project already documents an intentional deviation, a known Mixxx limitation, or a deliberate work-in-progress gap.
 - Some browse-related behavior is known to depend on Mixxx GUI focus.
 - The codebase contains several TODO/FIXME notes around incomplete S5 behavior; extend existing work carefully instead of assuming the controller is feature-complete.

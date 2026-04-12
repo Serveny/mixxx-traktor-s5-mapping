@@ -1,13 +1,19 @@
 import type { S5 } from '../s5';
 import type { ControlOutOptions } from '../types/component';
 import type { Meter } from '../types/mapping';
-import type { MixxxChannelGroup } from '../types/mixxx-controls';
+import {
+	channelGroup,
+	type AuxiliaryGroup,
+	type DeckChannel,
+	type MicrophoneGroup,
+	type MixxxChannelGroup,
+} from '../types/mixxx-controls';
 import { ControlComponent, ControlOutMixin } from './component';
 
 type Group =
 	| MixxxChannelGroup
-	| `[Auxiliary${number}]`
-	| `[Microphone${number}]`;
+	| AuxiliaryGroup
+	| MicrophoneGroup;
 
 export class VolumeMeter extends ControlOutMixin(
 	ControlComponent<Group, ControlOutOptions<Group>>
@@ -22,18 +28,18 @@ export class VolumeMeter extends ControlOutMixin(
 	isChange = false;
 
 	constructor(
-		private deckNum: number,
+		private deckNum: DeckChannel,
 		outKey: MixxxControls.Ctrl<Group>,
 		private s5: S5,
 		io: Meter
 	) {
 		super({
-			group: `[Channel${deckNum}]`,
+			group: channelGroup(deckNum),
 			outKey,
 			reports: s5.reports,
 			io,
 		});
-		this.channelGroup = `[Channel${deckNum}]`;
+		this.channelGroup = channelGroup(deckNum);
 		this.auxGroup = `[Auxiliary${deckNum}]`;
 		this.micGroup = `[Microphone${deckNum}]`;
 	}

@@ -1,5 +1,10 @@
-import type { ControlOptions } from '../types/component';
+import type { ComponentChild, ControlOptions } from '../types/component';
 import { ShiftMixin, ControlComponent } from './component';
+
+interface RegisteredChild {
+	component: ComponentChild;
+	groupBound: boolean;
+}
 
 export abstract class ComponentContainer<
 	TGroup extends MixxxControls.Group,
@@ -7,33 +12,62 @@ export abstract class ComponentContainer<
 	ControlComponent<MixxxControls.Group, ControlOptions<MixxxControls.Group>>
 ) {
 	declare group: TGroup;
+	private children: RegisteredChild[] = [];
 
 	constructor(group: TGroup) {
 		super({ group });
 	}
+
+	protected register<T extends ComponentChild>(
+		component: T,
+		options: { groupBound?: boolean } = {}
+	): T {
+		this.children.push({
+			component,
+			groupBound: options.groupBound ?? false,
+		});
+		return component;
+	}
+
+	protected registerAll<T extends ComponentChild>(
+		components: Iterable<T>,
+		options: { groupBound?: boolean } = {}
+	): void {
+		for (const component of components) {
+			this.register(component, options);
+		}
+	}
+
 	*[Symbol.iterator]() {
-		// can't use for...of here because it would create an infinite loop
-		for (const property in this) {
-			if (!Object.prototype.hasOwnProperty.call(this, property)) continue;
-			const obj: any = this[property];
-			if (obj?.shift != null) yield obj;
-			else if (Array.isArray(obj)) {
-				for (const objectInArray of obj) {
-					if (objectInArray?.shift != null) yield objectInArray;
-				}
+		for (const { component } of this.children) {
+			yield component;
+		}
+	}
+
+	protected rebindGroupChildren(group: TGroup) {
+		this.group = group;
+		for (const { component, groupBound } of this.children) {
+			if (!groupBound) {
+				continue;
+			}
+			const rebindGroup = (component as Record<string, unknown>).rebindGroup;
+			if (typeof rebindGroup === 'function') {
+				(rebindGroup as (group: TGroup) => void).call(component, group);
 			}
 		}
 	}
-	reconnectComponents(callback?: (component: any) => boolean) {
+
+	reconnectComponents(callback?: (component: ComponentChild) => boolean) {
 		for (const component of this) {
-			//if (component.reconnectComponents != null) {
-			//component.reconnectComponents(callback);
-			//continue;
-			//}
-			if (callback) if (!callback.call(this, component)) continue;
-			component.outDisconnect?.();
-			component.outConnect?.();
-			component.outTrigger?.();
+			if (callback && !callback.call(this, component)) continue;
+			const componentRecord = component as Record<string, unknown>;
+			const outDisconnect = componentRecord.outDisconnect;
+			const outConnect = componentRecord.outConnect;
+			const outTrigger = componentRecord.outTrigger;
+
+			if (typeof outDisconnect === 'function') outDisconnect.call(component);
+			if (typeof outConnect === 'function') outConnect.call(component);
+			if (typeof outTrigger === 'function') outTrigger.call(component);
 		}
 	}
 
@@ -51,9 +85,10 @@ export abstract class ComponentContainer<
 
 	private callAll(fnName: string) {
 		for (const component of this) {
-			if (component[fnName] !== undefined) component[fnName]();
-			else if (Array.isArray(component))
-				component.forEach((c) => c[fnName]?.());
+			const fn = (component as Record<string, unknown>)[fnName];
+			if (typeof fn === 'function') {
+				(fn as () => void).call(component);
+			}
 		}
 	}
 }

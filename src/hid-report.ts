@@ -1,12 +1,17 @@
-import type { BytePosIn, HidInReportField } from './types/mapping';
+import type {
+	BytePosIn,
+	HidInReportField,
+	InputReportId,
+	OutputReportId,
+} from './types/mapping';
 
 /*
  * HID report parsing library
  */
 export class HIDInputReport {
-	reportId: number;
+	reportId: InputReportId;
 	fields: HidInReportField[];
-	constructor(reportId: number) {
+	constructor(reportId: InputReportId) {
 		this.reportId = reportId;
 		this.fields = [];
 	}
@@ -47,7 +52,8 @@ export class HIDInputReport {
 					return element !== field;
 				});
 			},
-		} as any;
+			trigger: () => {},
+		} as ScriptConnection;
 	}
 
 	handleInput(reportData: ArrayBufferLike) {
@@ -85,10 +91,10 @@ export class HIDInputReport {
 }
 
 export class HIDOutputReport {
-	reportId: number;
+	reportId: OutputReportId;
 	data: Uint8Array;
 
-	constructor(reportId: number, length: number) {
+	constructor(reportId: OutputReportId, length: number) {
 		this.reportId = reportId;
 		this.data = new Uint8Array(length).fill(0);
 	}
@@ -97,16 +103,26 @@ export class HIDOutputReport {
 	}
 }
 
-export class HIDReportHodler {
-	in: HIDInputReport[] = [];
-	out: HIDOutputReport[] = [];
+export function isInputReportId(reportId: number): reportId is InputReportId {
+	return reportId === 1 || reportId === 2;
+}
+
+export class HIDReportHolder {
+	in: Record<InputReportId, HIDInputReport>;
+	out: Record<OutputReportId, HIDOutputReport>;
 
 	constructor() {
-		this.in[1] = new HIDInputReport(1); // Buttons, encoder, touch strip
-		this.in[2] = new HIDInputReport(2); // Knobs, Fader
+		this.in = {
+			1: new HIDInputReport(1), // Buttons, encoder, touch strip
+			2: new HIDInputReport(2), // Knobs, Fader
+		};
 
-		this.out[128] = new HIDOutputReport(128, 104); // LED's left deck
-		this.out[129] = new HIDOutputReport(129, 104); // LED's right deck
-		this.out[130] = new HIDOutputReport(130, 73); // LED's mixer
+		this.out = {
+			128: new HIDOutputReport(128, 104), // LED's left deck
+			129: new HIDOutputReport(129, 104), // LED's right deck
+			130: new HIDOutputReport(130, 73), // LED's mixer
+		};
 	}
 }
+
+export class HIDReportHodler extends HIDReportHolder {}

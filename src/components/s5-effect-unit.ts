@@ -8,9 +8,10 @@ import { FxButton } from './buttons/fx-button';
 import { PowerWindowButton } from './buttons/power-window-button';
 import { createCompContainer } from './component-container';
 import { Pot } from './pot';
+import type { EffectUnitGroup } from '../types/mixxx-controls';
 
-type Group = `[EffectRack1_EffectUnit${number}]`;
-type EffectGroup = `[EffectRack1_EffectUnit${number}_Effect${number}]`;
+type Group = EffectUnitGroup<1 | 2>;
+type EffectGroup = `[EffectRack1_EffectUnit${1 | 2}_Effect${1 | 2 | 3}]`;
 export class S5EffectUnit extends createCompContainer<Group>() {
 	declare group: Group;
 	focusedEffect: number | null = null;
@@ -20,32 +21,34 @@ export class S5EffectUnit extends createCompContainer<Group>() {
 	knobs: Pot<EffectGroup>[] = [];
 	buttons: FxButton[] = [];
 	constructor(
-		public unitNumber: number,
+		public unitNumber: 1 | 2,
 		reports: HIDReportHodler,
 		io: S5FxUnitMapping
 	) {
 		super(`[EffectRack1_EffectUnit${unitNumber}]`);
 
-		this.mixKnob = new Pot(this.group, 'mix', reports, io.knobs[0].fade);
-		this.mainButton = new PowerWindowButton(this, reports, io.buttons[0]);
+		this.mixKnob = this.register(
+			new Pot(this.group, 'mix', reports, io.knobs[0].fade)
+		);
+		this.mainButton = this.register(
+			new PowerWindowButton(this, reports, io.buttons[0])
+		);
 
-		for (const index of [0, 1, 2]) {
-			const effectGroup: EffectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${
-				index + 1
-			}]`;
-			this.knobs[index] = new Pot(
+		for (const effectNumber of [1, 2, 3] as const) {
+			const effectGroup: EffectGroup = `[EffectRack1_EffectUnit${unitNumber}_Effect${effectNumber}]`;
+			this.knobs[effectNumber - 1] = this.register(new Pot(
 				effectGroup,
 				'meta',
 				reports,
-				io.knobs[index + 1].fade
-			);
-			this.buttons[index] = new FxButton(
+				io.knobs[effectNumber].fade
+			));
+			this.buttons[effectNumber - 1] = this.register(new FxButton(
 				effectGroup,
 				this,
 				reports,
-				index,
+				effectNumber - 1,
 				io.buttons
-			);
+			));
 		}
 
 		this.triggerComponents();

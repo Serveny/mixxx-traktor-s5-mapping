@@ -82,6 +82,11 @@ export class PadButton extends RgbOutMixin(
 		this.isActive = isActive !== 0;
 		this.colorComp.colorOutput(this.isActive, this.isPressed);
 	}
+
+	rebindGroup(group: MixxxChannelGroup) {
+		super.rebindGroup(group);
+		this.colorComp.rebindGroup(group);
+	}
 }
 
 class ColorComponent extends RgbOutMixin(

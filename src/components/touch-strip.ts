@@ -40,7 +40,7 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
 	onShift(): void {
 		this.leds.setOutKey('playposition');
 		this.leds.lightAll(127, 0); // light bar blue
-		const playPos = engine.getValue('[Channel1]', 'playposition');
+		const playPos = engine.getValue(this.deck.group, 'playposition');
 		this.leds.showPlayPositon(playPos);
 	}
 
@@ -96,6 +96,10 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
 		if (deltaTime === 0) return 0;
 		return deltaValue / deltaTime;
 	}
+
+	rebindGroup(group: MixxxChannelGroup) {
+		this.leds.rebindGroup(group);
+	}
 }
 
 class TouchStripLEDs extends ControlOutMixin(
@@ -121,7 +125,6 @@ class TouchStripLEDs extends ControlOutMixin(
 
 	output(value: number) {
 		if (this.strip.isShifted) this.showPlayPositon(value);
-		else console.log('scratch2', value);
 	}
 
 	// Light 3 red LEDs at the track play position

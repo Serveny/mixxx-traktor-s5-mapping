@@ -1,4 +1,5 @@
 import { wheelModes } from '../../settings';
+import type { WheelMode } from '../../settings';
 import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
@@ -33,7 +34,7 @@ export class FluxButton extends SetInOutKeyMixin(
 	declare inKey: MixxxControls.CtrlRW<MixxxChannelGroup>;
 	declare outKey: MixxxControls.Ctrl<MixxxChannelGroup>;
 
-	private previousWheelMode: number | null = null;
+	private previousWheelMode: WheelMode | null = null;
 	private loopModeConnection: ScriptConnection | null = null;
 
 	constructor(

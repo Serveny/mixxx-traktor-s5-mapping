@@ -17,7 +17,10 @@ import { TouchStrip } from './touch-strip';
 import { DisplayArea } from './display-area';
 import { PadButton } from './buttons/pad-button';
 import { HotcueModeButton } from './buttons/hotcue-mode-button';
-import type { MixxxChannelGroup } from '../types/mixxx-controls';
+import type {
+	DeckChannel,
+	MixxxChannelGroup,
+} from '../types/mixxx-controls';
 import { FreezeButton } from './buttons/freeze-button';
 
 export class S5Deck extends Deck {
@@ -36,7 +39,7 @@ export class S5Deck extends Deck {
 	cueButton: CueButton;
 	playButton: PlayButton;
 	constructor(
-		decks: number[],
+		decks: [DeckChannel, DeckChannel],
 		public effectUnit: S5EffectUnit,
 		public mixer: Mixer,
 		public reports: HIDReportHodler,
@@ -44,34 +47,48 @@ export class S5Deck extends Deck {
 	) {
 		super(decks, settings);
 
-		this.display = new DisplayArea(this, io.displayAreaAndControls);
+		this.display = this.register(new DisplayArea(this, io.displayAreaAndControls), {
+			groupBound: true,
+		});
 
-		this.browserEncoder = new BrowserEncoder(this, io.browseControls.browse);
-		this.browserBackButton = new BrowserBackButton(
-			this.display,
-			this.reports,
-			io.browseControls.back
+		this.browserEncoder = this.register(
+			new BrowserEncoder(this, io.browseControls.browse)
 		);
-		this.deckButton = new DeckButton(this, io.deck);
-		this.loopEncoder = new loopEncoder(this, io.loop);
-		this.freezeButton = new FreezeButton(this, io.modeSelect.freeze);
+		this.browserBackButton = this.register(
+			new BrowserBackButton(this.display, this.reports, io.browseControls.back)
+		);
+		this.deckButton = this.register(new DeckButton(this, io.deck));
+		this.loopEncoder = this.register(new loopEncoder(this, io.loop), {
+			groupBound: true,
+		});
+		this.freezeButton = this.register(new FreezeButton(this, io.modeSelect.freeze), {
+			groupBound: true,
+		});
 
-		this.hotcueModeButton = new HotcueModeButton(
-			this,
-			io.modeSelect.hotcueMode
+		this.hotcueModeButton = this.register(
+			new HotcueModeButton(this, io.modeSelect.hotcueMode),
+			{ groupBound: true }
 		);
 
-		this.fluxButton = new FluxButton(this, io.flux);
+		this.fluxButton = this.register(new FluxButton(this, io.flux), {
+			groupBound: true,
+		});
 
-		this.touchStrip = new TouchStrip(this, io.touchStrip);
+		this.touchStrip = this.register(new TouchStrip(this, io.touchStrip), {
+			groupBound: true,
+		});
 
 		const transCltr = io.transportControls;
-		this.shiftButton = new ShiftButton(this, transCltr.shift);
-		this.syncButton = new SyncButton(this, reports, transCltr.sync);
-		this.cueButton = new CueButton(this, transCltr.cue);
-		this.playButton = new PlayButton(this, reports, transCltr.play);
-
-		this.triggerComponents();
+		this.shiftButton = this.register(new ShiftButton(this, transCltr.shift));
+		this.syncButton = this.register(new SyncButton(this, reports, transCltr.sync), {
+			groupBound: true,
+		});
+		this.cueButton = this.register(new CueButton(this, transCltr.cue), {
+			groupBound: true,
+		});
+		this.playButton = this.register(new PlayButton(this, reports, transCltr.play), {
+			groupBound: true,
+		});
 
 		// FIXME there is no feature about playlist at the moment, so we use this button to control the context menu, which has playlist control
 		//this.libraryPlaylistButton = new Button({
@@ -144,8 +161,14 @@ export class S5Deck extends Deck {
 		//this.keyboardOffset = 9;
 
 		for (let padNum = 1; padNum < 9; padNum++) {
-			this.pads.push(new PadButton(padNum, this, io.pads[padNum - 1]));
+			this.pads.push(
+				this.register(new PadButton(padNum, this, io.pads[padNum - 1]), {
+					groupBound: true,
+				})
+			);
 		}
+
+		this.triggerComponents();
 		//const hotcuePage2 = Array(8).fill({});
 		//const hotcuePage3 = Array(8).fill({});
 		//const samplerOrBeatloopRollPage = Array(8).fill({});

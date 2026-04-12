@@ -1,16 +1,21 @@
-import type { MixxxChannelGroup } from '../types/mixxx-controls';
+import type {
+	DeckChannel,
+	MixxxChannelGroup,
+} from '../types/mixxx-controls';
+import { channelGroup } from '../types/mixxx-controls';
 import { createCompContainer } from './component-container';
+import type { MoveMode, WheelMode } from '../settings';
 
 export abstract class Deck extends createCompContainer<MixxxChannelGroup>() {
 	declare group: MixxxChannelGroup;
-	currentDeckIdx: number = 0;
+	currentDeckIdx: 0 | 1 = 0;
 	settings?: object;
-	wheelMode: number = 1;
-	moveMode: number = 0;
+	wheelMode: WheelMode = 1;
+	moveMode: MoveMode = 0;
 	keyboardPlayMode: number = 0;
 
 	constructor(
-		public decks: number[],
+		public decks: [DeckChannel, DeckChannel],
 		settings: object
 	) {
 		super(Deck.groupForNumber(decks[0] ?? 1));
@@ -24,20 +29,10 @@ export abstract class Deck extends createCompContainer<MixxxChannelGroup>() {
 
 	switchDeck(newGroup: MixxxChannelGroup) {
 		engine.setValue(this.group, 'scratch2_enable', 0);
-		this.group = newGroup;
-		this.reconnectComponents(function (component) {
-			if (component.group == null) return false;
-			if (component.group.search(script.channelRegEx) !== -1)
-				component.group = newGroup;
-			else if (component.group.search(script.eqRegEx) !== -1)
-				component.group = `[EqualizerRack1_${newGroup}_Effect1]`;
-			else if (component.group.search(script.quickEffectRegEx) !== -1)
-				component.group = `[QuickEffectRack1_${newGroup}]`;
-			return true;
-		});
+		this.rebindGroupChildren(newGroup);
 	}
 
-	static groupForNumber(deckNumber: number): MixxxChannelGroup {
-		return `[Channel${deckNumber}]`;
+	static groupForNumber(deckNumber: DeckChannel): MixxxChannelGroup {
+		return channelGroup(deckNumber);
 	}
 }
