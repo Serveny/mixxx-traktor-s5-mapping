@@ -3,6 +3,14 @@ import { TouchEncoder } from './encoder';
 import type { S5Deck } from '../s5-deck';
 import type { TouchEncoder as EncoderMapping } from '../../types/mapping';
 
+const libraryFocus = {
+	none: 0,
+	sidebar: 2,
+	tracksTable: 3,
+	contextMenu: 4,
+	dialog: 5,
+} as const;
+
 export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 	isPressedPreviewButton = false;
 	gridButtonPressed = false;
@@ -18,6 +26,44 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 	}
 
 	onChange(isRight: boolean) {
+		const focused = engine.getValue('[Library]', 'focused_widget');
+		const targetFocus = this.isShifted
+			? libraryFocus.sidebar
+			: libraryFocus.tracksTable;
+
+		if (focused === libraryFocus.none) {
+			engine.setValue(
+				'[Playlist]',
+				this.isShifted
+					? isRight
+						? 'SelectNextPlaylist'
+						: 'SelectPrevPlaylist'
+					: isRight
+						? 'SelectNextTrack'
+						: 'SelectPrevTrack',
+				1
+			);
+			this.deck.display.isPlaylistSelected =
+				targetFocus === libraryFocus.tracksTable;
+			return;
+		}
+
+		if (
+			focused !== libraryFocus.contextMenu &&
+			focused !== libraryFocus.dialog
+		) {
+			this.deck.display.isPlaylistSelected =
+				targetFocus === libraryFocus.tracksTable;
+		}
+
+		if (
+			focused !== libraryFocus.contextMenu &&
+			focused !== libraryFocus.dialog &&
+			focused !== targetFocus
+		) {
+			engine.setValue('[Library]', 'focused_widget', targetFocus);
+		}
+
 		engine.setValue('[Library]', isRight ? 'MoveDown' : 'MoveUp', 1);
 
 		//if (this.libraryViewButtonPressed) {
@@ -88,10 +134,12 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 	onPress(pressed: number): void {
 		if (!pressed) return;
 
-		const isFocusTrackTable =
-			engine.getValue('[Library]', 'focused_widget') === 3;
-
-		this.deck.display.setPlaylistStatus(isFocusTrackTable);
+		const focused = engine.getValue('[Library]', 'focused_widget');
+		if (focused === libraryFocus.tracksTable) {
+			this.deck.display.isPlaylistSelected = true;
+		} else if (focused === libraryFocus.sidebar) {
+			this.deck.display.isPlaylistSelected = false;
+		}
 
 		// -- 🚜 S5 Docs 2.1.2
 		// "Press the BROWSE encoder to load a track"

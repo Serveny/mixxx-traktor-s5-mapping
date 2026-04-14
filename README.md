@@ -38,10 +38,6 @@ Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeSc
 - Browser/preview behavior that depends on Mixxx GUI focus
 - Remaining S5-specific workflow details from the original hardware manual
 
-### 🤬 Known bugs
-
-- Track/Playlist browse functions only working if GUI is in focus
-
 ## 👩‍💻 How to setup development
 
 1. Install the <a href="https://mixxx.org/">Mixxx</a> software
