@@ -111,6 +111,8 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 	}
 
 	openPopup(popup: Exclude<DisplayPopup, 'none'>, autoClose = true) {
+		// -- 🚜 S5 Docs 2.8.2 / 2.9 / 3.3.2 / 3.5.3:
+		// Keep exactly one popup lifecycle active per deck so encoder routing stays deterministic.
 		if (this.popupTimer !== 0) {
 			engine.stopTimer(this.popupTimer);
 			this.popupTimer = 0;
@@ -146,6 +148,8 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 	}
 
 	popupForDisplayButton2() {
+		// -- 🚜 S5 Docs 2.9 / 3.5.3:
+		// Display Button 2 is context-sensitive: key on track decks, quantize in remix mode.
 		return this.deck.performanceMode === 'remix'
 			? popupNames.quantize
 			: popupNames.key;
@@ -190,6 +194,8 @@ class PopupButton extends SingleColorOutMixin(InMixin(Component)) {
 		if (!pressed) {
 			return;
 		}
+		// -- 🚜 S5 Docs 2.8.2 / 2.9 / 3.5.3:
+		// The physical button only selects popup mode; rendering is handled later by the display work.
 		const popup =
 			this.popup === popupNames.key ? this.display.popupForDisplayButton2() : this.popup;
 		this.display.openPopup(popup);
@@ -206,6 +212,8 @@ class SettingsButton extends SingleColorOutMixin(InMixin(Component)) {
 		if (!pressed) {
 			return;
 		}
+		// -- 🚜 S5 Docs 4.2.1.1:
+		// Until preferences are mapped explicitly, reuse the library layout toggle as a safe fallback.
 		script.toggleControl('[Skin]', 'show_maximized_library');
 	}
 }
@@ -223,6 +231,8 @@ class ViewButton extends SingleColorOutMixin(InMixin(Component)) {
 		if (!pressed) {
 			return;
 		}
+		// -- 🚜 S5 Docs 2.1.2 / 2.8.2 / 2.9:
+		// VIEW should dismiss transient popup modes without also changing the browser layout.
 		if (this.display.activePopup !== popupNames.none) {
 			this.display.closePopup();
 			return;

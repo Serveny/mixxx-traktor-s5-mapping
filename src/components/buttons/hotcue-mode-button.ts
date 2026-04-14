@@ -42,6 +42,8 @@ export class HotcueModeButton extends DoubleColorOutMixin(
 	}
 
 	onShortPress() {
+		// -- 🚜 S5 Docs 2.7:
+		// Re-enter hotcue mode on page 1 from other performance modes, then cycle on repeated presses.
 		if (this.deck.performanceMode !== 'hotcue') {
 			this.deck.hotcuePage = 1;
 			this.deck.setPerformanceMode('hotcue');

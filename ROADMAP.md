@@ -10,33 +10,33 @@ These features are expected to work on any DJ controller and block basic usabili
 
 ### Display Pop-up System
 **Prerequisite for BPM, Key, Quantize, Slice Size pop-ups.**
-- [ ] Pop-up state management (active pop-up, dismiss on timeout/button release)
+- [x] Pop-up state management (active pop-up, dismiss on timeout/button release)
 - [ ] Display area synchronisation with pop-up content
-- [ ] BPM pop-up (Display Button 1) — tempo adjust via BROWSE encoder
-- [ ] KEY pop-up (Display Button 2) — key display + adjust via BROWSE encoder
-- [ ] Keylock activation and key adjustment while Keylock is active
-- [ ] SLICE SIZE pop-up (Shift + LOOP Touch)
-- [ ] QUANTIZE pop-up (Display Button 2 in Remix Mode)
+- [x] BPM pop-up (Display Button 1) — tempo adjust via BROWSE encoder
+- [x] KEY pop-up (Display Button 2) — key display + adjust via BROWSE encoder
+- [x] Keylock activation and key adjustment while Keylock is active
+- [x] SLICE SIZE pop-up (Shift + LOOP Touch)
+- [x] QUANTIZE pop-up (Display Button 2 in Remix Mode)
 
 ### Loop Encoder — Missing Functions
-- [ ] Fixed loop size preset list (1/32, 1/16, 1/8, 1/4, 1/2, 1, 2, 4, 8, 16, 32 beats)
-- [ ] Beatjump navigation with Shift + Rotation
-- [ ] Loop Save on Pad (store active loop to Hotcue slot)
-- [ ] Loop Delete with Shift + Pad
+- [x] Fixed loop size preset list (1/32, 1/16, 1/8, 1/4, 1/2, 1, 2, 4, 8, 16, 32 beats)
+- [x] Beatjump navigation with Shift + Rotation
+- [x] Loop Save on Pad (store active loop to Hotcue slot)
+- [x] Loop Delete with Shift + Pad
 
 ### Hotcue Mode — Page Switching
-- [ ] `onShortPress()` cycles through Hotcue pages 1 / 2 / 3 ([hotcue-mode-button.ts:42](src/components/buttons/hotcue-mode-button.ts#L42))
-- [ ] Page 1: Hotcues 1–8 (current behavior)
-- [ ] Page 2: Hotcues 5–12 (offset mapping)
-- [ ] Page 3: Hotcues 13–20 (offset mapping)
-- [ ] Button color reflects active page
+- [x] `onShortPress()` cycles through Hotcue pages 1 / 2 / 3 ([hotcue-mode-button.ts:42](src/components/buttons/hotcue-mode-button.ts#L42))
+- [x] Page 1: Hotcues 1–8 (current behavior)
+- [x] Page 2: Hotcues 5–12 (offset mapping)
+- [x] Page 3: Hotcues 13–20 (offset mapping)
+- [x] Button color reflects active page
 
 ### Deck Button Color Output
-- [ ] Blue LED = Deck A/B active
-- [ ] White LED = Deck C/D active
+- [x] Blue LED = Deck A/B active
+- [x] White LED = Deck C/D active
 
 ### Settings Button
-- [ ] Map SETTINGS button to Mixxx preferences or a sensible fallback action
+- [x] Map SETTINGS button to Mixxx preferences or a sensible fallback action
 
 ---
 

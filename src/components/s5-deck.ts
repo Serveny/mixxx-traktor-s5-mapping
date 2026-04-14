@@ -693,6 +693,8 @@ export class S5Deck extends Deck {
 	}
 
 	setPerformanceMode(mode: 'hotcue' | 'freeze' | 'remix') {
+		// -- 🚜 S5 Docs 2.5 / 3.3 / 3.5:
+		// Mode changes invalidate any popup semantics that belonged to the previous deck context.
 		this.display.closePopup();
 		this.performanceMode = mode;
 		if (mode !== 'hotcue') {
@@ -703,6 +705,8 @@ export class S5Deck extends Deck {
 	}
 
 	cycleHotcuePage() {
+		// -- 🚜 S5 Docs 2.7:
+		// The S5 reuses one physical mode button to page through three hotcue banks.
 		this.performanceMode = 'hotcue';
 		this.hotcuePage = ((this.hotcuePage % 3) + 1) as 1 | 2 | 3;
 		this.refreshPads();
@@ -716,6 +720,8 @@ export class S5Deck extends Deck {
 	}
 
 	hotcueNumberForPad(padNumber: number) {
+		// -- 🚜 S5 Docs 2.7:
+		// Page 2 overlaps 5-8 on purpose, matching the controller's progressive hotcue banks.
 		if (this.hotcuePage === 1) {
 			return padNumber;
 		}
@@ -726,6 +732,8 @@ export class S5Deck extends Deck {
 	}
 
 	adjustLoopSize(direction: 1 | -1) {
+		// -- 🚜 S5 Docs 3.2.1 / 3.2.2:
+		// Keep preset selection explicit so loop turns and shifted beatjumps always agree.
 		this.loopSizeIndex = Math.max(
 			0,
 			Math.min(this.loopSizePresets.length - 1, this.loopSizeIndex + direction)

@@ -72,6 +72,8 @@ export class PadButton extends RgbOutMixin(
 	}
 
 	updateBindings() {
+		// -- 🚜 S5 Docs 2.7:
+		// Pad bindings follow the active hotcue page instead of staying fixed to 1-8.
 		const hotcueNumber = this.deck.hotcueNumberForPad(this.number);
 		this.setInKey(
 			(this.isShifted
@@ -93,6 +95,8 @@ export class PadButton extends RgbOutMixin(
 		this.updateBindings();
 		engine.setValue(this.group, 'scratch2_enable', 0);
 		if (!this.isShifted && engine.getValue(this.group, 'loop_enabled') !== 0) {
+			// -- 🚜 S5 Docs 3.2.3:
+			// An active loop takes priority so the same pads can store saved loops without a separate mode.
 			engine.setValue(
 				this.group,
 				`hotcue_${this.deck.hotcueNumberForPad(this.number)}_setloop`,

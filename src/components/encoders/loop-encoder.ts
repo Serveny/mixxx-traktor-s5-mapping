@@ -24,6 +24,8 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 			this.switchSortCategory(isRight);
 		}
 		else if (this.deck.display.activePopup === 'sliceSize') {
+			// -- 🚜 S5 Docs 3.3.2:
+			// While SLICE SIZE is held open, loop turns should not leak into beatloop controls.
 			this.deck.adjustSliceSize(isRight ? 1 : -1);
 		}
 
@@ -48,6 +50,8 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 			engine.setValue(this.group, 'loop_start_position', valueIn);
 			engine.setValue(this.group, 'loop_end_position', valueOut);
 		} else if (this.isShifted) {
+			// -- 🚜 S5 Docs 3.2.2:
+			// Shift turns reuse the currently selected loop size as the beatjump distance.
 			const size = this.deck.currentLoopSize();
 			engine.setValue(
 				this.group,
@@ -55,6 +59,8 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 				1
 			);
 		} else {
+			// -- 🚜 S5 Docs 3.2.1:
+			// Unshifted turns walk the fixed S5 loop size preset list.
 			this.deck.adjustLoopSize(isRight ? 1 : -1);
 		}
 	}
@@ -72,6 +78,8 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 	}
 
 	onTouch(pressed: number): void {
+		// -- 🚜 S5 Docs 3.3.2:
+		// Freeze + loop touch temporarily hands the encoder over to slice-size selection.
 		if (this.deck.freezeButton.isPressed && pressed) {
 			this.deck.display.openPopup('sliceSize', false);
 			return;

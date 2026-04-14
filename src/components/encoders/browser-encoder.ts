@@ -125,6 +125,8 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 
 	private handlePopupChange(isRight: boolean, popup: 'bpm' | 'key' | 'sliceSize' | 'quantize') {
 		if (popup === 'bpm') {
+			// -- 🚜 S5 Docs 2.8.2:
+			// BPM popup mirrors deck tempo nudging on the browse encoder while it is visible.
 			const currentBpm = engine.getValue(this.deck.group, 'bpm');
 			const step = this.isShifted ? 1 : 0.1;
 			engine.setValue(this.deck.group, 'bpm', currentBpm + (isRight ? step : -step));
@@ -133,6 +135,8 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 		}
 
 		if (popup === 'key') {
+			// -- 🚜 S5 Docs 2.9:
+			// Only apply semitone steps once Keylock is on, matching the staged Traktor workflow.
 			if (engine.getValue(this.deck.group, 'keylock')) {
 				engine.setValue(this.deck.group, isRight ? 'pitch_up' : 'pitch_down', 1);
 			}
@@ -141,6 +145,8 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 		}
 
 		if (popup === 'quantize') {
+			// -- 🚜 S5 Docs 3.5.3:
+			// Quantize selection is deck-local controller state until remix playback wiring exists.
 			this.deck.adjustQuantizeSize(isRight ? 1 : -1);
 			this.deck.display.resetPopupTimer();
 		}
@@ -164,6 +170,8 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 		if (!pressed) return;
 
 		if (this.deck.display.activePopup === 'key') {
+			// -- 🚜 S5 Docs 2.9:
+			// Pressing browse inside KEY mode toggles Keylock instead of loading a library item.
 			script.toggleControl(this.deck.group, 'keylock');
 			this.deck.display.resetPopupTimer();
 			return;
