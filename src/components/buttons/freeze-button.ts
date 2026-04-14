@@ -11,6 +11,7 @@ import type { S5Deck } from '../s5-deck';
 export class FreezeButton extends DoubleColorOutMixin(
 	OutMixin(InMixin(Component))
 ) {
+	isPressed = false;
 	constructor(
 		private deck: S5Deck,
 		io: BytePosInOut
@@ -35,5 +36,15 @@ export class FreezeButton extends DoubleColorOutMixin(
 				isOn ? ButtonBrightnessOn : ButtonBrightnessOff,
 				0
 			);
+	}
+
+	input(pressed: number) {
+		this.isPressed = pressed !== 0;
+		if (pressed) {
+			this.deck.setPerformanceMode('freeze');
+		}
+		if (!pressed && this.deck.display.activePopup === 'sliceSize') {
+			this.deck.display.closePopup();
+		}
 	}
 }

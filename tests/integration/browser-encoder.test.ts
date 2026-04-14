@@ -105,4 +105,48 @@ describe('browser encoder', () => {
 			1
 		);
 	});
+
+	test('adjusts bpm instead of browsing while the bpm popup is active', () => {
+		const s5 = new S5(mapping);
+		const encoder = s5.deckLeft.browserEncoder;
+
+		globalThis.engine.setValue('[Channel1]', 'bpm', 120);
+		s5.deckLeft.display.displayButton1.input(1);
+		(globalThis.engine.setValue as ReturnType<typeof import('vitest').vi.fn>).mockClear();
+
+		encoder.input(5);
+		encoder.input(6);
+
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith('[Channel1]', 'bpm', 120.1);
+		expect(
+			(globalThis.engine.setValue as ReturnType<typeof import('vitest').vi.fn>).mock.calls
+		).not.toContainEqual(['[Library]', 'MoveDown', 1]);
+	});
+
+	test('browse press toggles keylock while the key popup is active', () => {
+		const s5 = new S5(mapping);
+		const encoder = s5.deckLeft.browserEncoder;
+
+		s5.deckLeft.display.displayButton2.input(1);
+		encoder.onPress(1);
+
+		expect(globalThis.script.toggleControl).toHaveBeenCalledWith(
+			'[Channel1]',
+			'keylock'
+		);
+	});
+
+	test('adjusts the quantize popup selection while remix mode is active', () => {
+		const s5 = new S5(mapping);
+		const encoder = s5.deckLeft.browserEncoder;
+
+		s5.deckLeft.remixModeButton.input(1);
+		s5.deckLeft.display.displayButton2.input(1);
+		expect(s5.deckLeft.quantizeSizeIndex).toBe(2);
+
+		encoder.input(5);
+		encoder.input(6);
+
+		expect(s5.deckLeft.quantizeSizeIndex).toBe(3);
+	});
 });

@@ -1,17 +1,36 @@
 import type { S5DisplayArea as DisplayAreaMapping } from '../types/mapping';
 import type { MixxxChannelGroup } from '../types/mixxx-controls';
-import { PushButton, ToggleButton } from './buttons/button';
+import { PushButton } from './buttons/button';
 import { PerformanceLeftButton } from './buttons/performance-left-button';
 import { PerformanceRightButton } from './buttons/performance-right-button';
+import {
+	Component,
+	InMixin,
+	SingleColorOutMixin,
+	OutMixin,
+} from './component';
+import type { HIDReportHodler } from '../hid-report';
+import type { Btn as ButtonMapping } from '../types/mapping';
 import { createCompContainer } from './component-container';
 import type { S5Deck } from './s5-deck';
 
+export const popupNames = {
+	none: 'none',
+	bpm: 'bpm',
+	key: 'key',
+	sliceSize: 'sliceSize',
+	quantize: 'quantize',
+} as const;
+
+export type DisplayPopup = (typeof popupNames)[keyof typeof popupNames];
+
 export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
-	// settingsButton: PushButton;
-	displayButton1: PushButton;
-	// displayButton2: PushButton;
+	private deck: S5Deck;
+	settingsButton: SettingsButton;
+	displayButton1: PopupButton;
+	displayButton2: PopupButton;
 	perfModeLeftButton: PerformanceLeftButton;
-	viewButton: ToggleButton;
+	viewButton: ViewButton;
 	displayButton3: PushButton;
 	displayButton4: PushButton;
 	perfModeRightButton: PerformanceRightButton;
@@ -19,18 +38,26 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 	// Runtime variables
 	isPlaylistSelected = false;
 	isSorting = false;
+	activePopup: DisplayPopup = popupNames.none;
+	popupTimeoutMillis = 2000;
+	private popupTimer = 0;
 
 	constructor(deck: S5Deck, io: DisplayAreaMapping) {
 		super(deck.group);
+		this.deck = deck;
+
+		this.settingsButton = this.register(
+			new SettingsButton(deck.reports, io.settings),
+			{ groupBound: true }
+		);
 
 		this.displayButton1 = this.register(
-			new PushButton({
-			group: this.group,
-			inKey: 'beats_translate_curpos',
-			outKey: 'beats_translate_curpos',
-			reports: deck.reports,
-			io: io.display1,
-			}),
+			new PopupButton(this, popupNames.bpm, deck.reports, io.display1),
+			{ groupBound: true }
+		);
+
+		this.displayButton2 = this.register(
+			new PopupButton(this, popupNames.key, deck.reports, io.display2),
 			{ groupBound: true }
 		);
 
@@ -41,13 +68,10 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 
 		// -- 🚜 S5 Docs 2.1.2
 		// "Press the VIEW button. The display will return to Track view."
-		this.viewButton = this.register(new ToggleButton({
-			group: '[Skin]',
-			inKey: 'show_maximized_library',
-			outKey: 'show_maximized_library',
-			reports: deck.reports,
-			io: io.view,
-		}));
+		this.viewButton = this.register(
+			new ViewButton(this, deck.reports, io.view),
+			{ groupBound: true }
+		);
 
 		// -- 🚜 S5 Docs 2.6
 		// "To zoom into the waveform press Display Button 3"
@@ -86,6 +110,57 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 		this.rebindGroupChildren(group);
 	}
 
+	openPopup(popup: Exclude<DisplayPopup, 'none'>, autoClose = true) {
+		if (this.popupTimer !== 0) {
+			engine.stopTimer(this.popupTimer);
+			this.popupTimer = 0;
+		}
+		if (this.activePopup === popup) {
+			this.closePopup();
+			return;
+		}
+		this.activePopup = popup;
+		this.updatePopupOutputs();
+		if (autoClose) {
+			this.resetPopupTimer();
+		}
+	}
+
+	closePopup() {
+		if (this.popupTimer !== 0) {
+			engine.stopTimer(this.popupTimer);
+			this.popupTimer = 0;
+		}
+		this.activePopup = popupNames.none;
+		this.updatePopupOutputs();
+	}
+
+	resetPopupTimer() {
+		if (this.popupTimer !== 0) {
+			engine.stopTimer(this.popupTimer);
+		}
+		this.popupTimer = engine.beginTimer(this.popupTimeoutMillis, () => {
+			this.popupTimer = 0;
+			this.closePopup();
+		}, true);
+	}
+
+	popupForDisplayButton2() {
+		return this.deck.performanceMode === 'remix'
+			? popupNames.quantize
+			: popupNames.key;
+	}
+
+	updatePopupOutputs() {
+		this.displayButton1.output(this.activePopup === popupNames.bpm ? 1 : 0);
+		this.displayButton2.output(
+			this.activePopup === popupNames.key ||
+				this.activePopup === popupNames.quantize
+				? 1
+				: 0
+		);
+	}
+
 	setPlaylistStatus(isActive: boolean) {
 		if (!isActive) {
 			this.isSorting = false;
@@ -97,5 +172,62 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 
 	togglePlaylistStatus() {
 		this.setPlaylistStatus(!this.isPlaylistSelected);
+	}
+}
+
+class PopupButton extends SingleColorOutMixin(InMixin(Component)) {
+	constructor(
+		private display: DisplayArea,
+		private popup: Exclude<DisplayPopup, 'none'>,
+		reports: HIDReportHodler,
+		io: ButtonMapping
+	) {
+		super({ reports, io });
+		this.output(0);
+	}
+
+	input(pressed: number) {
+		if (!pressed) {
+			return;
+		}
+		const popup =
+			this.popup === popupNames.key ? this.display.popupForDisplayButton2() : this.popup;
+		this.display.openPopup(popup);
+	}
+}
+
+class SettingsButton extends SingleColorOutMixin(InMixin(Component)) {
+	constructor(reports: HIDReportHodler, io: ButtonMapping) {
+		super({ reports, io });
+		this.output(0);
+	}
+
+	input(pressed: number) {
+		if (!pressed) {
+			return;
+		}
+		script.toggleControl('[Skin]', 'show_maximized_library');
+	}
+}
+
+class ViewButton extends SingleColorOutMixin(InMixin(Component)) {
+	constructor(
+		private display: DisplayArea,
+		reports: HIDReportHodler,
+		io: ButtonMapping
+	) {
+		super({ reports, io });
+	}
+
+	input(pressed: number) {
+		if (!pressed) {
+			return;
+		}
+		if (this.display.activePopup !== popupNames.none) {
+			this.display.closePopup();
+			return;
+		}
+		this.display.closePopup();
+		script.toggleControl('[Skin]', 'show_maximized_library');
 	}
 }

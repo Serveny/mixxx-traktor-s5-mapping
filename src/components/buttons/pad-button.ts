@@ -59,22 +59,47 @@ export class PadButton extends RgbOutMixin(
 			number === 1 ? RgbColor.white() : RgbColor.blue(),
 			this
 		);
+		this.updateBindings();
 		this.output(0);
 	}
 
-	unshift() {
-		this.inKey = `hotcue_${this.number}_activate`;
+	onUnshift() {
+		this.updateBindings();
 	}
 
-	shift() {
-		this.inKey = `hotcue_${this.number}_clear`;
+	onShift() {
+		this.updateBindings();
+	}
+
+	updateBindings() {
+		const hotcueNumber = this.deck.hotcueNumberForPad(this.number);
+		this.setInKey(
+			(this.isShifted
+				? `hotcue_${hotcueNumber}_clear`
+				: `hotcue_${hotcueNumber}_activate`) as MixxxControls.CtrlRW<MixxxChannelGroup>
+		);
+		this.setOutKey(
+			`hotcue_${hotcueNumber}_status` as MixxxControls.Ctrl<MixxxChannelGroup>
+		);
+		this.colorComp.setOutKey(
+			`hotcue_${hotcueNumber}_color` as MixxxControls.Ctrl<MixxxChannelGroup>
+		);
 	}
 
 	input(pressed: number) {
 		this.isPressed = pressed !== 0;
 		this.colorComp.colorOutput(this.isActive, this.isPressed);
 		if (!pressed) return;
+		this.updateBindings();
 		engine.setValue(this.group, 'scratch2_enable', 0);
+		if (!this.isShifted && engine.getValue(this.group, 'loop_enabled') !== 0) {
+			engine.setValue(
+				this.group,
+				`hotcue_${this.deck.hotcueNumberForPad(this.number)}_setloop`,
+				1
+			);
+			return;
+		}
 		engine.setValue(this.group, this.inKey, 1);
 	}
 

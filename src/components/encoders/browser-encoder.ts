@@ -26,6 +26,12 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 	}
 
 	onChange(isRight: boolean) {
+		const popup = this.deck.display.activePopup;
+		if (popup !== 'none') {
+			this.handlePopupChange(isRight, popup);
+			return;
+		}
+
 		const focused = engine.getValue('[Library]', 'focused_widget');
 		const targetFocus = this.isShifted
 			? libraryFocus.sidebar
@@ -117,6 +123,29 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 		//}
 	}
 
+	private handlePopupChange(isRight: boolean, popup: 'bpm' | 'key' | 'sliceSize' | 'quantize') {
+		if (popup === 'bpm') {
+			const currentBpm = engine.getValue(this.deck.group, 'bpm');
+			const step = this.isShifted ? 1 : 0.1;
+			engine.setValue(this.deck.group, 'bpm', currentBpm + (isRight ? step : -step));
+			this.deck.display.resetPopupTimer();
+			return;
+		}
+
+		if (popup === 'key') {
+			if (engine.getValue(this.deck.group, 'keylock')) {
+				engine.setValue(this.deck.group, isRight ? 'pitch_up' : 'pitch_down', 1);
+			}
+			this.deck.display.resetPopupTimer();
+			return;
+		}
+
+		if (popup === 'quantize') {
+			this.deck.adjustQuantizeSize(isRight ? 1 : -1);
+			this.deck.display.resetPopupTimer();
+		}
+	}
+
 	onTouch(pressed: number): void {
 		const focused = engine.getValue('[Library]', 'focused_widget');
 		this.deck.display.isPlaylistSelected = focused === 3;
@@ -133,6 +162,12 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 
 	onPress(pressed: number): void {
 		if (!pressed) return;
+
+		if (this.deck.display.activePopup === 'key') {
+			script.toggleControl(this.deck.group, 'keylock');
+			this.deck.display.resetPopupTimer();
+			return;
+		}
 
 		const focused = engine.getValue('[Library]', 'focused_widget');
 		if (focused === libraryFocus.tracksTable) {

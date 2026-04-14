@@ -24,17 +24,18 @@ describe('shift combination pass', () => {
 		expect(globalThis.engine.setValue).not.toHaveBeenCalledWith('[Channel1]', 'cue_default', 1);
 	});
 
-	test('shift+loop encoder right triggers loop_move_1_forward instead of loop_double', () => {
+	test('shift+loop encoder right beatjumps by the current loop size instead of changing the loop size', () => {
 		const instance = s5.get();
 
+		globalThis.engine.setValue('[Channel1]', 'beatloop_size', 1);
 		instance.deckLeft.shiftButton.input(1);
 		instance.deckLeft.loopEncoder.input(5);
 		instance.deckLeft.loopEncoder.input(6);
 
-		expect(globalThis.script.triggerControl).toHaveBeenCalledWith(
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith(
 			'[Channel1]',
-			'loop_move_1_forward',
-			50
+			'beatjump_1_forward',
+			1
 		);
 		expect(globalThis.script.triggerControl).not.toHaveBeenCalledWith(
 			'[Channel1]',
@@ -43,17 +44,18 @@ describe('shift combination pass', () => {
 		);
 	});
 
-	test('shift+loop encoder left triggers loop_move_1_backward instead of loop_halve', () => {
+	test('shift+loop encoder left beatjumps backward by the current loop size', () => {
 		const instance = s5.get();
 
+		globalThis.engine.setValue('[Channel1]', 'beatloop_size', 1);
 		instance.deckLeft.shiftButton.input(1);
 		instance.deckLeft.loopEncoder.input(5);
 		instance.deckLeft.loopEncoder.input(4);
 
-		expect(globalThis.script.triggerControl).toHaveBeenCalledWith(
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith(
 			'[Channel1]',
-			'loop_move_1_backward',
-			50
+			'beatjump_1_backward',
+			1
 		);
 	});
 
@@ -104,18 +106,19 @@ describe('shift combination pass', () => {
 		expect(globalThis.script.triggerControl).not.toHaveBeenCalledWith('[Channel1]', 'eject', 50);
 	});
 
-	test('unshifting restores normal loop encoder behavior', () => {
+	test('unshifting restores normal loop size preset behavior', () => {
 		const instance = s5.get();
 
+		globalThis.engine.setValue('[Channel1]', 'beatloop_size', 1);
 		instance.deckLeft.shiftButton.input(1);
 		instance.deckLeft.shiftButton.input(0);
 		instance.deckLeft.loopEncoder.input(5);
 		instance.deckLeft.loopEncoder.input(6);
 
-		expect(globalThis.script.triggerControl).toHaveBeenCalledWith(
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith(
 			'[Channel1]',
-			'loop_double',
-			50
+			'beatloop_size',
+			2
 		);
 	});
 
@@ -147,10 +150,12 @@ describe('shift combination pass', () => {
 		instance.deckLeft.cueButton.input(1);
 		expect(globalThis.engine.setValue).toHaveBeenCalledWith('[Channel1]', 'start_stop', 1);
 
-		// loop encoder rotate → loop_move
+		globalThis.engine.setValue('[Channel1]', 'beatloop_size', 1);
+
+		// loop encoder rotate → beatjump
 		instance.deckLeft.loopEncoder.input(5);
 		instance.deckLeft.loopEncoder.input(6);
-		expect(globalThis.script.triggerControl).toHaveBeenCalledWith('[Channel1]', 'loop_move_1_forward', 50);
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith('[Channel1]', 'beatjump_1_forward', 1);
 
 		// loop encoder press → reloop_toggle
 		instance.deckLeft.loopEncoder.onPress(1);
@@ -167,9 +172,11 @@ describe('shift combination pass', () => {
 		instance.deckLeft.playButton.input(1);
 		expect(globalThis.script.toggleControl).toHaveBeenCalledWith('[Channel1]', 'play');
 
-		// loop encoder → loop_double
+		globalThis.engine.setValue('[Channel1]', 'beatloop_size', 1);
+
+		// loop encoder → next preset
 		instance.deckLeft.loopEncoder.input(7);
-		expect(globalThis.script.triggerControl).toHaveBeenCalledWith('[Channel1]', 'loop_double', 50);
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith('[Channel1]', 'beatloop_size', 2);
 
 		// pad → activate
 		instance.deckLeft.pads[0].input(1);

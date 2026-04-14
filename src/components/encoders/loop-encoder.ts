@@ -23,6 +23,9 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 		if (this.deck.display.isSorting) {
 			this.switchSortCategory(isRight);
 		}
+		else if (this.deck.display.activePopup === 'sliceSize') {
+			this.deck.adjustSliceSize(isRight ? 1 : -1);
+		}
 
 		// -- 🚜 S5 Docs 2.1.4
 		// "Press the LOOP encoder to start preview of the selected track."
@@ -45,17 +48,14 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 			engine.setValue(this.group, 'loop_start_position', valueIn);
 			engine.setValue(this.group, 'loop_end_position', valueOut);
 		} else if (this.isShifted) {
-			script.triggerControl(
+			const size = this.deck.currentLoopSize();
+			engine.setValue(
 				this.group,
-				isRight ? 'loop_move_1_forward' : 'loop_move_1_backward',
-				50
+				`beatjump_${size}_${isRight ? 'forward' : 'backward'}`,
+				1
 			);
 		} else {
-			script.triggerControl(
-				this.group,
-				isRight ? 'loop_double' : 'loop_halve',
-				50
-			);
+			this.deck.adjustLoopSize(isRight ? 1 : -1);
 		}
 	}
 
@@ -71,8 +71,14 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 		engine.setValue('[Library]', 'sort_column', newCat);
 	}
 
-	onTouch(): void {
-		// TODO
+	onTouch(pressed: number): void {
+		if (this.deck.freezeButton.isPressed && pressed) {
+			this.deck.display.openPopup('sliceSize', false);
+			return;
+		}
+		if (!pressed && this.deck.display.activePopup === 'sliceSize') {
+			this.deck.display.closePopup();
+		}
 	}
 
 	// originally onShortPress

@@ -22,6 +22,7 @@ import type {
 	MixxxChannelGroup,
 } from '../types/mixxx-controls';
 import { FreezeButton } from './buttons/freeze-button';
+import { RemixModeButton } from './buttons/remix-mode-button';
 
 export class S5Deck extends Deck {
 	display: DisplayArea;
@@ -31,6 +32,7 @@ export class S5Deck extends Deck {
 	loopEncoder: loopEncoder;
 	hotcueModeButton: HotcueModeButton;
 	freezeButton: FreezeButton;
+	remixModeButton: RemixModeButton;
 	fluxButton: FluxButton;
 	pads: PadButton[] = [];
 	touchStrip: TouchStrip;
@@ -38,6 +40,14 @@ export class S5Deck extends Deck {
 	syncButton: SyncButton;
 	cueButton: CueButton;
 	playButton: PlayButton;
+	performanceMode: 'hotcue' | 'freeze' | 'remix' = 'hotcue';
+	hotcuePage: 1 | 2 | 3 = 1;
+	loopSizePresets = [1 / 32, 1 / 16, 1 / 8, 1 / 4, 1 / 2, 1, 2, 4, 8, 16, 32] as const;
+	loopSizeIndex = 5;
+	sliceSizePresets = [1 / 4, 1 / 2, 1, 2, 4] as const;
+	sliceSizeIndex = 2;
+	quantizeSizes = [1 / 4, 1 / 2, 1, 2, 4, 8, 16] as const;
+	quantizeSizeIndex = 2;
 	constructor(
 		decks: [DeckChannel, DeckChannel],
 		public effectUnit: S5EffectUnit,
@@ -64,6 +74,10 @@ export class S5Deck extends Deck {
 		this.freezeButton = this.register(new FreezeButton(this, io.modeSelect.freeze), {
 			groupBound: true,
 		});
+		this.remixModeButton = this.register(
+			new RemixModeButton(this, io.modeSelect.remix),
+			{ groupBound: true }
+		);
 
 		this.hotcueModeButton = this.register(
 			new HotcueModeButton(this, io.modeSelect.hotcueMode),
@@ -169,6 +183,7 @@ export class S5Deck extends Deck {
 		}
 
 		this.triggerComponents();
+		this.updateModeButtons();
 		//const hotcuePage2 = Array(8).fill({});
 		//const hotcuePage3 = Array(8).fill({});
 		//const samplerOrBeatloopRollPage = Array(8).fill({});
@@ -671,9 +686,79 @@ export class S5Deck extends Deck {
 	}
 
 	switchDeck(newGroup: MixxxChannelGroup) {
-		this.hotcueModeButton.output(0);
-		this.freezeButton.output(0);
+		this.display.closePopup();
 		super.switchDeck(newGroup);
+		this.deckButton.output();
+		this.updateModeButtons();
+	}
+
+	setPerformanceMode(mode: 'hotcue' | 'freeze' | 'remix') {
+		this.display.closePopup();
+		this.performanceMode = mode;
+		if (mode !== 'hotcue') {
+			this.hotcuePage = 1;
+			this.refreshPads();
+		}
+		this.updateModeButtons();
+	}
+
+	cycleHotcuePage() {
+		this.performanceMode = 'hotcue';
+		this.hotcuePage = ((this.hotcuePage % 3) + 1) as 1 | 2 | 3;
+		this.refreshPads();
+		this.updateModeButtons();
+	}
+
+	refreshPads() {
+		for (const pad of this.pads) {
+			pad.updateBindings();
+		}
+	}
+
+	hotcueNumberForPad(padNumber: number) {
+		if (this.hotcuePage === 1) {
+			return padNumber;
+		}
+		if (this.hotcuePage === 2) {
+			return padNumber + 4;
+		}
+		return padNumber + 12;
+	}
+
+	adjustLoopSize(direction: 1 | -1) {
+		this.loopSizeIndex = Math.max(
+			0,
+			Math.min(this.loopSizePresets.length - 1, this.loopSizeIndex + direction)
+		);
+		const size = this.loopSizePresets[this.loopSizeIndex];
+		engine.setValue(this.group, 'beatloop_size', size);
+		return size;
+	}
+
+	currentLoopSize() {
+		return engine.getValue(this.group, 'beatloop_size') || this.loopSizePresets[this.loopSizeIndex];
+	}
+
+	adjustSliceSize(direction: 1 | -1) {
+		this.sliceSizeIndex = Math.max(
+			0,
+			Math.min(this.sliceSizePresets.length - 1, this.sliceSizeIndex + direction)
+		);
+		return this.sliceSizePresets[this.sliceSizeIndex];
+	}
+
+	adjustQuantizeSize(direction: 1 | -1) {
+		this.quantizeSizeIndex = Math.max(
+			0,
+			Math.min(this.quantizeSizes.length - 1, this.quantizeSizeIndex + direction)
+		);
+		return this.quantizeSizes[this.quantizeSizeIndex];
+	}
+
+	updateModeButtons() {
+		this.hotcueModeButton.output(this.performanceMode === 'hotcue' ? 1 : 0);
+		this.freezeButton.output(this.performanceMode === 'freeze' ? 1 : 0);
+		this.remixModeButton.output(this.performanceMode === 'remix' ? 1 : 0);
 	}
 
 	//switchPadLayer(deck, newLayer) {

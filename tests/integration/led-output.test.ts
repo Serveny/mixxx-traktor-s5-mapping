@@ -153,4 +153,18 @@ describe('LED output', () => {
 		expect(meterBytes[1]).toBe(125);
 		expect(meterBytes.slice(2).every((value) => value === 0)).toBe(true);
 	});
+
+	test('deck button is blue for deck A/B and white for deck C/D', () => {
+		const s5 = new S5(mapping);
+		const deckOutByte = mapping.deckLeft.deck.outByte;
+		const outReport = s5.reports.out[128];
+
+		expect(outReport.data[deckOutByte]).toBe(0);
+		expect(outReport.data[deckOutByte + 1]).toBe(127);
+
+		s5.deckLeft.toggleDeck();
+
+		expect(outReport.data[deckOutByte]).toBe(127);
+		expect(outReport.data[deckOutByte + 1]).toBe(0);
+	});
 });

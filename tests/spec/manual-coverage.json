@@ -33,5 +33,68 @@
 		"component": "Deck / DeckButton / group-bound children",
 		"automationLevel": "integration",
 		"status": "covered"
+	},
+	{
+		"manualSection": "2.8.2 Deck-specific tempo adjustments",
+		"feature": "BPM popup routes browse encoder to deck tempo adjustment",
+		"component": "DisplayArea / BrowserEncoder",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "2.9 Using Keylock",
+		"feature": "KEY popup toggles keylock and routes browse encoder to key adjustment",
+		"component": "DisplayArea / BrowserEncoder / SyncButton",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "3.2.2 Moving a Loop",
+		"feature": "Loop encoder uses preset sizes and shifted beatjump navigation",
+		"component": "loopEncoder",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "3.2.3 Storing a Loop",
+		"feature": "Pads store active loops and shifted pads delete saved loops",
+		"component": "PadButton",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "3.3.2 Adjusting the Freeze Slice Size",
+		"feature": "Freeze hold and loop touch open slice size popup state",
+		"component": "FreezeButton / loopEncoder / DisplayArea",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "3.5.3 Triggering Samples using Different Quantize Sizes",
+		"feature": "Display button 2 opens quantize popup in remix mode",
+		"component": "DisplayArea / RemixModeButton",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "4.2.1.1 Display Buttons and Settings",
+		"feature": "Display popup buttons and settings fallback are controller-wired",
+		"component": "DisplayArea",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "4.2.8 HOTCUE Button",
+		"feature": "Hotcue pages cycle across pads 1-8, 5-12, and 13-20",
+		"component": "HotcueModeButton / PadButton",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "4.2.9 DECK Button",
+		"feature": "Deck button output is blue for A/B and white for C/D",
+		"component": "DeckButton",
+		"automationLevel": "integration",
+		"status": "covered"
 	}
 ]
