@@ -1,10 +1,10 @@
-# 📀 Mixxx Traktor S5 Mapping
+# 📀 Mixxx Traktor Kontrol S5 Mapping
 
-Very **Work in progress** Traktor S5 mapping for the Mixxx DJ software in TypeScript.
+Traktor Kontrol S5 mapping for the Mixxx DJ software in TypeScript.
 
 > [!NOTE]
-> This project relies on **Mixxx control types** from [PR #15441](https://github.com/mixxxdj/mixxx/pull/15441), which is currently unmerged.  
-> To use these types, clone the PR branch into a sibling directory and verify the paths configuration in your tsconfig.json.
+> This project relies on **Mixxx control types** from [PR #15441](https://github.com/mixxxdj/mixxx/pull/15441), which is merged into the Mixxx [2.6 branch](https://github.com/mixxxdj/mixxx/tree/2.6).  
+> To use these types, clone the [2.6 branch](https://github.com/mixxxdj/mixxx/tree/2.6) into a sibling directory and verify the paths configuration in your tsconfig.json.
 
 ## 🗿 Current status
 
