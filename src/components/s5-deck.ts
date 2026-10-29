@@ -15,6 +15,7 @@ import { loopEncoder } from './encoders/loop-encoder';
 import type { S5EffectUnit } from './s5-effect-unit';
 import { TouchStrip } from './touch-strip';
 import { DisplayArea } from './display-area';
+import { publishScreenState } from '../screen-state';
 import { PadButton } from './buttons/pad-button';
 import { HotcueModeButton } from './buttons/hotcue-mode-button';
 import type {
@@ -690,6 +691,16 @@ export class S5Deck extends Deck {
 		super.switchDeck(newGroup);
 		this.deckButton.output();
 		this.updateModeButtons();
+		this.publishScreenState();
+	}
+
+	publishScreenState() {
+		publishScreenState(this.decks[0] === 1 ? 'leftdeck' : 'rightdeck', {
+			group: this.group,
+			popup: this.display.activePopup,
+			sliceSize: this.sliceSizePresets[this.sliceSizeIndex],
+			quantizeSize: this.quantizeSizes[this.quantizeSizeIndex],
+		});
 	}
 
 	setPerformanceMode(mode: 'hotcue' | 'freeze' | 'remix') {
@@ -752,6 +763,7 @@ export class S5Deck extends Deck {
 			0,
 			Math.min(this.sliceSizePresets.length - 1, this.sliceSizeIndex + direction)
 		);
+		this.publishScreenState();
 		return this.sliceSizePresets[this.sliceSizeIndex];
 	}
 
@@ -760,6 +772,7 @@ export class S5Deck extends Deck {
 			0,
 			Math.min(this.quantizeSizes.length - 1, this.quantizeSizeIndex + direction)
 		);
+		this.publishScreenState();
 		return this.quantizeSizes[this.quantizeSizeIndex];
 	}
 

@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<MixxxControllerPreset mixxxVersion="2.6.0" schemaVersion="1">
+    <info>
+        <name>Traktor Kontrol S5 (Screens)</name>
+        <author>D. Lewis</author>
+        <description>Traktor Kontrol S5 screens (480x272 RGB565, S8/D2 display protocol)</description>
+        <manual>native_instruments_traktor_kontrol_s5</manual>
+        <devices>
+            <!--
+                Verified with lsusb on Traktor Kontrol S5:
+                idProduct=0x1420, vendor-specific bulk interface 4,
+                Bulk OUT endpoint 0x03.
+
+                The current Mixxx bulk controller enumerator also requires the
+                device to be registered in src/controllers/bulk/bulksupported.h.
+            -->
+            <product protocol="bulk" vendor_id="0x17cc" product_id="0x1420" out_epaddr="0x03" interface_number="0x04" />
+        </devices>
+    </info>
+    <controller id="TraktorS5Screens" direction="out" namespace="S5">
+        <screens>
+            <screen identifier="leftdeck" width="480" height="272" targetFps="30" pixelType="RGB565" reversed="false" endian="big" splashoff="300" />
+            <screen identifier="rightdeck" width="480" height="272" targetFps="30" pixelType="RGB565" reversed="false" endian="big" splashoff="300" />
+        </screens>
+        <scriptfiles>
+            <file filename="TraktorKontrolS5Screens.qml" />
+        </scriptfiles>
+        <qmllibraries>
+            <library path="TraktorKontrolS5Screens" />
+        </qmllibraries>
+    </controller>
+</MixxxControllerPreset>

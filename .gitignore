@@ -28,3 +28,4 @@ dist-ssr
 *.sw?
 
 /docs/*.pdf
+screens/tools/s5_screen_test

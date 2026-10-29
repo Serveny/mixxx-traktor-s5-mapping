@@ -29,18 +29,19 @@ Traktor Kontrol S5 mapping for the Mixxx DJ software in TypeScript.
 - Flux button basic slip/loop interaction
 - Display-area transport/browser-related buttons
 - LED output for transport, pads, touch strip and mixer
+- Display rendering (Track Deck view, 480x272) via the separate screens preset, see [screens/README.md](screens/README.md)
 
 ### 🚧 Work in progress components
 
 - Freeze mode behavior
 - Remix mode behavior
-- Display rendering
+- Display: deck switching and pop-ups on screen (waiting for Mixxx shared-data API), Split View, Remix/Stem views
 - Browser/preview behavior that depends on Mixxx GUI focus
 - Remaining S5-specific workflow details from the original hardware manual
 
 ## 👩‍💻 How to setup development
 
-1. Install the <a href="https://mixxx.org/">Mixxx</a> software
+1. Install the <a href="https://mixxx.org/">Mixxx</a> software (developed against Mixxx `main`, 2.7-alpha; the screens need a local Mixxx build, see [screens/README.md](screens/README.md))
 2. Clone the repository: `git clone git@github.com:Serveny/mixxx-traktor-s5-mapping.git`
 3. Open repository directory and install dev dependencies: `npm install`
 4. Check that the Mixxx type-definition paths referenced in `tsconfig.json` exist on your machine, or adjust them to your local Mixxx checkout / installation

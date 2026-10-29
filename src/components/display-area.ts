@@ -163,6 +163,7 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 				? 1
 				: 0
 		);
+		this.deck.publishScreenState();
 	}
 
 	setPlaylistStatus(isActive: boolean) {

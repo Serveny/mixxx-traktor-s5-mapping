@@ -86,4 +86,25 @@ describe('display area popup controls', () => {
 			'show_maximized_library'
 		);
 	});
+
+	test('publishes deck focus and popup state for the screens when shared data exists', () => {
+		let shared: Record<string, unknown> = { other: 1 };
+		const sharedEngine = globalThis.engine as any;
+		sharedEngine.getSharedData = () => shared;
+		sharedEngine.setSharedData = (data: Record<string, unknown>) => {
+			shared = data;
+		};
+		try {
+			const s5 = new S5(mapping);
+			s5.deckRight.display.displayButton1.input(1);
+			expect(shared.rightdeck).toMatchObject({ group: '[Channel2]', popup: 'bpm' });
+
+			s5.deckRight.toggleDeck();
+			expect(shared.rightdeck).toMatchObject({ group: '[Channel4]', popup: 'none' });
+			expect(shared.other).toBe(1);
+		} finally {
+			delete sharedEngine.getSharedData;
+			delete sharedEngine.setSharedData;
+		}
+	});
 });
