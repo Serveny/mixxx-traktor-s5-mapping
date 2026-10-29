@@ -29,3 +29,6 @@ dist-ssr
 
 /docs/*.pdf
 screens/tools/s5_screen_test
+
+# USB captures are large; keep them local
+*.pcapng
