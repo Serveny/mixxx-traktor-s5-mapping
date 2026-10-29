@@ -2,6 +2,7 @@ import { settings } from '../../settings';
 import { TouchEncoder } from './encoder';
 import type { S5Deck } from '../s5-deck';
 import type { TouchEncoder as EncoderMapping } from '../../types/mapping';
+import type { DisplayPopup } from '../display-area';
 
 const libraryFocus = {
 	none: 0,
@@ -129,7 +130,13 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 		//}
 	}
 
-	private handlePopupChange(isRight: boolean, popup: 'bpm' | 'key' | 'sliceSize' | 'quantize' | 'beatgrid') {
+	private handlePopupChange(isRight: boolean, popup: Exclude<DisplayPopup, 'none'>) {
+		if (popup === 'browser') {
+			// -- 🚜 S5 Docs 2.1.2: "Rotate the BROWSE encoder. The selected entry will be highlighted"
+			this.deck.browser.scroll(isRight ? 1 : -1, this.isShifted);
+			return;
+		}
+
 		if (popup === 'bpm') {
 			// -- 🚜 S5 Docs 2.8.2:
 			// BPM popup mirrors deck tempo nudging on the browse encoder while it is visible.
@@ -159,6 +166,10 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 	}
 
 	onTouch(pressed: number): void {
+		if (this.deck.browser.enabled) {
+			this.deck.browser.touch(pressed !== 0);
+			return;
+		}
 		const focused = engine.getValue('[Library]', 'focused_widget');
 		this.deck.display.isPlaylistSelected = focused === 3;
 
@@ -188,6 +199,16 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 		if (this.deck.isStemMode() && this.deck.stems.page === 'volume' && this.deck.stems.hasSelection()) {
 			// -- 🚜 S5 Docs 3.8.3: "Press the BROWSE encoder to reset the volume to maximum level."
 			this.deck.stems.resetVolume();
+			return;
+		}
+
+		if (this.deck.display.activePopup === 'browser') {
+			this.deck.browser.load();
+			return;
+		}
+
+		if (this.deck.browser.enabled) {
+			this.deck.browser.open();
 			return;
 		}
 

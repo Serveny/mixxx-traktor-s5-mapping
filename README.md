@@ -35,7 +35,7 @@ Traktor Kontrol S5 mapping for the Mixxx DJ software in TypeScript.
 
 - Freeze mode behavior
 - Remix mode behavior
-- Display: deck switching and pop-ups on screen (waiting for Mixxx shared-data API), Split View, Remix/Stem views
+- Display: deck switching, pop-ups and browser on screen need Mixxx's shared-data API (local patch, see [screens/README.md](screens/README.md)); Split View, Remix/Stem views
 - Browser/preview behavior that depends on Mixxx GUI focus
 - Remaining S5-specific workflow details from the original hardware manual
 

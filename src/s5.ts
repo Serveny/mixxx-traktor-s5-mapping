@@ -42,6 +42,8 @@ export class S5 {
 			this.reports,
 			io.deckRight
 		);
+		this.deckLeft.otherSide = this.deckRight;
+		this.deckRight.otherSide = this.deckLeft;
 
 		const volumeMeter = [
 			this.mixer.channelA.volumeMeter,

@@ -26,6 +26,10 @@ export class PerformanceRightButton extends Button {
 			if (pressed) this.deck.stems.togglePage();
 			return;
 		}
+		if (this.deck.display.activePopup === 'browser') {
+			if (pressed) this.deck.browser.togglePreviewMode();
+			return;
+		}
 		if (pressed) {
 			script.triggerControl(this.group, 'LoadSelectedTrackAndPlay', 50);
 		} else {

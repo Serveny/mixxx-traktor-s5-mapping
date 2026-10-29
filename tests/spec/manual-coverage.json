@@ -1,10 +1,10 @@
 [
 	{
 		"manualSection": "2.1.1 Opening the Browser",
-		"feature": "Open browser with browse encoder press",
-		"component": "BrowserEncoder",
-		"automationLevel": "scenario",
-		"status": "planned"
+		"feature": "Browse press opens the browser on the deck display; turning scrolls, pressing loads",
+		"component": "BrowserEncoder / ScreenBrowser",
+		"automationLevel": "integration",
+		"status": "covered"
 	},
 	{
 		"manualSection": "2.2.2 Playing a Track",
@@ -22,10 +22,10 @@
 	},
 	{
 		"manualSection": "2.1.5 Sorting Tracks",
-		"feature": "Shifted browse and loop encoder interactions during browsing",
-		"component": "BrowserEncoder / loopEncoder / ShiftButton",
-		"automationLevel": "manual-only",
-		"status": "planned"
+		"feature": "SORT BY via left Performance Mode button, LOOP turn picks category, LOOP press flips order",
+		"component": "PerformanceLeftButton / loopEncoder / ScreenBrowser",
+		"automationLevel": "integration",
+		"status": "covered"
 	},
 	{
 		"manualSection": "2.5 Deck Switching",
@@ -101,6 +101,20 @@
 		"manualSection": "4.2.1.4 View Button",
 		"feature": "VIEW flashes while a pop-up is open and closes it",
 		"component": "DisplayArea / ViewButton",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "2.1.3 Browsing using Touch Interactions",
+		"feature": "Touch opens the browser, it closes 3 s after the last interaction",
+		"component": "BrowserEncoder / ScreenBrowser",
+		"automationLevel": "integration",
+		"status": "covered"
+	},
+	{
+		"manualSection": "2.1.4 Preview Tracks",
+		"feature": "PREVIEW via right Performance Mode button and LOOP encoder",
+		"component": "PerformanceRightButton / loopEncoder / ScreenBrowser",
 		"automationLevel": "integration",
 		"status": "covered"
 	}

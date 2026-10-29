@@ -28,6 +28,7 @@ import { LoopLed } from './loop-led';
 import { FreezeSlicer } from './freeze-slicer';
 import { RemixSamplers } from './remix-samplers';
 import { StemPads } from './stem-pads';
+import { ScreenBrowser } from './screen-browser';
 
 export class S5Deck extends Deck {
 	display: DisplayArea;
@@ -57,6 +58,9 @@ export class S5Deck extends Deck {
 	freezeSlicer = new FreezeSlicer(this);
 	remix = new RemixSamplers(this);
 	stems = new StemPads(this);
+	browser = new ScreenBrowser(this);
+	// The deck on the other side of the controller, set by S5.
+	otherSide?: S5Deck;
 	constructor(
 		decks: [DeckChannel, DeckChannel],
 		public effectUnit: S5EffectUnit,
@@ -725,6 +729,13 @@ export class S5Deck extends Deck {
 			popup: this.display.activePopup,
 			sliceSize: this.sliceSizePresets[this.sliceSizeIndex],
 			quantizeSize: this.quantizeSizes[this.quantizeSizeIndex],
+			browserScrollRequest: this.browser.scrollRequest,
+			browserLoadRequest: this.browser.loadRequest,
+			browserPreviewRequest: this.browser.previewRequest,
+			browserSorting: this.browser.isSorting,
+			browserSortColumn: this.browser.sortColumn,
+			browserSortDescending: this.browser.sortDescending,
+			browserPreviewMode: this.browser.isPreviewMode,
 		});
 	}
 

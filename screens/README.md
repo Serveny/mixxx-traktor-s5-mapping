@@ -17,20 +17,30 @@ Working on hardware with Mixxx 2.7-alpha (upstream `main`):
 - The other deck on the same side (C below A, D below B) as a slim row with title, BPM and
   progress, shown when it has a track loaded (a reduced form of the manual's Split View).
 - BPM / KEY / SLICE SIZE / QUANTIZE pop-ups.
+- Browser (manual 2.1, `S5/BrowserView.qml`): BROWSE opens it, turning scrolls (SHIFT: 8 rows),
+  pressing loads; BACK/VIEW close it. SORT BY (TITLE, ARTIST, BPM, KEY) and PREVIEW via the
+  Performance Mode buttons and the LOOP encoder. Only the full track collection is listed:
+  Mixxx's QML library has no playlists/crates yet, and IMPORT DATE / # are not exposed as columns.
 
-Needs Mixxx's controller shared-data API (open PRs mixxxdj/mixxx#16129 / #16778):
+Needs Mixxx's controller shared-data API (open PR mixxxdj/mixxx#16129, see below):
 
 - Following deck switches (A/C, B/D): without it the screens stay on Deck A and B.
-- Showing pop-ups: the HID mapping publishes its state through
-  `src/screen-state.ts`, which does nothing until the API exists.
+- Showing pop-ups and the browser: the HID mapping publishes its state through `src/screen-state.ts`
+  (one shared value per screen entity `leftdeck` / `rightdeck`).
+- Both mapping XMLs need `sharedDataNamespace="S5"` on their `<controller>` element. The bulk XML here
+  has it; add it to `Traktor Kontrol S5.hid.xml` as well.
 
-Not implemented: full Split View toggle, Remix Deck view, browser on the display, device settings screen.
+Screen QML runs in its own render thread: Qt aborts when a view's delegates are created there for a
+model (`Illegal attempt to connect ... in a different thread`). Use fixed `Repeater { model: N }` rows
+instead of `ListView` or dynamic models, and copy GUI-thread data (like the library) into JS values.
+
+Not implemented: full Split View toggle, Remix Deck view, device settings screen.
 
 Protocol details: `protocol/notes.md`.
 
 ## Mixxx requirements
 
-Two local patches in the Mixxx checkout (`../mixxx`):
+Local patches in the Mixxx checkout (`../mixxx`):
 
 1. `src/controllers/bulk/bulksupported.h`: register the S5:
 
@@ -41,6 +51,15 @@ Two local patches in the Mixxx checkout (`../mixxx`):
 2. GLES builds only (`-DQGLES2=ON`): in
    `src/controllers/rendering/controllerrenderingengine.cpp`, apply `fboImage.rgbSwap()` when
    `m_screenInfo.reversedColor` is set rather than on an endian mismatch. Without this, red and blue are swapped.
+
+3. Shared data: apply PR mixxxdj/mixxx#16129 (`gh pr diff 16129 -R mixxxdj/mixxx | git apply --3way`),
+   then on current `main`:
+   - `src/controllers/controllermanager.cpp`: also call `pController->setSharedData(m_pSharedData)` before
+     `pController->open(...)` in the startup path (`slotSetUpDevices`), not only in `openController()`;
+     otherwise controllers opened at startup report "No shared data available".
+   - same file: `m_pSharedData->moveToThread(m_pThread.get())` after `moveToThread(m_pThread.get())`;
+     otherwise the per-controller namespace objects end up without a parent and crash on first use.
+   - `src/test/controllershareddata_test.cpp`: add `#include <QElapsedTimer>` to build the tests.
 
 If the log shows `ControllerRenderingEngine - GLError after glReadPixels: 1282`, build Mixxx with GLES:
 

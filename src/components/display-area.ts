@@ -22,6 +22,7 @@ export const popupNames = {
 	sliceSize: 'sliceSize',
 	quantize: 'quantize',
 	beatgrid: 'beatgrid',
+	browser: 'browser',
 } as const;
 
 export type DisplayPopup = (typeof popupNames)[keyof typeof popupNames];
@@ -125,8 +126,7 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 			this.closePopup();
 			return;
 		}
-		this.activePopup = popup;
-		this.updatePopupOutputs();
+		this.setActivePopup(popup);
 		if (autoClose) {
 			this.resetPopupTimer();
 		}
@@ -137,7 +137,13 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 			engine.stopTimer(this.popupTimer);
 			this.popupTimer = 0;
 		}
-		this.activePopup = popupNames.none;
+		this.setActivePopup(popupNames.none);
+	}
+
+	private setActivePopup(popup: DisplayPopup) {
+		const closesBrowser = this.activePopup === popupNames.browser && popup !== popupNames.browser;
+		this.activePopup = popup;
+		if (closesBrowser) this.deck.browser.onClosed();
 		this.updatePopupOutputs();
 	}
 

@@ -1,3 +1,4 @@
 module S5
 SplashOff 1.0 SplashOff.qml
 DeckScreen 1.0 DeckScreen.qml
+BrowserView 1.0 BrowserView.qml

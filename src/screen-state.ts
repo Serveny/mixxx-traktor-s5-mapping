@@ -8,19 +8,32 @@ export type ScreenState = {
 	popup: DisplayPopup;
 	sliceSize: number;
 	quantizeSize: number;
+	// Display browser (manual 2.1). The *Request values are counters: the screen acts once per increment.
+	browserScrollRequest: number;
+	browserLoadRequest: number;
+	browserPreviewRequest: number;
+	browserSorting: boolean;
+	browserSortColumn: number;
+	browserSortDescending: boolean;
+	browserPreviewMode: boolean;
 };
 
-type SharedDataEngine = {
-	getSharedData?: () => Record<string, unknown> | undefined;
-	setSharedData?: (data: Record<string, unknown>) => void;
+type SharedValueEngine = {
+	setSharedValue?: (entity: string, key: string, value: string | number | boolean) => void;
 };
+
+const api = () => engine as unknown as SharedValueEngine;
+
+// shortcut: needs Mixxx's controller shared-data API (open PR mixxxdj/mixxx#16129, applied locally),
+// and `sharedDataNamespace="S5"` on the <controller> of the HID and the bulk mapping XML.
+export function hasScreenApi() {
+	return typeof api().setSharedValue === 'function';
+}
 
 // Feeds the screen QML (screens/TraktorKontrolS5Screens) with mapping-only state.
-// shortcut: needs Mixxx's controller shared-data API (open PRs #16129/#16778), no-op until it lands.
 export function publishScreenState(screenId: ScreenId, state: ScreenState) {
-	const api = engine as unknown as SharedDataEngine;
-	if (typeof api.setSharedData !== 'function' || typeof api.getSharedData !== 'function') {
-		return;
+	if (!hasScreenApi()) return;
+	for (const [key, value] of Object.entries(state)) {
+		api().setSharedValue!(screenId, key, value);
 	}
-	api.setSharedData({ ...(api.getSharedData() ?? {}), [screenId]: state });
 }

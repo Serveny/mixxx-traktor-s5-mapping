@@ -21,7 +21,13 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 	onChange(isRight: boolean) {
 		// -- 🚜 S5 Docs 2.1.5
 		// "Rotate the LOOP encoder until the desired category is selected in the SORT BY pop-up window. The tracks will then be resorted."
-		if (this.deck.display.isSorting) {
+		if (this.deck.display.activePopup === 'browser' && this.deck.browser.isSorting) {
+			this.deck.browser.cycleSortColumn(isRight ? 1 : -1);
+		}
+		else if (this.deck.display.activePopup === 'browser' && this.deck.browser.isPreviewMode) {
+			this.deck.browser.seekPreview(isRight ? 1 : -1);
+		}
+		else if (this.deck.display.isSorting) {
 			this.switchSortCategory(isRight);
 		}
 		else if (this.deck.mixer.auxButton.isHeld) {
@@ -49,11 +55,6 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 			this.deck.adjustSliceSize(isRight ? 1 : -1);
 		}
 
-		// -- 🚜 S5 Docs 2.1.4
-		// "Press the LOOP encoder to start preview of the selected track."
-		// TODO: Disabled because this should only work in combination with the displays
-		//else if (this.deck.display.isPlaylistSelected)
-		//this.browsePreviewTrack(isRight);
 		else if (
 			this.deck.wheelMode === wheelModes.loopIn ||
 			this.deck.wheelMode === wheelModes.loopOut
@@ -89,12 +90,9 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 		return (
 			!this.isShifted &&
 			!this.deck.display.isSorting &&
+			this.deck.display.activePopup !== 'browser' &&
 			engine.getValue(this.group, 'slip_enabled') !== 0
 		);
-	}
-
-	private browsePreviewTrack(isRight: boolean) {
-		engine.setValue('[PreviewDeck1]', 'beatjump', isRight ? 16 : -16);
 	}
 
 	private switchSortCategory(isRight: boolean) {
@@ -130,20 +128,17 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 		if (!pressed) {
 			return;
 		}
-		//if (this.deck.display.isPlaylistSelected) {
 		// -- 🚜 S5 Docs 2.1.5:
 		// "Press the LOOP encoder to switch between ascending and descending order"
-		if (this.deck.display.isSorting) {
+		if (this.deck.display.activePopup === 'browser' && this.deck.browser.isSorting) {
+			this.deck.browser.toggleSortOrder();
+		}
+		else if (this.deck.display.activePopup === 'browser' && this.deck.browser.isPreviewMode) {
+			this.deck.browser.togglePreview();
+		}
+		else if (this.deck.display.isSorting) {
 			script.toggleControl('[Library]', 'sort_order');
 		}
-
-		// -- 🚜 S5 Docs 2.1.4:
-		// "Press the LOOP encoder to start preview of the selected track."
-		// TODO: Disabled until solution for library focus was found
-		//  else {
-		//this.previewTrack();
-		//}
-		//}
 		else if (!this.isShifted && this.deck.isStemMode() && this.deck.stems.page === 'filter' && this.deck.stems.hasSelection()) {
 			// -- 🚜 S5 Docs 3.8.3: "Press the LOOP encoder to activate FILTER on the Stem Part."
 			this.deck.stems.toggleFilter();
@@ -158,15 +153,5 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 		} else {
 			script.triggerControl(this.group, 'reloop_toggle', 50);
 		}
-	}
-
-	private previewTrack() {
-		// TODO: Check original behavior in Traktor Pro
-		const isPlaying = engine.getValue('[PreviewDeck1]', 'play');
-		script.triggerControl(
-			'[PreviewDeck1]',
-			isPlaying ? 'stop' : 'LoadSelectedTrackAndPlay',
-			50
-		);
 	}
 }

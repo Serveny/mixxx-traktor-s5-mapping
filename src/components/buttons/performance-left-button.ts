@@ -32,6 +32,10 @@ export class PerformanceLeftButton extends SingleColorOutMixin(
 			this.display.deck.stems.togglePage();
 			return;
 		}
+		if (this.display.activePopup === 'browser') {
+			if (pressed) this.display.deck.browser.toggleSorting();
+			return;
+		}
 		if (!pressed || !this.display.isPlaylistSelected) return;
 		this.display.isSorting = !this.display.isSorting;
 		this.output(this.display.isSorting ? 1 : 0);

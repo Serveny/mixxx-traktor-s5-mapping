@@ -30,21 +30,51 @@ Rectangle {
 
     color: "black"
 
-    function onSharedDataUpdate(data) {
-        const state = data ? data[root.screenId] : null
-        if (!state) {
-            return
-        }
-        root.group = state.group || root.group
-        root.popup = state.popup || "none"
-        root.sliceSize = state.sliceSize || root.sliceSize
-        root.quantizeSize = state.quantizeSize || root.quantizeSize
+    // Browser state (manual 2.1), see ScreenBrowser in the HID mapping.
+    property bool browserSorting: false
+    property int browserSortColumn: 0
+    property bool browserSortDescending: false
+    property bool browserPreviewMode: false
+    // Last seen request counters; the mapping increments them once per request.
+    property var lastRequests: ({})
+
+    // Returns how often a request counter was incremented since the last call.
+    function takeRequests(key, value) {
+        const last = root.lastRequests[key]
+        root.lastRequests[key] = value
+        return last === undefined ? 0 : value - last
     }
 
+    function onSharedValue(value, _entity, key) {
+        switch (key) {
+        case "group": root.group = value || root.group; break
+        case "popup": root.popup = value || "none"; break
+        case "sliceSize": root.sliceSize = value || root.sliceSize; break
+        case "quantizeSize": root.quantizeSize = value || root.quantizeSize; break
+        case "browserSorting": root.browserSorting = !!value; break
+        case "browserSortColumn": root.browserSortColumn = value || 0; break
+        case "browserSortDescending": root.browserSortDescending = !!value; break
+        case "browserPreviewMode": root.browserPreviewMode = !!value; break
+        case "browserScrollRequest": browser.scroll(root.takeRequests(key, value)); break
+        case "browserLoadRequest": if (root.takeRequests(key, value) > 0) browser.loadSelected(); break
+        case "browserPreviewRequest": if (root.takeRequests(key, value) > 0) browser.previewSelected(); break
+        }
+    }
+
+    // Needs Mixxx's controller shared-data API (mixxxdj/mixxx#16129) and sharedDataNamespace="S5" in both mapping XMLs.
     Component.onCompleted: {
-        if (typeof engine.makeSharedDataConnection === "function") {
-            engine.makeSharedDataConnection(root.onSharedDataUpdate)
-            root.onSharedDataUpdate(engine.getSharedData())
+        if (typeof engine.makeSharedValueConnection !== "function") {
+            return
+        }
+        for (const key of ["group", "popup", "sliceSize", "quantizeSize", "browserSorting", "browserSortColumn",
+                "browserSortDescending", "browserPreviewMode", "browserScrollRequest", "browserLoadRequest",
+                "browserPreviewRequest"]) {
+            const value = engine.getSharedValue(root.screenId, key)
+            if (value !== undefined) {
+                // Counters only record a baseline here, so requests from before startup are not replayed.
+                root.onSharedValue(value, root.screenId, key)
+            }
+            engine.makeSharedValueConnection(root.screenId, key, root.onSharedValue)
         }
     }
 
@@ -379,7 +409,7 @@ Rectangle {
         width: 260
         height: 120
         radius: 8
-        visible: root.popup !== "none"
+        visible: root.popup !== "none" && root.popup !== "browser"
         color: "#e0101010"
         border.color: root.accent
         border.width: 2
@@ -413,6 +443,17 @@ Rectangle {
                 font.bold: true
             }
         }
+    }
+
+    BrowserView {
+        id: browser
+        anchors.fill: parent
+        visible: root.popup === "browser"
+        group: root.group
+        sorting: root.browserSorting
+        sortColumn: root.browserSortColumn
+        sortDescending: root.browserSortDescending
+        previewMode: root.browserPreviewMode
     }
 
     component SecondaryDeck: Rectangle {

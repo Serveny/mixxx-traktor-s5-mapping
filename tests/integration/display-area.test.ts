@@ -110,11 +110,10 @@ describe('display area popup controls', () => {
 	});
 
 	test('publishes deck focus and popup state for the screens when shared data exists', () => {
-		let shared: Record<string, unknown> = { other: 1 };
+		const shared: Record<string, Record<string, unknown>> = {};
 		const sharedEngine = globalThis.engine as any;
-		sharedEngine.getSharedData = () => shared;
-		sharedEngine.setSharedData = (data: Record<string, unknown>) => {
-			shared = data;
+		sharedEngine.setSharedValue = (entity: string, key: string, value: unknown) => {
+			(shared[entity] ??= {})[key] = value;
 		};
 		try {
 			const s5 = new S5(mapping);
@@ -123,10 +122,9 @@ describe('display area popup controls', () => {
 
 			s5.deckRight.toggleDeck();
 			expect(shared.rightdeck).toMatchObject({ group: '[Channel4]', popup: 'none' });
-			expect(shared.other).toBe(1);
+			expect(shared.leftdeck).toBeUndefined();
 		} finally {
-			delete sharedEngine.getSharedData;
-			delete sharedEngine.setSharedData;
+			delete sharedEngine.setSharedValue;
 		}
 	});
 });
