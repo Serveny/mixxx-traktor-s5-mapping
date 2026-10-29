@@ -14,7 +14,7 @@
 
 - A built Mixxx binary at `../mixxx/build/mixxx`
 - A built controller mapping at `dist/Traktor-Kontrol-S5.js` (`npm run build`)
-- The HID XML mapping at `~/.mixxx/controllers/Traktor Kontrol S5.hid.xml`
+- The HID XML mapping at `mapping/Traktor Kontrol S5.hid.xml` (in this repository)
 
 ## Exit behavior
 

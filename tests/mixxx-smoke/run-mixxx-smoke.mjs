@@ -1,5 +1,5 @@
 import { cpSync, existsSync, mkdtempSync, mkdirSync } from 'node:fs';
-import { homedir, tmpdir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { parseMixxxOutput } from './parse-mixxx-log.mjs';
@@ -57,10 +57,7 @@ if (!existsSync(builtJs)) {
 
 // --- Locate the HID XML mapping ---
 
-const hidXmlSource = resolve(
-	homedir(),
-	'.mixxx/controllers/Traktor Kontrol S5.hid.xml'
-);
+const hidXmlSource = resolve('mapping/Traktor Kontrol S5.hid.xml');
 if (!existsSync(hidXmlSource)) {
 	console.warn(
 		`WARN: HID XML mapping not found at ${hidXmlSource}. Smoke test skipped.`

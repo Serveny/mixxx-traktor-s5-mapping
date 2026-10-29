@@ -4,6 +4,7 @@ import path from 'node:path';
 const fileName = 'Traktor-Kontrol-S5';
 const outDir = 'dist';
 const copyTargetDir = path.resolve('attic/mappings/controllers');
+const xmlSource = 'mapping/Traktor Kontrol S5.hid.xml';
 
 export default defineConfig({
 	build: {
@@ -37,6 +38,7 @@ export default defineConfig({
 				try {
 					await mkdir(copyTargetDir, { recursive: true });
 					await copyFile(source, destination);
+					await copyFile(path.resolve(xmlSource), path.join(copyTargetDir, path.basename(xmlSource)));
 				} catch (error) {
 					this.warn(`Skipping controller copy to ${destination}: ${error}`);
 				}
