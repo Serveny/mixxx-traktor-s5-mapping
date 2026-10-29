@@ -31,9 +31,12 @@ export class RemixModeButton extends DoubleColorOutMixin(
 	}
 
 	input(pressed: number) {
-		if (!pressed) {
-			return;
+		// -- 🚜 S5 Docs 3.5.4: holding REMIX turns the pads into slot mute buttons.
+		this.deck.remix.remixButtonHeld = pressed !== 0;
+		this.deck.remix.invalidate();
+		if (pressed && this.deck.performanceMode !== 'remix') {
+			this.deck.setPerformanceMode('remix');
 		}
-		this.deck.setPerformanceMode('remix');
+		this.deck.refreshModePads();
 	}
 }

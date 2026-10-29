@@ -88,10 +88,26 @@ export class PadButton extends RgbOutMixin(
 		);
 	}
 
+	private fluxJumped = false;
+
 	input(pressed: number) {
 		this.isPressed = pressed !== 0;
+		if (this.deck.performanceMode !== 'hotcue') {
+			this.deck.padInput(this.number, this.isPressed);
+			return;
+		}
 		this.colorComp.colorOutput(this.isActive, this.isPressed);
-		if (!pressed) return;
+		if (!pressed) {
+			if (this.fluxJumped) {
+				// -- 🚜 S5 Docs 3.4:
+				// "When you let go, playback resumes at the second Playhead's position."
+				// Leaving slip mode makes Mixxx jump to the slip position; re-enable it to stay in FLUX.
+				this.fluxJumped = false;
+				engine.setValue(this.group, 'slip_enabled', 0);
+				engine.setValue(this.group, 'slip_enabled', 1);
+			}
+			return;
+		}
 		this.updateBindings();
 		engine.setValue(this.group, 'scratch2_enable', 0);
 		if (!this.isShifted && engine.getValue(this.group, 'loop_enabled') !== 0) {
@@ -105,11 +121,23 @@ export class PadButton extends RgbOutMixin(
 			return;
 		}
 		engine.setValue(this.group, this.inKey, 1);
+		this.fluxJumped =
+			!this.isShifted && engine.getValue(this.group, 'slip_enabled') !== 0;
 	}
 
 	output(isActive: number) {
 		this.isActive = isActive !== 0;
 		this.colorComp.colorOutput(this.isActive, this.isPressed);
+	}
+
+	// Re-reads the hotcue state after another pad mode painted the pads.
+	redraw() {
+		this.colorComp.outTrigger();
+		this.outTrigger();
+	}
+
+	paint(color: RgbColor) {
+		this.outputRgb(color);
 	}
 
 	rebindGroup(group: MixxxChannelGroup) {
@@ -141,6 +169,8 @@ class ColorComponent extends RgbOutMixin(
 	}
 
 	colorOutput(isActive: boolean, isPressed: boolean) {
+		// Other pad modes own the pad LEDs.
+		if (this.padBtn.deck.performanceMode !== 'hotcue') return;
 		this.outputRgb(this.color.brightness(!isActive ? 0 : isPressed ? 1 : 0.1));
 	}
 }

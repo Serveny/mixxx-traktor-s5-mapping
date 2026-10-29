@@ -17,6 +17,15 @@ export class PerformanceRightButton extends Button {
 	}
 
 	input(pressed: number) {
+		// -- 🚜 S5 Docs 3.9.2: Performance Mode buttons select the beatgrid parameter.
+		if (this.deck.display.activePopup === 'beatgrid') {
+			if (pressed) this.deck.display.beatgrid.cycle(1);
+			return;
+		}
+		if (this.deck.isStemMode()) {
+			if (pressed) this.deck.stems.togglePage();
+			return;
+		}
 		if (pressed) {
 			script.triggerControl(this.group, 'LoadSelectedTrackAndPlay', 50);
 		} else {

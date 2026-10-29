@@ -14,13 +14,13 @@ describe('shift combination pass', () => {
 		expect(globalThis.script.triggerControl).toHaveBeenCalledWith('[Channel1]', 'eject', 50);
 	});
 
-	test('shift+cue triggers start_stop instead of cue_default', () => {
+	test('shift+cue triggers start_play instead of cue_default', () => {
 		const instance = s5.get();
 
 		instance.deckLeft.shiftButton.input(1);
 		instance.deckLeft.cueButton.input(1);
 
-		expect(globalThis.engine.setValue).toHaveBeenCalledWith('[Channel1]', 'start_stop', 1);
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith('[Channel1]', 'start_play', 1);
 		expect(globalThis.engine.setValue).not.toHaveBeenCalledWith('[Channel1]', 'cue_default', 1);
 	});
 
@@ -146,9 +146,9 @@ describe('shift combination pass', () => {
 		instance.deckLeft.playButton.input(1);
 		expect(globalThis.script.triggerControl).toHaveBeenCalledWith('[Channel1]', 'eject', 50);
 
-		// cue → start_stop
+		// cue → start_play
 		instance.deckLeft.cueButton.input(1);
-		expect(globalThis.engine.setValue).toHaveBeenCalledWith('[Channel1]', 'start_stop', 1);
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith('[Channel1]', 'start_play', 1);
 
 		globalThis.engine.setValue('[Channel1]', 'beatloop_size', 1);
 

@@ -13,6 +13,7 @@ import type { HIDReportHodler } from '../hid-report';
 import type { Btn as ButtonMapping } from '../types/mapping';
 import { createCompContainer } from './component-container';
 import type { S5Deck } from './s5-deck';
+import { BeatgridMode } from './beatgrid-mode';
 
 export const popupNames = {
 	none: 'none',
@@ -20,31 +21,34 @@ export const popupNames = {
 	key: 'key',
 	sliceSize: 'sliceSize',
 	quantize: 'quantize',
+	beatgrid: 'beatgrid',
 } as const;
 
 export type DisplayPopup = (typeof popupNames)[keyof typeof popupNames];
 
 export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
-	private deck: S5Deck;
+	readonly deck: S5Deck;
 	settingsButton: SettingsButton;
 	displayButton1: PopupButton;
 	displayButton2: PopupButton;
 	perfModeLeftButton: PerformanceLeftButton;
 	viewButton: ViewButton;
-	displayButton3: PushButton;
-	displayButton4: PushButton;
+	displayButton3: ZoomOrScrollButton;
+	displayButton4: ZoomOrScrollButton;
 	perfModeRightButton: PerformanceRightButton;
 
 	// Runtime variables
 	isPlaylistSelected = false;
 	isSorting = false;
 	activePopup: DisplayPopup = popupNames.none;
+	beatgrid: BeatgridMode;
 	popupTimeoutMillis = 2000;
 	private popupTimer = 0;
 
 	constructor(deck: S5Deck, io: DisplayAreaMapping) {
 		super(deck.group);
 		this.deck = deck;
+		this.beatgrid = new BeatgridMode(deck);
 
 		this.settingsButton = this.register(
 			new SettingsButton(deck.reports, io.settings),
@@ -76,7 +80,7 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 		// -- 🚜 S5 Docs 2.6
 		// "To zoom into the waveform press Display Button 3"
 		this.displayButton3 = this.register(
-			new PushButton({
+			new ZoomOrScrollButton(deck, -1, {
 			group: this.group,
 			inKey: 'waveform_zoom_down',
 			outKey: 'waveform_zoom_down',
@@ -89,7 +93,7 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 		// -- 🚜 S5 Docs 2.6
 		// "To zoom out of the waveform press Display Button 4"
 		this.displayButton4 = this.register(
-			new PushButton({
+			new ZoomOrScrollButton(deck, 1, {
 			group: this.group,
 			inKey: 'waveform_zoom_up',
 			outKey: 'waveform_zoom_up',
@@ -163,6 +167,7 @@ export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
 				? 1
 				: 0
 		);
+		this.viewButton.flash(this.activePopup !== popupNames.none);
 		this.deck.publishScreenState();
 	}
 
@@ -195,6 +200,17 @@ class PopupButton extends SingleColorOutMixin(InMixin(Component)) {
 		if (!pressed) {
 			return;
 		}
+		if (this.display.activePopup === popupNames.beatgrid) {
+			// -- 🚜 S5 Docs 3.9.3: "Press Display Button 1 (LOCK)." Display Button 2 (Tick) is not available.
+			if (this.popup === popupNames.bpm && !this.display.deck.isShifted) this.display.beatgrid.lock();
+			else if (this.popup === popupNames.bpm) this.display.closePopup();
+			return;
+		}
+		if (this.popup === popupNames.bpm && this.display.deck.isShifted) {
+			// -- 🚜 S5 Docs 3.9.2: "Press the SHIFT button and the Display Button 1. The Beatgrid mode opens in the display."
+			this.display.openPopup(popupNames.beatgrid, false);
+			return;
+		}
 		// -- 🚜 S5 Docs 2.8.2 / 2.9 / 3.5.3:
 		// The physical button only selects popup mode; rendering is handled later by the display work.
 		const popup =
@@ -220,12 +236,30 @@ class SettingsButton extends SingleColorOutMixin(InMixin(Component)) {
 }
 
 class ViewButton extends SingleColorOutMixin(InMixin(Component)) {
+	private blinkTimer = 0;
+	private blinkOn = false;
+
 	constructor(
 		private display: DisplayArea,
 		reports: HIDReportHodler,
 		io: ButtonMapping
 	) {
 		super({ reports, io });
+	}
+
+	// -- 🚜 S5 Docs 4.2.1.4: "Whenever you open a pop-up from a Deck view [...] the View button starts flashing."
+	flash(on: boolean) {
+		if (on && this.blinkTimer === 0) {
+			this.blinkTimer = engine.beginTimer(250, () => {
+				this.blinkOn = !this.blinkOn;
+				this.output(this.blinkOn ? 1 : 0);
+			});
+		} else if (!on && this.blinkTimer !== 0) {
+			engine.stopTimer(this.blinkTimer);
+			this.blinkTimer = 0;
+		}
+		this.blinkOn = on;
+		this.output(on ? 1 : 0);
 	}
 
 	input(pressed: number) {
@@ -240,5 +274,34 @@ class ViewButton extends SingleColorOutMixin(InMixin(Component)) {
 		}
 		this.display.closePopup();
 		script.toggleControl('[Skin]', 'show_maximized_library');
+	}
+}
+
+// -- 🚜 S5 Docs 4.2.1.2: Display Buttons 3/4 zoom the waveform on Track Decks and
+// "scroll up/down in the Sample Grid in steps of two" in REMIX mode.
+class ZoomOrScrollButton extends PushButton {
+	constructor(
+		private deck: S5Deck,
+		private direction: 1 | -1,
+		options: ConstructorParameters<typeof PushButton>[0]
+	) {
+		super(options);
+	}
+
+	input(pressed: number) {
+		if (this.deck.display.activePopup === popupNames.beatgrid) {
+			// -- 🚜 S5 Docs 3.9.3: Display Button 3 = TAP, Display Button 4 = RST.
+			if (pressed && this.direction < 0) this.deck.display.beatgrid.tap();
+			else if (pressed) this.deck.display.beatgrid.reset();
+			return;
+		}
+		if (this.deck.performanceMode === 'remix' && !this.deck.stems.available()) {
+			if (pressed) {
+				this.deck.remix.scroll(this.direction);
+				this.deck.refreshModePads();
+			}
+			return;
+		}
+		super.input(pressed);
 	}
 }

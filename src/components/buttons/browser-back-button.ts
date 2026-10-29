@@ -19,8 +19,23 @@ export class BrowserBackButton extends PushButton {
 		});
 	}
 
+	private exitTimer = 0;
+
 	input(pressed: number): void {
+		if (this.exitTimer !== 0) {
+			engine.stopTimer(this.exitTimer);
+			this.exitTimer = 0;
+		}
 		if (!pressed) return;
+		// -- 🚜 S5 Docs 4.2.2: "Pressing the BACK button for longer than a second lets you exit the Browser."
+		this.exitTimer = engine.beginTimer(
+			1000,
+			() => {
+				this.exitTimer = 0;
+				this.display.setPlaylistStatus(false);
+			},
+			true
+		);
 		const isFocusTrackTable =
 			engine.getValue('[Library]', 'focused_widget') === 3;
 

@@ -73,6 +73,8 @@ export interface S5MixerMapping {
 	cueGain: Knob;
 	aux: Btn;
 	auxToggle: Btn;
+	// Top (clip) LEDs of the MAIN meters left/right of the MAIN knob: [left, right]
+	mainLevel: Meter;
 
 	channelB: S5MixerColumnMapping;
 	channelD: S5MixerColumnMapping;
@@ -110,6 +112,8 @@ export interface S5DeckMapping {
 	transportControls: { shift: Btn; sync: Btn; cue: Btn; play: Btn };
 	flux: Btn;
 	loop: TouchEncoder;
+	// Two LEDs left of the loop encoder: [white, blue]
+	loopLed: Meter;
 	deck: Btn;
 }
 

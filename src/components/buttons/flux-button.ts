@@ -59,13 +59,6 @@ export class FluxButton extends SetInOutKeyMixin(
 		this.setKey('loop_enabled');
 	}
 
-	onShortRelease() {
-		if (!this.isShifted) {
-			engine.setValue(this.group, this.inKey, 0);
-			engine.setValue(this.group, 'scratch2_enable', 0);
-		}
-	}
-
 	loopModeOff(skipRestore: boolean) {
 		if (this.previousWheelMode !== null) {
 			this.indicator(false);
@@ -122,7 +115,9 @@ export class FluxButton extends SetInOutKeyMixin(
 				this.loopModeOff(false);
 			}
 		} else {
-			engine.setValue(this.group, this.inKey, 1);
+			// -- 🚜 S5 Docs 3.4:
+			// "Press the FLUX button to enable FLUX mode ... Press the FLUX button again to exit FLUX mode."
+			script.toggleControl(this.group, this.inKey);
 		}
 	}
 

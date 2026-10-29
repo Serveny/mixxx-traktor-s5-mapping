@@ -20,7 +20,10 @@ Rectangle {
     readonly property var player: Mixxx.PlayerManager.getPlayer(root.group)
     readonly property var track: root.player ? root.player.currentTrack : null
     readonly property color accent: deckLetter === "C" || deckLetter === "D" ? "#e6e6e6" : "#2aa6ff"
-    readonly property string deckLetter: "ABCD"[parseInt(root.group.replace(/\D/g, "")) - 1] || "?"
+    readonly property int deckNumber: parseInt(root.group.replace(/\D/g, ""))
+    readonly property string deckLetter: "ABCD"[root.deckNumber - 1] || "?"
+    // The other deck on this side (A<->C, B<->D), shown small like the manual's Split View (2.6).
+    readonly property string secondaryGroup: `[Channel${root.deckNumber > 2 ? root.deckNumber - 2 : root.deckNumber + 2}]`
     // Mixxx key enum order, shown in Open Key notation like Traktor.
     readonly property var openKeys: ["", "1d", "8d", "3d", "10d", "5d", "12d", "7d", "2d", "9d", "4d", "11d", "6d",
         "10m", "5m", "12m", "7m", "2m", "9m", "4m", "11m", "6m", "1m", "8m", "3m"]
@@ -68,6 +71,7 @@ Rectangle {
     Mixxx.ControlProxy { id: zoomControl; group: root.group; key: "waveform_zoom" }
     Mixxx.ControlProxy { id: samples; group: root.group; key: "track_samples" }
     Mixxx.ControlProxy { id: quantize; group: root.group; key: "quantize" }
+    Mixxx.ControlProxy { id: stemCount; group: root.group; key: "stem_count" }
 
     ColumnLayout {
         anchors.fill: parent
@@ -251,6 +255,72 @@ Rectangle {
             }
         }
 
+        // Stem Deck: one box per stem with volume and mute (manual 3.8).
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
+            Layout.topMargin: 4
+            visible: trackLoaded.value && stemCount.value > 0
+            spacing: 4
+
+            Repeater {
+                model: root.track && stemCount.value > 0 ? root.track.stemsModel : 0
+
+                Item {
+                    id: stem
+
+                    required property int index
+                    required property string label
+                    required property color color
+                    readonly property string stemGroup: `${root.group.slice(0, -1)}_Stem${stem.index + 1}]`
+
+                    Mixxx.ControlProxy { id: stemVolume; group: stem.stemGroup; key: "volume" }
+                    Mixxx.ControlProxy { id: stemMute; group: stem.stemGroup; key: "mute" }
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    opacity: stemMute.value ? 0.35 : 1
+
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 3
+                        color: "#262626"
+                    }
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        width: parent.width * stemVolume.value
+                        radius: 3
+                        color: stem.color
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: stemMute.value ? `${stem.label} (M)` : stem.label
+                        color: "white"
+                        style: Text.Outline
+                        styleColor: "black"
+                        font.pixelSize: 13
+                        font.bold: true
+                    }
+                }
+            }
+        }
+
+        // Other deck on this side, only when it has a track.
+        SecondaryDeck {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 22
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
+            Layout.topMargin: 4
+            deckGroup: root.secondaryGroup
+        }
+
         // Overview with play position and hotcues.
         Item {
             Layout.fillWidth: true
@@ -320,7 +390,7 @@ Rectangle {
 
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: ({ bpm: "BPM", key: "KEY", sliceSize: "SLICE SIZE", quantize: "QUANTIZE" })[root.popup] || ""
+                text: ({ bpm: "BPM", key: "KEY", sliceSize: "SLICE SIZE", quantize: "QUANTIZE", beatgrid: "BEATGRID" })[root.popup] || ""
                 color: "#aaa"
                 font.pixelSize: 16
                 font.bold: true
@@ -330,7 +400,8 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: {
                     switch (root.popup) {
-                    case "bpm": return bpm.value.toFixed(2)
+                    case "bpm":
+                    case "beatgrid": return bpm.value.toFixed(2)
                     case "key": return `${root.openKeys[keyControl.value] || "-"}${keylock.value ? " 🔒" : ""}`
                     case "sliceSize": return root.formatBeats(root.sliceSize)
                     case "quantize": return quantize.value ? root.formatBeats(root.quantizeSize) : "OFF"
@@ -339,6 +410,60 @@ Rectangle {
                 }
                 color: "white"
                 font.pixelSize: 44
+                font.bold: true
+            }
+        }
+    }
+
+    component SecondaryDeck: Rectangle {
+        id: secondary
+
+        property string deckGroup
+        readonly property var deckTrack: Mixxx.PlayerManager.getPlayer(secondary.deckGroup).currentTrack
+
+        Mixxx.ControlProxy { id: secondaryLoaded; group: secondary.deckGroup; key: "track_loaded" }
+        Mixxx.ControlProxy { id: secondaryBpm; group: secondary.deckGroup; key: "bpm" }
+        Mixxx.ControlProxy { id: secondaryPosition; group: secondary.deckGroup; key: "playposition" }
+        Mixxx.ControlProxy { id: secondaryPlay; group: secondary.deckGroup; key: "play" }
+
+        visible: secondaryLoaded.value > 0
+        radius: 3
+        color: "#1a1a1a"
+
+        Rectangle {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: parent.width * secondaryPosition.value
+            radius: 3
+            color: "#333"
+        }
+
+        RowLayout {
+            anchors.fill: parent
+            anchors.leftMargin: 4
+            anchors.rightMargin: 4
+            spacing: 6
+
+            Text {
+                text: "ABCD"[parseInt(secondary.deckGroup.replace(/\D/g, "")) - 1] || "?"
+                color: secondaryPlay.value ? "#2aa6ff" : "#888"
+                font.pixelSize: 14
+                font.bold: true
+            }
+
+            Text {
+                Layout.fillWidth: true
+                text: secondary.deckTrack ? secondary.deckTrack.title : ""
+                color: "#ccc"
+                font.pixelSize: 13
+                elide: Text.ElideRight
+            }
+
+            Text {
+                text: secondaryBpm.value.toFixed(1)
+                color: "#ccc"
+                font.pixelSize: 13
                 font.bold: true
             }
         }

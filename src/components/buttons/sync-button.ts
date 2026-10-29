@@ -1,6 +1,6 @@
 import type { HIDReportHodler } from '../../hid-report';
 import type { Btn as ButtonMapping } from '../../types/mapping';
-import { settings } from '../../settings';
+import { ButtonBrightnessOff, ButtonBrightnessOn, settings } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import {
 	ControlComponent,
@@ -39,11 +39,61 @@ export class SyncButton extends SingleColorOutMixin(
 		});
 	}
 
+	// Beat fraction the deck may drift from the tempo master before SYNC turns red.
+	static readonly phaseTolerance = 0.05;
+	private phaseOffset: number | null = null;
+	private lastLed = -1;
+
 	onShortRelease() {
+		if (this.isShifted && !settings.useKeylockOnMaster) {
+			// -- 🚜 S5 Docs 4.2.6:
+			// "While playing, pressing SHIFT + SYNC sets the Deck as the Tempo Master."
+			script.toggleControl(this.group, 'sync_leader');
+			return;
+		}
 		script.toggleControl(this.group, this.inKey);
 		if (!this.isShifted) {
 			engine.softTakeover(this.group, 'rate', true);
 		}
+	}
+
+	output(_value: number) {
+		this.lastLed = -1;
+		this.render();
+	}
+
+	setPhaseOffset(offset: number | null) {
+		this.phaseOffset = offset;
+		this.render();
+	}
+
+	// -- 🚜 S5 Docs 4.2.6:
+	// Bright green = synced and in phase, bright red = synced but out of phase, dim green = not synced.
+	private render() {
+		if (this.outKey === 'keylock') {
+			this.sendLed(engine.getValue(this.group, 'keylock') ? ButtonBrightnessOn : ButtonBrightnessOff, 0);
+			return;
+		}
+		const synced =
+			engine.getValue(this.group, 'sync_enabled') !== 0 ||
+			engine.getValue(this.group, 'sync_leader') !== 0;
+		const outOfPhase =
+			synced &&
+			this.phaseOffset !== null &&
+			Math.abs(this.phaseOffset) > SyncButton.phaseTolerance;
+		if (!synced) this.sendLed(ButtonBrightnessOff, 0);
+		else if (outOfPhase) this.sendLed(0, ButtonBrightnessOn);
+		else this.sendLed(ButtonBrightnessOn, 0);
+	}
+
+	// Byte 0 is the green LED, byte 1 the red one (verified on hardware).
+	private sendLed(green: number, red: number) {
+		const led = green * 256 + red;
+		if (led === this.lastLed) return;
+		this.lastLed = led;
+		this.outReport.data[this.io.outByte] = green;
+		this.outReport.data[this.io.outByte + 1] = red;
+		this.outReport.send();
 	}
 
 	onLongPress() {

@@ -84,6 +84,7 @@ export const mapping: S5Mapping = {
       press: { inReportId: 1, inByte: 6, inBit: 6, inLengthBit: 1 },
       fade : { inReportId: 1, inByte: 0, inBit: 4, inLengthBit: 4 },
     },
+    loopLed: { outReportId: 128, outByte: 40, outLengthByte: 2 },
     deck: { inReportId: 1, inByte: 6, inBit: 7, inLengthBit: 1, outReportId: 128, outByte: 38, outLengthByte: 2 },
   },
   /*
@@ -128,6 +129,7 @@ export const mapping: S5Mapping = {
     cueGain  : { inReportId: 2, inByte: 16 },
     aux      : { inReportId: 1, inByte: 11, inBit: 0, inLengthBit: 1, outReportId: 130, outByte: 16, outLengthByte: 1 },
     auxToggle: { inReportId: 1, inByte: 10, inBit: 3, inLengthBit: 1, outReportId: 130, outByte: 16, outLengthByte: 1 },
+    mainLevel: {                                                      outReportId: 130, outByte: 63, outLengthByte: 2 },
     channelB : {
       gain             : { inReportId: 2, inByte: 28 },
       fxUnitAssignLeft : { inReportId: 1, inByte: 12, inBit: 0, inLengthBit: 1, outReportId: 130, outByte: 6, outLengthByte: 1 },
@@ -238,6 +240,7 @@ export const mapping: S5Mapping = {
       press: { inReportId: 1, inByte: 14, inBit: 3, inLengthBit: 1 },
       fade : { inReportId: 1, inByte: 1, inBit: 4, inLengthBit: 4 },
     },
+    loopLed: { outReportId: 129, outByte: 40, outLengthByte: 2 },
     deck: { inReportId: 1, inByte: 14, inBit: 2, inLengthBit: 1, outReportId: 129, outByte: 38, outLengthByte: 2 },
   },
 };

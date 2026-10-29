@@ -46,10 +46,13 @@ export class TouchStrip extends ShiftMixin(InMixin(Component)) {
 
 	onUnshift(): void {
 		this.leds.setOutKey('scratch2');
-		this.leds.lightAll(0, 0); // unlight bar
+		this.leds.showPhase(null);
+	}
 
-		// Light the middle segment red
-		this.leds.lightRed(12, 127);
+	// -- 🚜 S5 Docs 3.1.2 / 4.2.5:
+	// Unshifted, the LEDs are a phase meter against the tempo master.
+	showPhase(offset: number | null) {
+		if (!this.isShifted) this.leds.showPhase(offset);
 	}
 
 	private jumpToPos(value: number) {
@@ -141,7 +144,30 @@ class TouchStripLEDs extends ControlOutMixin(
 		this.outReport.send();
 	}
 
+	private lastPhaseIdx: number | null = null;
+
+	// Center red = in phase; blue segments grow from the center towards the side the deck is ahead/behind.
+	// Full strip width is ±0.5 beat.
+	showPhase(offset: number | null) {
+		const center = Math.floor(this.stripSegments / 2);
+		const idx =
+			offset === null
+				? center
+				: center + Math.round(Math.max(-0.5, Math.min(0.5, offset)) * 2 * center);
+		if (idx === this.lastPhaseIdx) return;
+		this.lightAll(0, 0);
+		this.lastPhaseIdx = idx;
+		if (idx === center) this.lightRed(center, 127);
+		for (let i = Math.min(idx, center); i <= Math.max(idx, center); i++) {
+			if (i !== center) this.lightBlue(i, 127);
+		}
+		this.outReport.send();
+	}
+
 	lightAll(blueBrightness: number, redBrightness: number) {
+		this.lastPhaseIdx = null;
+		// Forces the next showPlayPositon to redraw (NaN never equals a new index, lightBlue/Red ignore it).
+		this.oldPlayIdx = NaN;
 		for (let i = 0; i < this.stripSegments; i++) {
 			this.lightBlue(i, blueBrightness);
 			this.lightRed(i, redBrightness);

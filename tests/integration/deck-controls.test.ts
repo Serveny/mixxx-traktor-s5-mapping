@@ -83,7 +83,8 @@ describe('deck control regressions', () => {
 		s5.deckLeft.shiftButton.input(1);
 		s5.deckLeft.fluxButton.onShortPress();
 
-		expect(activeConnectionsFor('[Channel1]', 'loop_enabled')).toHaveLength(2);
+		// flux button output + flux loop-mode connection + loop LED
+		expect(activeConnectionsFor('[Channel1]', 'loop_enabled')).toHaveLength(3);
 
 		s5.deckLeft.toggleDeck();
 
@@ -113,7 +114,7 @@ describe('deck control regressions', () => {
 
 		expect(globalThis.engine.setValue).toHaveBeenCalledWith(
 			'[Channel3]',
-			'start_stop',
+			'start_play',
 			1
 		);
 	});

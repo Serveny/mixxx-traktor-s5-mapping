@@ -96,5 +96,12 @@
 		"component": "DeckButton",
 		"automationLevel": "integration",
 		"status": "covered"
+	},
+	{
+		"manualSection": "4.2.1.4 View Button",
+		"feature": "VIEW flashes while a pop-up is open and closes it",
+		"component": "DisplayArea / ViewButton",
+		"automationLevel": "integration",
+		"status": "covered"
 	}
 ]

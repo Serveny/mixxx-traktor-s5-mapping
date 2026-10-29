@@ -40,7 +40,8 @@ export class FreezeButton extends DoubleColorOutMixin(
 
 	input(pressed: number) {
 		this.isPressed = pressed !== 0;
-		if (pressed) {
+		// Holding FREEZE to change the slice size must not re-freeze at a new position.
+		if (pressed && this.deck.performanceMode !== 'freeze') {
 			this.deck.setPerformanceMode('freeze');
 		}
 		if (!pressed && this.deck.display.activePopup === 'sliceSize') {

@@ -21,8 +21,10 @@ export class CueButton extends PushButton {
 		this.inKey = 'cue_default';
 	}
 
+	// -- 🚜 S5 Docs 4.2.6:
+	// "Press SHIFT + CUE to skip back to the beginning of the track and playback continuous immediately."
 	onShift() {
-		this.inKey = 'start_stop';
+		this.inKey = 'start_play';
 	}
 
 	input(pressed: number) {

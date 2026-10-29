@@ -4,23 +4,25 @@ import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 import type { HIDReportHodler } from '../../hid-report';
 import { channels } from '../../settings';
 
+// -- 🚜 S5 Docs 4.4.2.4:
+// "The central TEMPO knob controls TRAKTOR's Tempo Master in BPM. All synced Decks automatically follow tempo changes."
+// "The TEMPO encoder changes tempo in increments of .01 BPM. Hold SHIFT to change in increments of 1 BPM."
 export class TempoEncoder extends Encoder<MixxxChannelGroup> {
-	constructor(reports: HIDReportHodler, io: EncoderMapping) {
-		super('[Channel1]', 'rate_perm_down', reports, io);
-	}
-	onChange(isRight: boolean) {
-		if (this.isShifted)
-			this.triggerAllChannels(isRight ? 'rate_perm_up' : 'rate_perm_down');
-		else
-			this.triggerAllChannels(
-				isRight ? 'rate_perm_up_small' : 'rate_perm_down_small'
-			);
-	}
-	onPress(): void {
-		// TODO
+	constructor(
+		reports: HIDReportHodler,
+		io: EncoderMapping,
+		private anyDeckShifted: () => boolean
+	) {
+		super('[Channel1]', 'bpm', reports, io);
 	}
 
-	private triggerAllChannels(control: MixxxControls.CtrlRW<MixxxChannelGroup>) {
-		for (const channel of channels) script.triggerControl(channel, control, 50);
+	onChange(isRight: boolean) {
+		const step = (this.anyDeckShifted() ? 1 : 0.01) * (isRight ? 1 : -1);
+		const leader = channels.find((c) => engine.getValue(c, 'sync_leader'));
+		// [InternalClock] is the tempo master when no deck is the leader; it is missing from the control typings.
+		const group = (leader ?? '[InternalClock]') as MixxxChannelGroup;
+		engine.setValue(group, 'bpm', Math.round((engine.getValue(group, 'bpm') + step) * 100) / 100);
 	}
+
+	onPress(): void {}
 }

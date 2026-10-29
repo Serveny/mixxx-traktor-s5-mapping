@@ -13,6 +13,9 @@ Working on hardware with Mixxx 2.7-alpha (upstream `main`):
   loop size (green while a loop is active), elapsed/remaining time (red in the last 30 s).
 - Scrolling waveform (zoom with Display Buttons 3/4), loop range, beat grid, cue mark.
 - Overview waveform with play position and hotcue markers.
+- Stem decks (manual 3.8): one box per stem in the stem colour, filled to the stem volume, dimmed when muted.
+- The other deck on the same side (C below A, D below B) as a slim row with title, BPM and
+  progress, shown when it has a track loaded (a reduced form of the manual's Split View).
 - BPM / KEY / SLICE SIZE / QUANTIZE pop-ups.
 
 Needs Mixxx's controller shared-data API (open PRs mixxxdj/mixxx#16129 / #16778):
@@ -21,7 +24,7 @@ Needs Mixxx's controller shared-data API (open PRs mixxxdj/mixxx#16129 / #16778)
 - Showing pop-ups: the HID mapping publishes its state through
   `src/screen-state.ts`, which does nothing until the API exists.
 
-Not implemented: Split View, Remix/Stem Deck views, browser on the display, device settings screen.
+Not implemented: full Split View toggle, Remix Deck view, browser on the display, device settings screen.
 
 Protocol details: `protocol/notes.md`.
 

@@ -52,21 +52,24 @@ export class PowerWindowButton extends IndicatorMixin(
 	}
 
 	input(pressed: number) {
-		if (!this.isShifted) {
-			for (const index of [0, 1, 2]) {
-				const effectGroup = `[EffectRack1_EffectUnit${
-					this.unit.unitNumber
-				}_Effect${index + 1}]` as EffectGroup;
-				engine.setValue(effectGroup, 'enabled', pressed);
-			}
-			this.output(pressed);
-		} else if (pressed) {
-			if (this.unit.focusedEffect !== null) {
-				this.unit.setFocusedEffect(null);
-			} else {
-				script.toggleControl(this.unit.group, 'group_[Master]_enable');
-				this.shift();
-			}
+		if (this.isShifted) {
+			if (pressed) this.unit.toggleMode();
+			return;
 		}
+		if (this.unit.mode === 'single') {
+			// -- 🚜 S5 Docs 4.3 (Single Mode): "FX Button 1: Activate/deactivate the entire FX Unit."
+			if (pressed) {
+				script.toggleControl(this.unit.effectGroup(1), 'enabled');
+				this.output(engine.getValue(this.unit.effectGroup(1), 'enabled'));
+			}
+			return;
+		}
+		for (const index of [0, 1, 2]) {
+			const effectGroup = `[EffectRack1_EffectUnit${
+				this.unit.unitNumber
+			}_Effect${index + 1}]` as EffectGroup;
+			engine.setValue(effectGroup, 'enabled', pressed);
+		}
+		this.output(pressed);
 	}
 }

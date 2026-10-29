@@ -1,5 +1,5 @@
 import type { HIDReportHodler } from '../hid-report';
-import { settings } from '../settings';
+import { channels, settings } from '../settings';
 import type { S5DeckMapping } from '../types/mapping';
 import { BrowserEncoder } from './encoders/browser-encoder';
 import { BrowserBackButton } from './buttons/browser-back-button';
@@ -24,6 +24,10 @@ import type {
 } from '../types/mixxx-controls';
 import { FreezeButton } from './buttons/freeze-button';
 import { RemixModeButton } from './buttons/remix-mode-button';
+import { LoopLed } from './loop-led';
+import { FreezeSlicer } from './freeze-slicer';
+import { RemixSamplers } from './remix-samplers';
+import { StemPads } from './stem-pads';
 
 export class S5Deck extends Deck {
 	display: DisplayArea;
@@ -31,6 +35,7 @@ export class S5Deck extends Deck {
 	browserBackButton: BrowserBackButton;
 	deckButton: DeckButton;
 	loopEncoder: loopEncoder;
+	loopLed: LoopLed;
 	hotcueModeButton: HotcueModeButton;
 	freezeButton: FreezeButton;
 	remixModeButton: RemixModeButton;
@@ -49,6 +54,9 @@ export class S5Deck extends Deck {
 	sliceSizeIndex = 2;
 	quantizeSizes = [1 / 4, 1 / 2, 1, 2, 4, 8, 16] as const;
 	quantizeSizeIndex = 2;
+	freezeSlicer = new FreezeSlicer(this);
+	remix = new RemixSamplers(this);
+	stems = new StemPads(this);
 	constructor(
 		decks: [DeckChannel, DeckChannel],
 		public effectUnit: S5EffectUnit,
@@ -70,6 +78,9 @@ export class S5Deck extends Deck {
 		);
 		this.deckButton = this.register(new DeckButton(this, io.deck));
 		this.loopEncoder = this.register(new loopEncoder(this, io.loop), {
+			groupBound: true,
+		});
+		this.loopLed = this.register(new LoopLed(this, io.loopLed), {
 			groupBound: true,
 		});
 		this.freezeButton = this.register(new FreezeButton(this, io.modeSelect.freeze), {
@@ -686,11 +697,25 @@ export class S5Deck extends Deck {
 		//}
 	}
 
+	// -- 🚜 S5 Docs 3.7.2: the deck's SHIFT also shifts the FX Unit above it ("SHIFT button + Button 1 of FX Unit 1").
+	onShift() {
+		super.onShift();
+		this.effectUnit.shift();
+	}
+
+	onUnshift() {
+		super.onUnshift();
+		this.effectUnit.unshift();
+	}
+
 	switchDeck(newGroup: MixxxChannelGroup) {
+		// Freeze slices belong to the track of the previously focused deck.
+		if (this.performanceMode === 'freeze') this.setPerformanceMode('hotcue');
 		this.display.closePopup();
 		super.switchDeck(newGroup);
 		this.deckButton.output();
 		this.updateModeButtons();
+		this.redrawPads();
 		this.publishScreenState();
 	}
 
@@ -703,16 +728,90 @@ export class S5Deck extends Deck {
 		});
 	}
 
+	// -- 🚜 S5 Docs 3.1.2 / 4.2.5:
+	// Beat phase offset against the tempo master (or, without one, another playing deck), in beats.
+	phaseOffset(): number | null {
+		if (!engine.getValue(this.group, 'play') || engine.getValue(this.group, 'sync_leader')) {
+			return null;
+		}
+		const others = channels.filter(
+			(c) => c !== this.group && engine.getValue(c, 'play')
+		);
+		const reference =
+			others.find((c) => engine.getValue(c, 'sync_leader')) ?? others[0];
+		if (!reference) return null;
+		let offset =
+			engine.getValue(this.group, 'beat_distance') -
+			engine.getValue(reference, 'beat_distance');
+		if (offset > 0.5) offset -= 1;
+		else if (offset < -0.5) offset += 1;
+		return offset;
+	}
+
+	updatePhase() {
+		const offset = this.phaseOffset();
+		this.syncButton.setPhaseOffset(offset);
+		this.touchStrip.showPhase(offset);
+		this.refreshModePads();
+	}
+
 	setPerformanceMode(mode: 'hotcue' | 'freeze' | 'remix') {
 		// -- 🚜 S5 Docs 2.5 / 3.3 / 3.5:
 		// Mode changes invalidate any popup semantics that belonged to the previous deck context.
 		this.display.closePopup();
+		if (this.performanceMode === 'freeze' && mode !== 'freeze') this.freezeSlicer.exit();
+		if (mode !== 'remix') this.stems.clearSelection();
+		if (mode === 'freeze' && this.performanceMode !== 'freeze') this.freezeSlicer.freeze();
 		this.performanceMode = mode;
 		if (mode !== 'hotcue') {
 			this.hotcuePage = 1;
 			this.refreshPads();
 		}
 		this.updateModeButtons();
+		this.redrawPads();
+	}
+
+	// -- 🚜 S5 Docs 3.8: a deck with a stem file loaded is a Stem Deck; its REMIX mode controls the stems.
+	isStemMode() {
+		return this.performanceMode === 'remix' && this.stems.available();
+	}
+
+	padInput(padNumber: number, pressed: boolean) {
+		if (this.performanceMode === 'freeze') {
+			this.freezeSlicer.pad(padNumber, pressed);
+		} else if (this.isStemMode()) {
+			this.stems.pad(padNumber, pressed, this.isShifted);
+		} else if (this.performanceMode === 'remix') {
+			this.remix.pad(padNumber, pressed, this.isShifted);
+		}
+		this.refreshModePads();
+	}
+
+	private modePads() {
+		if (this.performanceMode === 'freeze') return this.freezeSlicer;
+		if (this.performanceMode === 'remix') return this.stems.available() ? this.stems : this.remix;
+		return null;
+	}
+
+	redrawPads() {
+		if (this.performanceMode === 'hotcue') {
+			for (const pad of this.pads) pad.redraw();
+			return;
+		}
+		this.refreshModePads(true);
+	}
+
+	// Called from the 50 ms GUI tick and after pad presses; only sends when colours changed.
+	refreshModePads(force = false) {
+		const source = this.modePads();
+		if (!source) return;
+		const colors = force ? source.padColors() : source.changedPadColors();
+		if (!colors) return;
+		this.pads.forEach((pad, i) => pad.paint(colors[i]));
+	}
+
+	currentSliceSize() {
+		return this.sliceSizePresets[this.sliceSizeIndex];
 	}
 
 	cycleHotcuePage() {
@@ -763,6 +862,7 @@ export class S5Deck extends Deck {
 			0,
 			Math.min(this.sliceSizePresets.length - 1, this.sliceSizeIndex + direction)
 		);
+		if (this.performanceMode === 'freeze') this.freezeSlicer.resize();
 		this.publishScreenState();
 		return this.sliceSizePresets[this.sliceSizeIndex];
 	}

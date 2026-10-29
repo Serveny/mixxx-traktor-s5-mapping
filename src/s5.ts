@@ -3,6 +3,7 @@ import { S5Deck } from './components/s5-deck';
 import type { S5Mapping } from './types/mapping';
 import { HIDReportHodler, isInputReportId } from './hid-report';
 import { S5EffectUnit } from './components/s5-effect-unit';
+import { samplersPerSide } from './components/remix-samplers';
 
 export class S5 {
 	reports = new HIDReportHodler();
@@ -16,8 +17,9 @@ export class S5 {
 		if (engine.getValue('[App]', 'num_decks') < 4) {
 			engine.setValue('[App]', 'num_decks', 4);
 		}
-		if (engine.getValue('[App]', 'num_samplers') < 16) {
-			engine.setValue('[App]', 'num_samplers', 16);
+		// One bank of remix samplers per deck side (see RemixSamplers).
+		if (engine.getValue('[App]', 'num_samplers') < 2 * samplersPerSide) {
+			engine.setValue('[App]', 'num_samplers', 2 * samplersPerSide);
 		}
 
 		this.fxUnitLeft = new S5EffectUnit(1, this.reports, io.fxUnitLeft);
@@ -50,7 +52,10 @@ export class S5 {
 
 		engine.makeConnection('[App]', 'gui_tick_50ms_period_s', (_value) => {
 			for (const meter of volumeMeter) meter.output();
-			if (volumeMeter.some((vm) => vm.isChange)) this.reports.out[130].send();
+			const mainChanged = this.mixer.updateMainLevel();
+			if (mainChanged || volumeMeter.some((vm) => vm.isChange)) this.reports.out[130].send();
+			this.deckLeft.updatePhase();
+			this.deckRight.updatePhase();
 		});
 	}
 

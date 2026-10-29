@@ -32,6 +32,12 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 			return;
 		}
 
+		if (this.deck.isStemMode() && this.deck.stems.page === 'volume' && this.deck.stems.hasSelection()) {
+			// -- 🚜 S5 Docs 3.8.3: "Rotate the BROWSE encoder to adjust the volume of Stem Part 1."
+			this.deck.stems.adjustVolume(isRight ? 1 : -1);
+			return;
+		}
+
 		const focused = engine.getValue('[Library]', 'focused_widget');
 		const targetFocus = this.isShifted
 			? libraryFocus.sidebar
@@ -123,7 +129,7 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 		//}
 	}
 
-	private handlePopupChange(isRight: boolean, popup: 'bpm' | 'key' | 'sliceSize' | 'quantize') {
+	private handlePopupChange(isRight: boolean, popup: 'bpm' | 'key' | 'sliceSize' | 'quantize' | 'beatgrid') {
 		if (popup === 'bpm') {
 			// -- 🚜 S5 Docs 2.8.2:
 			// BPM popup mirrors deck tempo nudging on the browse encoder while it is visible.
@@ -169,11 +175,19 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 	onPress(pressed: number): void {
 		if (!pressed) return;
 
+		if (this.deck.display.activePopup === 'beatgrid') return;
+
 		if (this.deck.display.activePopup === 'key') {
 			// -- 🚜 S5 Docs 2.9:
 			// Pressing browse inside KEY mode toggles Keylock instead of loading a library item.
 			script.toggleControl(this.deck.group, 'keylock');
 			this.deck.display.resetPopupTimer();
+			return;
+		}
+
+		if (this.deck.isStemMode() && this.deck.stems.page === 'volume' && this.deck.stems.hasSelection()) {
+			// -- 🚜 S5 Docs 3.8.3: "Press the BROWSE encoder to reset the volume to maximum level."
+			this.deck.stems.resetVolume();
 			return;
 		}
 

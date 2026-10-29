@@ -261,6 +261,7 @@ Reverse engineered HID mapping. Some bits/byte in the reports are empty between 
 |   35 |   0 |            8 | deckLeft.displayAreaAndControls.**performanceMode2** |
 |   36 |   0 |            8 | deckLeft.browseControls.**back**                     |
 |   38 |   0 |           16 | deckLeft.**deck**                                    |
+|   40 |   0 |           16 | deckLeft.**loopLed** (white, blue)                   |
 |   42 |   0 |           16 | deckLeft.modeSelect.**hotcue**                       |
 |   44 |   0 |           16 | deckLeft.modeSelect.**freeze**                       |
 |   46 |   0 |           16 | deckLeft.modeSelect.**remix**                        |
@@ -314,6 +315,7 @@ Touch strip phase LEDS: 25 bit for blue, then 25 bit for red
 |   30 |   0 |           88 | mixer.channelA.**volumeLevel**       |
 |   41 |   0 |           88 | mixer.channelB.**volumeLevel**       |
 |   52 |   0 |           88 | mixer.channelD.**volumeLevel**       |
+|   63 |   0 |           16 | mixer.**mainLevel** (clip LEDs L, R) |
 
 ## 🖥️ Displays
 
