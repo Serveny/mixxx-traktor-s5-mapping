@@ -40,7 +40,8 @@ Protocol details: `protocol/notes.md`.
 
 ## Mixxx requirements
 
-Local patches in the Mixxx checkout (`../mixxx`):
+Local patches in the Mixxx checkout (`../mixxx`). Patch 1 alone is enough for the deck views
+(decks A/B, no deck switching, pop-ups or browser); patch 3 adds the rest:
 
 1. `src/controllers/bulk/bulksupported.h`: register the S5:
 
