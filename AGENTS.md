@@ -13,4 +13,3 @@ bulk/QML preset for the two displays in `screens/`. See `README.md` and `screens
   directory via a local symlink).
 - The screens need a locally patched Mixxx in `../mixxx` (see `screens/README.md`). Screen QML renders in
   its own thread: no `ListView`/dynamic models, no bindings to GUI-thread models.
-- One commit per feature.
