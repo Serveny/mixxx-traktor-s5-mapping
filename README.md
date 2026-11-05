@@ -4,6 +4,14 @@
 TypeScript. It follows the original [S5 manual](docs/traktor_kontrol_s5_manual_english.md) as closely as
 Mixxx allows.
 
+## 🎧 Usage
+
+- Copy `dist/Traktor-Kontrol-S5.js` and `mapping/Traktor Kontrol S5.hid.xml` into
+  **Preferences → Controllers → Open User Mapping Folder**
+- Connect the S5, restart Mixxx, then select _Traktor Kontrol S5_ in **Preferences → Controllers**,
+  choose the mapping and click **Enabled → Apply**.
+- Displays require a patched Mixxx: see [screens/README.md](screens/README.md).
+
 ## 🗿 Status
 
 Work in progress, but usable for DJing:
@@ -29,17 +37,9 @@ Work in progress, but usable for DJing:
 The HID mapping also works with an unpatched Mixxx. The browser then uses Mixxx's on-screen library
 instead of the display, which needs the Mixxx window to be focused.
 
-## 🎧 Usage
+## 👩‍💻 Development
 
 Developed against Mixxx `main` (2.7-alpha).
-
-1. Build the mapping (see Development) or take `dist/Traktor-Kontrol-S5.js` from a build.
-2. Copy `dist/Traktor-Kontrol-S5.js` and `mapping/Traktor Kontrol S5.hid.xml` into your Mixxx controller
-   directory (Linux: `~/.mixxx/controllers`).
-3. In Mixxx → Preferences → Controllers, enable *Traktor Kontrol S5* with the *Traktor Kontrol S5* mapping.
-4. Optional, for the displays: follow [screens/README.md](screens/README.md).
-
-## 👩‍💻 Development
 
 ```bash
 git clone https://github.com/mixxxdj/mixxx.git ../mixxx   # type definitions (and the screens' Mixxx build)
@@ -52,12 +52,12 @@ npm run start                                              # ../mixxx/build/mixx
 `tsconfig.json` takes the Mixxx API types from `../mixxx/res/controllers`; adjust the paths if your
 checkout lives elsewhere.
 
-| Command | |
-| --- | --- |
-| `npm run check` | type-check |
-| `npm run test:run` | Vitest suite (components, HID input/LED output, manual scenarios) |
+| Command                    |                                                                               |
+| -------------------------- | ----------------------------------------------------------------------------- |
+| `npm run check`            | type-check                                                                    |
+| `npm run test:run`         | Vitest suite (components, HID input/LED output, manual scenarios)             |
 | `npm run test:mixxx-smoke` | starts `../mixxx/build/mixxx` with the mapping and fails on controller errors |
-| `npm run build` | type-check, build and copy JS + XML to `attic/mappings/controllers` |
+| `npm run build`            | type-check, build and copy JS + XML to `attic/mappings/controllers`           |
 
 ## 📚 More
 
