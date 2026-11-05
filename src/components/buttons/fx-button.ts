@@ -1,6 +1,7 @@
 import type { HIDReportHolder } from '../../hid-report';
 import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
+import type { EffectGroup as Group } from '../../types/mixxx-controls';
 import {
 	ControlComponent,
 	ControlInMixin,
@@ -10,8 +11,6 @@ import {
 	SingleColorOutMixin,
 } from '../component';
 import type { FxUnitMode, S5EffectUnit } from '../s5-effect-unit';
-
-type Group = `[EffectRack1_EffectUnit${number}_Effect${number}]`;
 
 export class FxButton extends SingleColorOutMixin(
 	LongPressMixin(
@@ -50,7 +49,7 @@ export class FxButton extends SingleColorOutMixin(
 		const effectNumber = (index + 1) as 1 | 2 | 3;
 		this.isResetButton = mode === 'single' && index === 0;
 		this.rebindGroup(this.unit.effectGroup(mode === 'single' ? 1 : effectNumber));
-		const key = (mode === 'single' && index > 0 ? `button_parameter${index}` : 'enabled') as typeof this.inKey;
+		const key = mode === 'single' && index > 0 ? (`button_parameter${index}` as const) : 'enabled';
 		this.setInKey(key);
 		this.setOutKey(key);
 	}

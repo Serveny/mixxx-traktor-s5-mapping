@@ -3,6 +3,7 @@ import type { ControlOutOptions } from '../types/component';
 import type { Meter } from '../types/mapping';
 import {
 	channelGroup,
+	microphoneGroup,
 	type AuxiliaryGroup,
 	type DeckChannel,
 	type MicrophoneGroup,
@@ -25,8 +26,8 @@ export class VolumeMeter extends ControlOutMixin(
 	// but in my opinion it looks irritating if the top blinks and the one under is not on
 	private deckSegments = 11;
 	private channelGroup: MixxxChannelGroup;
-	private auxGroup: `[Auxiliary${number}]`;
-	private micGroup: `[Microphone${number}]`;
+	private auxGroup: AuxiliaryGroup;
+	private micGroup: MicrophoneGroup;
 	private oldDeckLevel = 0;
 	isChange = false;
 
@@ -44,7 +45,7 @@ export class VolumeMeter extends ControlOutMixin(
 		});
 		this.channelGroup = channelGroup(deckNum);
 		this.auxGroup = `[Auxiliary${deckNum}]`;
-		this.micGroup = `[Microphone${deckNum}]`;
+		this.micGroup = microphoneGroup(deckNum);
 	}
 
 	output() {

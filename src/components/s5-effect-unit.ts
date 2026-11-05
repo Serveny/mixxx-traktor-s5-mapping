@@ -5,19 +5,17 @@ import { PowerWindowButton } from './buttons/power-window-button';
 import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
 import { Component, InMixin } from './component';
-import type { EffectUnitGroup } from '../types/mixxx-controls';
+import type { EffectGroup, EffectUnitGroup } from '../types/mixxx-controls';
 
-type Group = EffectUnitGroup<1 | 2>;
-type EffectGroup = `[EffectRack1_EffectUnit${1 | 2}_Effect${1 | 2 | 3}]`;
 export type FxUnitMode = 'group' | 'single';
 
-export class S5EffectUnit extends ComponentContainer<Group> {
-	declare group: Group;
+export class S5EffectUnit extends ComponentContainer<EffectUnitGroup> {
+	declare group: EffectUnitGroup;
 	// -- 🚜 S5 Docs 4.3: Group Mode = three effects with one knob/button each,
 	// Single Mode = one effect whose parameters are on the knobs. Mixxx units are Group Mode by default.
 	mode: FxUnitMode = 'group';
 	focusedEffect: number | null = null;
-	mixKnob: Pot<Group>;
+	mixKnob: Pot<EffectUnitGroup>;
 	mainButton: PowerWindowButton;
 	knobs: Pot<EffectGroup>[] = [];
 	buttons: FxButton[] = [];
@@ -80,7 +78,7 @@ export class S5EffectUnit extends ComponentContainer<Group> {
 		this.knobs.forEach((knob, i) => {
 			const effectNumber = (i + 1) as 1 | 2 | 3;
 			knob.group = this.mode === 'single' ? this.effectGroup(1) : this.effectGroup(effectNumber);
-			knob.inKey = (this.mode === 'single' ? `parameter${effectNumber}` : 'meta') as typeof knob.inKey;
+			knob.inKey = this.mode === 'single' ? `parameter${effectNumber}` : 'meta';
 			engine.softTakeover(knob.group, knob.inKey, true);
 		});
 		this.buttons.forEach((button, i) => button.applyMode(this.mode, i));
@@ -90,7 +88,7 @@ export class S5EffectUnit extends ComponentContainer<Group> {
 	// -- 🚜 S5 Docs 4.3 (Single Mode): "FX Button 2: Reset all FX parameters to their default value."
 	resetParameters() {
 		for (const parameter of [1, 2, 3]) {
-			engine.setValue(this.effectGroup(1), `parameter${parameter}_set_default` as any, 1);
+			engine.setValue(this.effectGroup(1), `parameter${parameter}_set_default`, 1);
 		}
 	}
 

@@ -85,18 +85,18 @@ export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
 			io: io.cue,
 		}));
 
-		const assginKey: `group_[Channel${number}]_enable` = `group_${this.group}_enable`;
+		const assignKey = `group_${this.group}_enable` as const;
 		this.fxAssignleft = this.register(new ToggleButton({
 			group: '[EffectRack1_EffectUnit1]',
-			inKey: assginKey,
-			outKey: assginKey,
+			inKey: assignKey,
+			outKey: assignKey,
 			reports: s5.reports,
 			io: io.fxUnitAssignLeft,
 		}));
 		this.fxAssignRight = this.register(new ToggleButton({
 			group: '[EffectRack1_EffectUnit2]',
-			inKey: assginKey,
-			outKey: assginKey,
+			inKey: assignKey,
+			outKey: assignKey,
 			reports: s5.reports,
 			io: io.fxUnitAssignRight,
 		}));

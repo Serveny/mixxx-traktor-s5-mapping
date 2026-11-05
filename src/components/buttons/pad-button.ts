@@ -76,16 +76,10 @@ export class PadButton extends RgbOutMixin(
 		// Pad bindings follow the active hotcue page instead of staying fixed to 1-8.
 		const hotcueNumber = this.deck.hotcueNumberForPad(this.number);
 		this.setInKey(
-			(this.isShifted
-				? `hotcue_${hotcueNumber}_clear`
-				: `hotcue_${hotcueNumber}_activate`) as MixxxControls.CtrlRW<MixxxChannelGroup>
+			this.isShifted ? `hotcue_${hotcueNumber}_clear` : `hotcue_${hotcueNumber}_activate`
 		);
-		this.setOutKey(
-			`hotcue_${hotcueNumber}_status` as MixxxControls.Ctrl<MixxxChannelGroup>
-		);
-		this.colorComp.setOutKey(
-			`hotcue_${hotcueNumber}_color` as MixxxControls.Ctrl<MixxxChannelGroup>
-		);
+		this.setOutKey(`hotcue_${hotcueNumber}_status`);
+		this.colorComp.setOutKey(`hotcue_${hotcueNumber}_color`);
 	}
 
 	private fluxJumped = false;

@@ -1,6 +1,7 @@
 import type { HIDReportHolder } from '../../hid-report';
 import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
+import type { EffectUnitGroup as Group } from '../../types/mixxx-controls';
 import {
 	ControlComponent,
 	ControlInMixin,
@@ -9,8 +10,6 @@ import {
 	IndicatorMixin,
 } from '../component';
 import type { S5EffectUnit } from '../s5-effect-unit';
-
-type Group = `[EffectRack1_EffectUnit${number}]`;
 
 export class PowerWindowButton extends IndicatorMixin(
 	ShiftMixin(
@@ -24,7 +23,7 @@ export class PowerWindowButton extends IndicatorMixin(
 		reports: HIDReportHolder,
 		io: Btn
 	) {
-		const key: `group_[Channel${number}]_enable` = `group_[Channel${unit.unitNumber}]_enable`;
+		const key = `group_[Channel${unit.unitNumber}]_enable` as const;
 		super({
 			group: unit.group,
 			inKey: key,
@@ -44,9 +43,7 @@ export class PowerWindowButton extends IndicatorMixin(
 	onUnshift() {
 		this.outDisconnect();
 		this.group = this.unit.group;
-		const key =
-			`group_${this.unit.group}_enable` as `group_[Channel${number}]_enable`;
-		this.outKey = key;
+		this.outKey = `group_[Channel${this.unit.unitNumber}]_enable`;
 		this.output(0);
 	}
 

@@ -1,7 +1,6 @@
 import { RgbColor } from '../color';
 import type { S5Deck } from './s5-deck';
-
-type SamplerGroup = `[Sampler${number}]`;
+import type { SamplerGroup } from '../types/mixxx-controls';
 
 // Mixxx has no Remix Decks; each deck side drives its own bank of samplers instead.
 // The bank is laid out like a Remix Set: 4 slots (pad columns) x 4 rows, the pads show two rows (one page).
@@ -31,7 +30,7 @@ export class RemixSamplers {
 	private samplersInSlot(slot: number): SamplerGroup[] {
 		return Array.from(
 			{ length: samplersPerSide / slots },
-			(_, row) => `[Sampler${this.firstSampler + row * slots + slot}]` as SamplerGroup
+			(_, row): SamplerGroup => `[Sampler${this.firstSampler + row * slots + slot}]`
 		);
 	}
 

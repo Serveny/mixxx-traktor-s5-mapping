@@ -134,6 +134,19 @@ describe('LED output', () => {
 		expect(meterBytes.every((value) => value === 0)).toBe(true);
 	});
 
+	test('shifted volume meter of channel 1 shows the first microphone [Microphone]', () => {
+		const s5 = new S5(mapping);
+		const meterOutByte = mapping.mixer.channelA.volumeLevel.outByte;
+		const outReport = s5.reports.out[130];
+
+		setTestValue('[Microphone]', 'input_configured', 1);
+		setTestValue('[Microphone]', 'vu_meter', 1);
+		s5.deckLeft.isShifted = true;
+		s5.mixer.channelA.volumeMeter.output();
+
+		expect(outReport.data[meterOutByte]).toBe(127);
+	});
+
 	test('volume meter renders consecutive full and partial segments', () => {
 		const s5 = new S5(mapping);
 		const meterOutByte = mapping.mixer.channelA.volumeLevel.outByte;

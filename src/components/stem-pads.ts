@@ -1,8 +1,6 @@
 import { RgbColor } from '../color';
 import type { S5Deck } from './s5-deck';
-
-type StemGroup = `[Channel${number}_Stem${number}]`;
-type StemFxGroup = `[QuickEffectRack1_${StemGroup}]`;
+import type { StemGroup, StemQuickEffectGroup } from '../types/mixxx-controls';
 
 export type StemPage = 'volume' | 'filter';
 
@@ -22,10 +20,10 @@ export class StemPads {
 	}
 
 	private stem(index: number): StemGroup {
-		return `[${this.deck.group.slice(1, -1)}_Stem${index}]` as StemGroup;
+		return `[Channel${this.deck.decks[this.deck.currentDeckIdx]}_Stem${index}]`;
 	}
 
-	private filter(index: number): StemFxGroup {
+	private filter(index: number): StemQuickEffectGroup {
 		return `[QuickEffectRack1_${this.stem(index)}]`;
 	}
 
