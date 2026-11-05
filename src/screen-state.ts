@@ -33,7 +33,7 @@ export function hasScreenApi() {
 // Feeds the screen QML (screens/TraktorKontrolS5Screens) with mapping-only state.
 export function publishScreenState(screenId: ScreenId, state: ScreenState) {
 	if (!hasScreenApi()) return;
-	for (const [key, value] of Object.entries(state)) {
-		api().setSharedValue!(screenId, key, value);
+	for (const key of Object.keys(state) as (keyof ScreenState)[]) {
+		api().setSharedValue!(screenId, key, state[key]);
 	}
 }

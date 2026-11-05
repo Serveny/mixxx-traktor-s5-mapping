@@ -49,8 +49,8 @@ npm run dev                                                # watch build; or: np
 npm run start                                              # ../mixxx/build/mixxx --controller-debug --developer
 ```
 
-`tsconfig.json` takes the Mixxx API types from `../mixxx/res/controllers` and `/usr/share/mixxx/controllers`;
-adjust the paths if your checkout lives elsewhere.
+`tsconfig.json` takes the Mixxx API types from `../mixxx/res/controllers`; adjust the paths if your
+checkout lives elsewhere.
 
 | Command | |
 | --- | --- |

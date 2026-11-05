@@ -1,12 +1,10 @@
 {
 	"compilerOptions": {
 		"target": "es6",
-		"types": [
-			"node"
-		],
+		"types": [], // Mapping code runs in Mixxx's QJSEngine, so no Node globals. Vitest brings its own types.
 		"useDefineForClassFields": false,
 		"lib": [
-			"ES2016"
+			"ES2016", // ES2016 is what Qt's QJSEngine supports.
 		],
 		"skipLibCheck": true,
 		/* Bundler mode */
@@ -22,25 +20,24 @@
 		"erasableSyntaxOnly": false,
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
-		"allowJs": true,
-		"checkJs": false,
-		"declaration": true
+		"declaration": true,
 	},
 	"include": [
 		"src",
 		"tests",
-		"/usr/share/mixxx/controllers/common-controller-scripts.js",
-		"/usr/share/mixxx/controllers/common-hid-packet-parser.js",
-		// "/usr/share/mixxx/controllers/engine-api.d.ts",
+		// Mixxx controller API types (engine, script, controller, MixxxControls) come
+		// from a Mixxx main checkout next to this repo (see README). It has to be main: the typed control
+		// names in mixxx-controls.d.ts are not part of the Mixxx 2.5 release.
 		"../mixxx/res/controllers/engine-api.d.ts",
-		"../../../mixxx/res/controllers/engine-api.d.ts",
-		"../mixxx/res/controllers/mixxx-controls.d.ts",
-		"../../../mixxx/res/controllers/mixxx-controls.d.ts",
-		// -------------------------------------------
 		"../mixxx/res/controllers/script-api.d.ts",
+		"../mixxx/res/controllers/hid-controller-api.d.ts",
+		"../mixxx/res/controllers/mixxx-controls.d.ts",
+		"../mixxx/res/controllers/console-api.d.ts",
+		// The same files seen from a git worktree in .worktrees/<name>/. tsc ignores the variant that does not exist.
+		"../../../mixxx/res/controllers/engine-api.d.ts",
 		"../../../mixxx/res/controllers/script-api.d.ts",
-		"/usr/share/mixxx/controllers/color-mapper-api.d.ts",
-		"/usr/share/mixxx/controllers/console-api.d.ts",
-		"/usr/share/mixxx/controllers/hid-controller-api.d.ts"
-	]
+		"../../../mixxx/res/controllers/hid-controller-api.d.ts",
+		"../../../mixxx/res/controllers/mixxx-controls.d.ts",
+		"../../../mixxx/res/controllers/console-api.d.ts",
+	],
 }
