@@ -5,7 +5,7 @@ import type { S5Deck } from './s5-deck';
 
 // -- 🚜 S5 Docs 2.1.5: "TITLE, ARTIST, BPM, IMPORT DATE, #, and KEY".
 // Mixxx's QML library model only exposes these columns; the order must match the sort columns in DeckScreen.qml.
-export const browserSortColumns = ['TITLE', 'ARTIST', 'BPM', 'KEY'] as const;
+const browserSortColumns = ['TITLE', 'ARTIST', 'BPM', 'KEY'] as const;
 
 // Rows moved per detent while SHIFT is held.
 const fastScrollRows = 8;

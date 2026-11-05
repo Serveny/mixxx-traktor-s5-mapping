@@ -1,5 +1,5 @@
 import type { S5 } from '../s5';
-import { createCompContainer } from './component-container';
+import { ComponentContainer } from './component-container';
 import { Pot } from './pot';
 import type { S5MixerColumnMapping } from '../types/mapping';
 import {
@@ -14,8 +14,7 @@ import {
 import { VolumeMeter } from './volume-meter';
 import { ToggleButton } from './buttons/button';
 
-const CompContainer = createCompContainer<MixxxChannelGroup>();
-export class S5MixerColumn extends CompContainer {
+export class S5MixerColumn extends ComponentContainer<MixxxChannelGroup> {
 	declare group: MixxxChannelGroup;
 	gain: Pot<MixxxChannelGroup>;
 	fxAssignleft: ToggleButton;
@@ -112,42 +111,4 @@ export class S5MixerColumn extends CompContainer {
 		this.triggerComponents();
 	}
 
-	updateGroup(shifted: boolean) {
-		let alternativeInput = null;
-		if (engine.getValue(`[Auxiliary${this.deckNum}]`, 'input_configured')) {
-			alternativeInput = `[Auxiliary${this.deckNum}]`;
-		} else if (
-			engine.getValue(`[Microphone${this.deckNum}]`, 'input_configured')
-		) {
-			alternativeInput =
-				this.deckNum !== 1 ? `[Microphone${this.deckNum}]` : '[Microphone]';
-		}
-
-		if (!alternativeInput) {
-			return;
-		}
-		this.group = shifted
-			? (alternativeInput as any)
-			: `[Channel${this.deckNum}]`;
-		for (const property of ['gain', 'volume', 'pfl', 'crossfaderSwitch']) {
-			const component = (this as any)[property];
-			if (component.group != null) {
-				component.inDisconnect();
-				component.group = this.group;
-				component.inConnect();
-			}
-		}
-		for (const property of ['effectUnit1Assign', 'effectUnit2Assign']) {
-			const component = (this as any)[property];
-			if (component.group != null) {
-				component.outDisconnect();
-				component.inDisconnect();
-				component.inKey = `group_${this.group}_enable`;
-				component.outKey = `group_${this.group}_enable`;
-				component.inConnect();
-				component.outConnect();
-				component.outTrigger();
-			}
-		}
-	}
 }

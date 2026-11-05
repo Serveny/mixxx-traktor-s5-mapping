@@ -1,7 +1,7 @@
 import { Encoder } from './encoder';
 import type { Encoder as EncoderMapping } from '../../types/mapping';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
-import type { HIDReportHodler } from '../../hid-report';
+import type { HIDReportHolder } from '../../hid-report';
 import { channels } from '../../settings';
 
 // -- 🚜 S5 Docs 4.4.2.4:
@@ -9,7 +9,7 @@ import { channels } from '../../settings';
 // "The TEMPO encoder changes tempo in increments of .01 BPM. Hold SHIFT to change in increments of 1 BPM."
 export class TempoEncoder extends Encoder<MixxxChannelGroup> {
 	constructor(
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		io: EncoderMapping,
 		private anyDeckShifted: () => boolean
 	) {

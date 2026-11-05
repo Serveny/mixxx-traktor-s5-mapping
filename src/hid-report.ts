@@ -18,8 +18,7 @@ export class HIDInputReport {
 
 	registerCallback(
 		callback: (value: number) => void,
-		io: BytePosIn,
-		defaultOldData: number | undefined = undefined
+		io: BytePosIn
 	): ScriptConnection {
 		if (typeof callback !== 'function') {
 			throw Error('callback must be a function');
@@ -32,7 +31,7 @@ export class HIDInputReport {
 			throw Error('inBit must be 0 or a positive integer');
 		}
 		if (
-			!Number.isInteger(io.inBit) ||
+			!Number.isInteger(io.inLengthBit) ||
 			io.inLengthBit < 1 ||
 			io.inLengthBit > 32
 		) {
@@ -42,7 +41,6 @@ export class HIDInputReport {
 		const field: HidInReportField = {
 			callback: callback,
 			io,
-			oldData: defaultOldData,
 		};
 		this.fields.push(field);
 
@@ -125,4 +123,3 @@ export class HIDReportHolder {
 	}
 }
 
-export class HIDReportHodler extends HIDReportHolder {}

@@ -45,7 +45,6 @@ export function installMixxxGlobals() {
 		engine: any;
 		controller: any;
 		script: any;
-		ColorMapper: any;
 	};
 
 	scope.engine = {
@@ -118,14 +117,6 @@ export function installMixxxGlobals() {
 				state.values.set(keyFor(group, control), 1);
 			}
 		),
-	};
-
-	scope.ColorMapper = class {
-		mapping: Record<number, number>;
-
-		constructor(mapping: Record<number, number>) {
-			this.mapping = mapping;
-		}
 	};
 
 	return state;

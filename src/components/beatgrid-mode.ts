@@ -1,6 +1,6 @@
 import type { S5Deck } from './s5-deck';
 
-export const beatgridParams = ['offset', 'bpm', 'fine', 'scan'] as const;
+const beatgridParams = ['offset', 'bpm', 'fine', 'scan'] as const;
 export type BeatgridParam = (typeof beatgridParams)[number];
 
 // -- 🚜 S5 Docs 3.9.2 / 3.9.3: Beatgrid mode (SHIFT + Display Button 1).

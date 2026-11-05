@@ -29,15 +29,6 @@ export abstract class ComponentContainer<
 		return component;
 	}
 
-	protected registerAll<T extends ComponentChild>(
-		components: Iterable<T>,
-		options: { groupBound?: boolean } = {}
-	): void {
-		for (const component of components) {
-			this.register(component, options);
-		}
-	}
-
 	*[Symbol.iterator]() {
 		for (const { component } of this.children) {
 			yield component;
@@ -54,20 +45,6 @@ export abstract class ComponentContainer<
 			if (typeof rebindGroup === 'function') {
 				(rebindGroup as (group: TGroup) => void).call(component, group);
 			}
-		}
-	}
-
-	reconnectComponents(callback?: (component: ComponentChild) => boolean) {
-		for (const component of this) {
-			if (callback && !callback.call(this, component)) continue;
-			const componentRecord = component as Record<string, unknown>;
-			const outDisconnect = componentRecord.outDisconnect;
-			const outConnect = componentRecord.outConnect;
-			const outTrigger = componentRecord.outTrigger;
-
-			if (typeof outDisconnect === 'function') outDisconnect.call(component);
-			if (typeof outConnect === 'function') outConnect.call(component);
-			if (typeof outTrigger === 'function') outTrigger.call(component);
 		}
 	}
 
@@ -93,7 +70,3 @@ export abstract class ComponentContainer<
 	}
 }
 
-// Factory to keep TGroup (can't give TGroup into GroupComponent)
-export function createCompContainer<TGroup extends MixxxControls.Group>() {
-	return ComponentContainer<TGroup>;
-}

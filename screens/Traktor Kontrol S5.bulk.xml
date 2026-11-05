@@ -2,7 +2,7 @@
 <MixxxControllerPreset mixxxVersion="2.6.0" schemaVersion="1">
     <info>
         <name>Traktor Kontrol S5 (Screens)</name>
-        <author>D. Lewis</author>
+        <author>Serveny</author>
         <description>Traktor Kontrol S5 screens (480x272 RGB565, S8/D2 display protocol)</description>
         <manual>native_instruments_traktor_kontrol_s5</manual>
         <devices>

@@ -1,12 +1,12 @@
 import { Mixer } from './components/mixer';
 import { S5Deck } from './components/s5-deck';
 import type { S5Mapping } from './types/mapping';
-import { HIDReportHodler, isInputReportId } from './hid-report';
+import { HIDReportHolder, isInputReportId } from './hid-report';
 import { S5EffectUnit } from './components/s5-effect-unit';
 import { samplersPerSide } from './components/remix-samplers';
 
 export class S5 {
-	reports = new HIDReportHodler();
+	reports = new HIDReportHolder();
 	fxUnitLeft: S5EffectUnit;
 	fxUnitRight: S5EffectUnit;
 	deckLeft: S5Deck;

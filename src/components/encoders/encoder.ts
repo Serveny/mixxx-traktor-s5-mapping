@@ -1,4 +1,4 @@
-import type { HIDReportHodler } from '../../hid-report';
+import type { HIDReportHolder } from '../../hid-report';
 import type {
 	Encoder as EncoderMapping,
 	TouchEncoder as TouchEncoderMapping,
@@ -22,17 +22,16 @@ export abstract class Encoder<
 	declare group: TGroup;
 	declare inKey: MixxxControls.CtrlRW<TGroup>;
 
-	inBitLength = 4;
 	lastValue: number | null = null;
-	max: number = 15;
-	isPressed: boolean = false;
+	// Encoders report a 4 bit position that wraps around.
+	max = 15;
 
 	press: EncoderPress;
 
 	constructor(
 		group: TGroup,
 		inKey: MixxxControls.CtrlRW<TGroup>,
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		io: EncoderMapping
 	) {
 		super({
@@ -42,7 +41,6 @@ export abstract class Encoder<
 			io: io.fade,
 		});
 
-		// TODO
 		this.press = new EncoderPress(this, {
 			reports,
 			io: io.press,
@@ -79,7 +77,7 @@ export abstract class TouchEncoder<
 	constructor(
 		group: TGroup,
 		inKey: MixxxControls.CtrlRW<TGroup>,
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		io: TouchEncoderMapping
 	) {
 		super(group, inKey, reports, io);

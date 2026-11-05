@@ -1,4 +1,4 @@
-import type { HIDReportHodler } from '../../hid-report';
+import type { HIDReportHolder } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
 import type { ControlInOutOptions } from '../../types/component';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
@@ -27,7 +27,7 @@ export class PlayButton extends SingleColorOutMixin(
 	declare inKey: MixxxControls.CtrlRW<MixxxChannelGroup>;
 	declare outKey: MixxxControls.Ctrl<MixxxChannelGroup>;
 
-	constructor(deck: S5Deck, reports: HIDReportHodler, io: Btn) {
+	constructor(deck: S5Deck, reports: HIDReportHolder, io: Btn) {
 		super({
 			group: deck.group,
 			inKey: 'play',

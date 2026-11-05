@@ -1,5 +1,3 @@
-import { wheelModes } from '../../settings';
-import type { WheelMode } from '../../settings';
 import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
@@ -34,7 +32,6 @@ export class FluxButton extends SetInOutKeyMixin(
 	declare inKey: MixxxControls.CtrlRW<MixxxChannelGroup>;
 	declare outKey: MixxxControls.Ctrl<MixxxChannelGroup>;
 
-	private previousWheelMode: WheelMode | null = null;
 	private loopModeConnection: ScriptConnection | null = null;
 
 	constructor(
@@ -59,60 +56,33 @@ export class FluxButton extends SetInOutKeyMixin(
 		this.setKey('loop_enabled');
 	}
 
-	loopModeOff(skipRestore: boolean) {
-		if (this.previousWheelMode !== null) {
-			this.indicator(false);
-			// const wheelOutput = new Uint8Array(40).fill(0);
-			// wheelOutput[0] = decks[0] - 1;
-			// controller.sendOutputReport(wheelOutput.buffer, null, 50, true);
-			if (!skipRestore) {
-				this.deck.wheelMode = this.previousWheelMode;
-			}
-			this.previousWheelMode = null;
-			if (this.loopModeConnection != null) {
-				this.loopModeConnection.disconnect();
-				this.loopModeConnection = null;
-			}
-		}
+	loopModeOff() {
+		if (!this.deck.loopMoveMode) return;
+		this.indicator(false);
+		this.deck.loopMoveMode = false;
+		this.loopModeConnection?.disconnect();
+		this.loopModeConnection = null;
 	}
 
 	onLoopChange(loopEnabled: number) {
-		if (loopEnabled) {
-			return;
-		}
-		this.loopModeOff(false);
+		if (!loopEnabled) this.loopModeOff();
 	}
 
 	onShortPress() {
 		this.indicator(false);
 		if (this.isShifted) {
 			const loopEnabled = engine.getValue(this.group, 'loop_enabled');
-			// If there is currently no loop, we set the loop in of a new loop
+			// Without a loop, close one at the playhead; with a loop, toggle loop move mode.
 			if (!loopEnabled) {
 				engine.setValue(this.group, 'loop_out', 1);
-				// Else, we enter/exit the loop in wheel mode
-			} else if (this.previousWheelMode === null) {
+			} else if (!this.deck.loopMoveMode) {
 				engine.setValue(this.group, 'scratch2_enable', 0);
-				this.previousWheelMode = this.deck.wheelMode;
-				this.deck.wheelMode = wheelModes.loopOut;
-				if (this.loopModeConnection === null) {
-					this.loopModeConnection =
-						engine.makeConnection(
-							this.group,
-							this.outKey,
-							this.onLoopChange.bind(this)
-						) ?? null;
-				}
-
-				//const wheelOutput = new Uint8Array(40).fill(0);
-				//wheelOutput[0] = decks[0] - 1;
-				//wheelOutput[1] = wheelLEDmodes.ringFlash;
-				//wheelOutput[4] = this.color + Button.prototype.brightnessOn;
-				// controller.sendOutputReport(50, wheelOutput.buffer, true);
-
+				this.deck.loopMoveMode = true;
+				this.loopModeConnection =
+					engine.makeConnection(this.group, this.outKey, this.onLoopChange.bind(this)) ?? null;
 				this.indicator(true);
-			} else if (this.previousWheelMode !== null) {
-				this.loopModeOff(false);
+			} else {
+				this.loopModeOff();
 			}
 		} else {
 			// -- 🚜 S5 Docs 3.4:
@@ -122,7 +92,7 @@ export class FluxButton extends SetInOutKeyMixin(
 	}
 
 	rebindGroup(group: MixxxChannelGroup) {
-		this.loopModeOff(false);
+		this.loopModeOff();
 		super.rebindGroup(group);
 	}
 }

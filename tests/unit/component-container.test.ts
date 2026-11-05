@@ -5,7 +5,7 @@ import {
 	ControlOutMixin,
 	ControlInMixin,
 } from '../../src/components/component';
-import { HIDReportHodler } from '../../src/hid-report';
+import { HIDReportHolder } from '../../src/hid-report';
 
 class TestContainer extends ComponentContainer<'[Channel1]' | '[Channel3]'> {
 	add(component: object, groupBound = false) {
@@ -59,7 +59,7 @@ class TestControl extends ControlOutMixin(
 				group: '[Channel1]' | '[Channel3]';
 				inKey: 'play';
 				outKey: 'play_indicator';
-				reports: HIDReportHodler;
+				reports: HIDReportHolder;
 				io: {
 					inReportId: 1;
 					inByte: 0;
@@ -76,7 +76,7 @@ class TestControl extends ControlOutMixin(
 
 describe('control mixins', () => {
 	test('rebindGroup reconnects output connections on the new group', () => {
-		const reports = new HIDReportHodler();
+		const reports = new HIDReportHolder();
 		const control = new TestControl({
 			group: '[Channel1]',
 			inKey: 'play',

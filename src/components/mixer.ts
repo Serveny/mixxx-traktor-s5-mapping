@@ -1,7 +1,6 @@
 import type { S5 } from '../s5';
 import { ButtonBrightnessOn, settings } from '../settings';
 import type { S5MixerMapping } from '../types/mapping';
-// import { FXSelect } from './buttons/fx-select-button';
 import { QuantizeButton } from './buttons/quantize-button';
 import { AuxButton } from './buttons/aux-button';
 import { ComponentContainer } from './component-container';
@@ -14,7 +13,6 @@ export class Mixer extends ComponentContainer<'[Master]'> {
 	channelA: S5MixerColumn;
 	channelB: S5MixerColumn;
 	channelD: S5MixerColumn;
-	// fxSelects: FXSelect[] = [];
 	quantizeButton: QuantizeButton;
 	auxButton: AuxButton;
 	tempoEncoder: TempoEncoder;
@@ -66,17 +64,6 @@ export class Mixer extends ComponentContainer<'[Master]'> {
 				new Pot('[Master]', 'headGain', s5.reports, io.cueGain)
 			);
 		}
-
-		// TODO: Find out why?
-		//for (const component of this) {
-		//if (component.inReport === undefined) {
-		//component.inReport = inReports[1];
-		//}
-		//component.outReport = this.outReport;
-		//component.inConnect();
-		//component.outConnect();
-		//component.outTrigger();
-		//}
 	}
 
 	// -- 🚜 S5 Docs 4.4.2.7:

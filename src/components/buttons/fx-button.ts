@@ -1,4 +1,4 @@
-import type { HIDReportHodler } from '../../hid-report';
+import type { HIDReportHolder } from '../../hid-report';
 import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
 import {
@@ -28,7 +28,7 @@ export class FxButton extends SingleColorOutMixin(
 	constructor(
 		group: Group,
 		private unit: S5EffectUnit,
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		index: number,
 		io: Btn[]
 	) {

@@ -3,15 +3,10 @@ import type { MixxxChannelGroup } from '../types/mixxx-controls';
 import { PushButton } from './buttons/button';
 import { PerformanceLeftButton } from './buttons/performance-left-button';
 import { PerformanceRightButton } from './buttons/performance-right-button';
-import {
-	Component,
-	InMixin,
-	SingleColorOutMixin,
-	OutMixin,
-} from './component';
-import type { HIDReportHodler } from '../hid-report';
+import { Component, InMixin, SingleColorOutMixin } from './component';
+import type { HIDReportHolder } from '../hid-report';
 import type { Btn as ButtonMapping } from '../types/mapping';
-import { createCompContainer } from './component-container';
+import { ComponentContainer } from './component-container';
 import type { S5Deck } from './s5-deck';
 import { BeatgridMode } from './beatgrid-mode';
 
@@ -27,7 +22,7 @@ export const popupNames = {
 
 export type DisplayPopup = (typeof popupNames)[keyof typeof popupNames];
 
-export class DisplayArea extends createCompContainer<MixxxChannelGroup>() {
+export class DisplayArea extends ComponentContainer<MixxxChannelGroup> {
 	readonly deck: S5Deck;
 	settingsButton: SettingsButton;
 	displayButton1: PopupButton;
@@ -195,7 +190,7 @@ class PopupButton extends SingleColorOutMixin(InMixin(Component)) {
 	constructor(
 		private display: DisplayArea,
 		private popup: Exclude<DisplayPopup, 'none'>,
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		io: ButtonMapping
 	) {
 		super({ reports, io });
@@ -226,7 +221,7 @@ class PopupButton extends SingleColorOutMixin(InMixin(Component)) {
 }
 
 class SettingsButton extends SingleColorOutMixin(InMixin(Component)) {
-	constructor(reports: HIDReportHodler, io: ButtonMapping) {
+	constructor(reports: HIDReportHolder, io: ButtonMapping) {
 		super({ reports, io });
 		this.output(0);
 	}
@@ -247,7 +242,7 @@ class ViewButton extends SingleColorOutMixin(InMixin(Component)) {
 
 	constructor(
 		private display: DisplayArea,
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		io: ButtonMapping
 	) {
 		super({ reports, io });
@@ -278,7 +273,6 @@ class ViewButton extends SingleColorOutMixin(InMixin(Component)) {
 			this.display.closePopup();
 			return;
 		}
-		this.display.closePopup();
 		script.toggleControl('[Skin]', 'show_maximized_library');
 	}
 }

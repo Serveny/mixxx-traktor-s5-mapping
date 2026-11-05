@@ -2,14 +2,14 @@ import type { Btn as ButtonMapping } from '../../types/mapping';
 import { Component, InMixin, SingleColorOutMixin } from '../component';
 import type { ComponentOptions } from '../../types/component';
 import type { DisplayArea } from '../display-area';
-import type { HIDReportHodler } from '../../hid-report';
+import type { HIDReportHolder } from '../../hid-report';
 
 export class PerformanceLeftButton extends SingleColorOutMixin(
 	InMixin(Component<ComponentOptions>)
 ) {
 	constructor(
 		private display: DisplayArea,
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		io: ButtonMapping
 	) {
 		super({

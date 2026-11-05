@@ -1,4 +1,4 @@
-import type { HIDReportHodler } from '../hid-report';
+import type { HIDReportHolder } from '../hid-report';
 import type { ControlInOptions } from '../types/component';
 import type { Knob } from '../types/mapping';
 import { ControlComponent, ControlInMixin } from './component';
@@ -10,13 +10,12 @@ export class Pot<TGroup extends MixxxControls.Group> extends ControlInMixin(
 	declare inKey: MixxxControls.CtrlRW<TGroup>;
 
 	max = 2 ** 12 - 1;
-	hardwarePosition: number | null;
-	shiftedHardwarePosition: number | null;
+	hardwarePosition: number | null = null;
 
 	constructor(
 		group: TGroup,
 		inKey: MixxxControls.CtrlRW<TGroup>,
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		io: Knob
 	) {
 		super({
@@ -30,8 +29,6 @@ export class Pot<TGroup extends MixxxControls.Group> extends ControlInMixin(
 				inLengthBit: 16,
 			},
 		});
-		this.hardwarePosition = null;
-		this.shiftedHardwarePosition = null;
 	}
 
 	input(value: number) {

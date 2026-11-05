@@ -106,29 +106,6 @@ describe('HIDInputReport', () => {
 		expect(callback).not.toHaveBeenCalled();
 	});
 
-	test('handles defaultOldData to skip initial identical value', () => {
-		const report = new HIDInputReport(1);
-		const callback = vi.fn();
-
-		// Set default old data to 42, so if first input is 42 it should not fire
-		report.registerCallback(
-			callback,
-			{ inReportId: 1, inByte: 0, inBit: 0, inLengthBit: 8 },
-			42
-		);
-
-		const buffer = new ArrayBuffer(4);
-		new DataView(buffer).setUint8(0, 42);
-		report.handleInput(buffer);
-
-		expect(callback).not.toHaveBeenCalled();
-
-		// Now change to different value
-		new DataView(buffer).setUint8(0, 43);
-		report.handleInput(buffer);
-
-		expect(callback).toHaveBeenCalledWith(43);
-	});
 });
 
 describe('HIDOutputReport', () => {

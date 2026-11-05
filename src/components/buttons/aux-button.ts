@@ -1,4 +1,4 @@
-import type { HIDReportHodler } from '../../hid-report';
+import type { HIDReportHolder } from '../../hid-report';
 import type { Btn } from '../../types/mapping';
 import { Component, InMixin, SingleColorOutMixin } from '../component';
 
@@ -8,7 +8,7 @@ import { Component, InMixin, SingleColorOutMixin } from '../component';
 export class AuxButton extends SingleColorOutMixin(InMixin(Component)) {
 	isHeld = false;
 
-	constructor(reports: HIDReportHodler, io: Btn) {
+	constructor(reports: HIDReportHolder, io: Btn) {
 		super({ reports, io });
 		this.output(0);
 	}

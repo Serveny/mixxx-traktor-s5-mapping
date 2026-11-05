@@ -43,7 +43,6 @@ export function InMixin<TBase extends ComponentConstructor>(Base: TBase) {
 		inConnection: ScriptConnection;
 		inReport: HIDInputReport;
 		io: BytePosIn;
-		oldDataDefault?: number;
 
 		constructor(...args: any[]) {
 			super(...args);
@@ -56,19 +55,11 @@ export function InMixin<TBase extends ComponentConstructor>(Base: TBase) {
 		}
 
 		inConnect(): ScriptConnection {
-			return this.inReport.registerCallback(
-				this.input.bind(this)!,
-				this.io,
-				this.oldDataDefault
-			);
+			return this.inReport.registerCallback(this.input.bind(this), this.io);
 		}
 
 		input(_: number) {
 			// Placeholder: Can't do abstract classes in mixins
-		}
-
-		inDisconnect() {
-			this.inConnection.disconnect();
 		}
 	};
 }
@@ -90,12 +81,6 @@ export function OutMixin<TBase extends ComponentConstructor>(Base: TBase) {
 
 		output(value: number) {
 			this.send(value);
-		}
-
-		outputArr(data: Uint8Array) {
-			for (let i = 0; i < data.length; i++) {
-				this.outReport.data[this.io.outByte + i] = data[i];
-			}
 		}
 
 		send(value: number) {
@@ -280,7 +265,6 @@ export function IndicatorMixin<TBase extends ComponentConstructor>(
 
 		indicator(on: boolean) {
 			if (on && this.indicatorTimer === 0) {
-				// this.outDisconnect();
 				this.indicatorTimer = engine.beginTimer(
 					this.indicatorIntervalMillis,
 					this.indicatorCallback.bind(this)
@@ -289,8 +273,6 @@ export function IndicatorMixin<TBase extends ComponentConstructor>(
 				engine.stopTimer(this.indicatorTimer);
 				this.indicatorTimer = 0;
 				this.indicatorState = false;
-				// this.outConnect();
-				// this.outTrigger();
 			}
 		}
 	};

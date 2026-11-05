@@ -1,11 +1,10 @@
-import { moveModes } from '../../settings';
 import type { BytePosInOut } from '../../types/mapping';
 import type { S5Deck } from '../s5-deck';
 import { PushButton } from './button';
 
 export class CueButton extends PushButton {
 	constructor(
-		private deck: S5Deck,
+		deck: S5Deck,
 		io: BytePosInOut
 	) {
 		super({
@@ -25,16 +24,5 @@ export class CueButton extends PushButton {
 	// "Press SHIFT + CUE to skip back to the beginning of the track and playback continuous immediately."
 	onShift() {
 		this.inKey = 'start_play';
-	}
-
-	input(pressed: number) {
-		if (
-			this.deck.moveMode === moveModes.keyboard &&
-			!this.deck.keyboardPlayMode
-		) {
-			// this.deck.assignKeyboardPlayMode(this.group, this.inKey);
-		} else {
-			engine.setValue(this.group, this.inKey, pressed);
-		}
 	}
 }

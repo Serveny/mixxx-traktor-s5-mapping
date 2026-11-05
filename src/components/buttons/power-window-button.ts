@@ -1,4 +1,4 @@
-import type { HIDReportHodler } from '../../hid-report';
+import type { HIDReportHolder } from '../../hid-report';
 import type { ControlInOutOptions } from '../../types/component';
 import type { Btn } from '../../types/mapping';
 import {
@@ -11,7 +11,6 @@ import {
 import type { S5EffectUnit } from '../s5-effect-unit';
 
 type Group = `[EffectRack1_EffectUnit${number}]`;
-type EffectGroup = `[EffectRack1_EffectUnit${number}_Effect${number}]`;
 
 export class PowerWindowButton extends IndicatorMixin(
 	ShiftMixin(
@@ -22,7 +21,7 @@ export class PowerWindowButton extends IndicatorMixin(
 ) {
 	constructor(
 		private unit: S5EffectUnit,
-		reports: HIDReportHodler,
+		reports: HIDReportHolder,
 		io: Btn
 	) {
 		const key: `group_[Channel${number}]_enable` = `group_[Channel${unit.unitNumber}]_enable`;
@@ -64,11 +63,8 @@ export class PowerWindowButton extends IndicatorMixin(
 			}
 			return;
 		}
-		for (const index of [0, 1, 2]) {
-			const effectGroup = `[EffectRack1_EffectUnit${
-				this.unit.unitNumber
-			}_Effect${index + 1}]` as EffectGroup;
-			engine.setValue(effectGroup, 'enabled', pressed);
+		for (const effectNumber of [1, 2, 3] as const) {
+			engine.setValue(this.unit.effectGroup(effectNumber), 'enabled', pressed);
 		}
 		this.output(pressed);
 	}

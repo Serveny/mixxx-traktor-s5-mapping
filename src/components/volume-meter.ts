@@ -75,9 +75,5 @@ export class VolumeMeter extends ControlOutMixin(
 						? DimBrightness
 						: 0;
 		}
-
-		// Peak indicator, but I do not use it
-		//const peak = engine.getValue(deckGroup, 'PeakIndicator') * 127;
-		//this.outReport.data[columnBaseIndex + this.deckSegments] = peak;
 	}
 }

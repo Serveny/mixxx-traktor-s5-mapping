@@ -1,7 +1,7 @@
 import { TouchEncoder } from './encoder';
 import type { TouchEncoder as EncoderMapping } from '../../types/mapping';
 import { S5Deck } from '../s5-deck';
-import { settings, wheelModes } from '../../settings';
+import { settings } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
 
 export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
@@ -54,22 +54,14 @@ export class loopEncoder extends TouchEncoder<MixxxChannelGroup> {
 			// While SLICE SIZE is held open, loop turns should not leak into beatloop controls.
 			this.deck.adjustSliceSize(isRight ? 1 : -1);
 		}
-
-		else if (
-			this.deck.wheelMode === wheelModes.loopIn ||
-			this.deck.wheelMode === wheelModes.loopOut
-		) {
+		else if (this.deck.loopMoveMode) {
 			const moveFactor = this.isShifted
 				? settings.loopEncoderShiftMoveFactor
 				: settings.loopEncoderMoveFactor;
-			const loopStartPos = engine.getValue(this.group, 'loop_start_position');
-			const valueIn =
-				loopStartPos + (isRight ? (moveFactor as number) : -moveFactor);
-			const loopEndPos = engine.getValue(this.group, 'loop_end_position');
-			const valueOut =
-				loopEndPos + (isRight ? (moveFactor as number) : -moveFactor);
-			engine.setValue(this.group, 'loop_start_position', valueIn);
-			engine.setValue(this.group, 'loop_end_position', valueOut);
+			const delta = isRight ? moveFactor : -moveFactor;
+			for (const key of ['loop_start_position', 'loop_end_position'] as const) {
+				engine.setValue(this.group, key, engine.getValue(this.group, key) + delta);
+			}
 		} else if (this.isShifted) {
 			// -- 🚜 S5 Docs 3.2.2:
 			// Shift turns reuse the currently selected loop size as the beatjump distance.

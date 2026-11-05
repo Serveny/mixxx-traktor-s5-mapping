@@ -1,4 +1,4 @@
-import type { HIDReportHodler } from '../../hid-report';
+import type { HIDReportHolder } from '../../hid-report';
 import type { Btn as ButtonMapping } from '../../types/mapping';
 import { ButtonBrightnessOff, ButtonBrightnessOn, settings } from '../../settings';
 import type { MixxxChannelGroup } from '../../types/mixxx-controls';
@@ -28,7 +28,7 @@ export class SyncButton extends SingleColorOutMixin(
 	declare inKey: MixxxControls.CtrlRW<MixxxChannelGroup>;
 	declare outKey: MixxxControls.Ctrl<MixxxChannelGroup>;
 
-	constructor(deck: S5Deck, reports: HIDReportHodler, io: ButtonMapping) {
+	constructor(deck: S5Deck, reports: HIDReportHolder, io: ButtonMapping) {
 		const key = 'sync_enabled';
 		super({
 			group: deck.group,

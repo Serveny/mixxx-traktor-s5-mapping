@@ -1,12 +1,10 @@
 import type { ControlComponent } from '../components/component';
-import type { HIDReportHodler } from '../hid-report';
+import type { HIDReportHolder } from '../hid-report';
 import type { BytePosIn, BytePosInOut, BytePosOut } from './mapping';
 
-// export type ComponentConstructor<T extends any[] = any[], R = {}> = new (...args: T) => R;
 export type ComponentConstructor<T extends object = object> = new (
 	...args: any[]
 ) => T;
-// export type ComponentConstructor<TOptions extends ComponentOptions> = new (...args: any[]) => Component<TOptions>;
 export type ControlComponentConstructor<
 	TGroup extends MixxxControls.Group = MixxxControls.Group,
 	P extends ControlOptions<TGroup> = ControlOptions<TGroup>,
@@ -20,9 +18,8 @@ export type ComponentChild = object;
 
 export interface InOptions extends ComponentOptions {
 	input?: (value: number) => void;
-	reports: HIDReportHodler;
+	reports: HIDReportHolder;
 	io: BytePosIn;
-	oldDataDefault?: number;
 }
 
 export interface ControlOptions<
@@ -38,7 +35,7 @@ export interface ControlInOptions<TGroup extends MixxxControls.Group>
 
 export interface OutOptions extends ComponentOptions {
 	output?: (value: number) => void;
-	reports: HIDReportHodler;
+	reports: HIDReportHolder;
 	io: BytePosOut;
 }
 
@@ -52,7 +49,3 @@ export interface ControlInOutOptions<TGroup extends MixxxControls.Group>
 	io: BytePosInOut;
 }
 
-export interface DeckModes {
-	wheelMode: number;
-	moveMode: number;
-}
