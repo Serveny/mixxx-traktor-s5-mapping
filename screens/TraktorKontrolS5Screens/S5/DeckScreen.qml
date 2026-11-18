@@ -1,4 +1,4 @@
-// Track Deck view, following S5 manual 4.2.1.3: artwork, title/artist, loop size,
+// Track Deck view, following S5 manual 4.2.1.3 (-- 🚜 S5 Docs 4.2.1.3): artwork, title/artist, loop size,
 // play position, BPM, deck focus and sync state, plus waveform and BPM/KEY pop-ups (2.8/2.9).
 import QtQuick 2.15
 import QtQuick.Layouts 1.3
@@ -107,16 +107,19 @@ Rectangle {
         anchors.fill: parent
         spacing: 0
 
-        // Header: artwork, title/artist, BPM with sync state, deck focus.
+        // Header like the manual's Track Deck view (4.2.1.3): artwork, title/artist, loop size,
+        // remaining/elapsed time, BPM with sync state, deck letter. The key sits under the loop size.
         RowLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 58
-            Layout.margins: 4
-            spacing: 6
+            Layout.preferredHeight: 46
+            Layout.leftMargin: 3
+            Layout.rightMargin: 3
+            Layout.topMargin: 3
+            spacing: 5
 
             Rectangle {
-                Layout.preferredWidth: 50
-                Layout.preferredHeight: 50
+                Layout.preferredWidth: 42
+                Layout.preferredHeight: 42
                 color: "#222"
 
                 Image {
@@ -128,34 +131,94 @@ Rectangle {
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 0
+                spacing: -2
 
                 Text {
                     Layout.fillWidth: true
                     text: trackLoaded.value && root.track ? root.track.title : "No Track"
-                    color: "white"
-                    font.pixelSize: 20
-                    font.bold: true
+                    color: root.accent
+                    font.pixelSize: 19
                     elide: Text.ElideRight
                 }
 
                 Text {
                     Layout.fillWidth: true
                     text: trackLoaded.value && root.track ? root.track.artist : ""
-                    color: "#aaa"
-                    font.pixelSize: 15
+                    color: Qt.darker(root.accent, 1.6)
+                    font.pixelSize: 16
                     elide: Text.ElideRight
                 }
             }
 
+            // Loop size in a circle, filled green while a loop is active.
             ColumnLayout {
-                spacing: 0
+                spacing: 1
+
+                Rectangle {
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.preferredWidth: 28
+                    Layout.preferredHeight: 28
+                    radius: 14
+                    color: loopEnabled.value ? "#00b400" : "transparent"
+                    border.color: loopEnabled.value ? "#00b400" : root.accent
+                    border.width: 2
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: root.formatBeats(loopSize.value)
+                        color: loopEnabled.value ? "black" : root.accent
+                        font.pixelSize: loopSize.value >= 1 ? 15 : 10
+                        font.bold: true
+                    }
+                }
+
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: root.openKeys[keyControl.value] || ""
+                    color: keylock.value ? "black" : "#aaa"
+                    font.pixelSize: 11
+                    font.bold: true
+
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.margins: -1
+                        z: -1
+                        radius: 2
+                        visible: keylock.value
+                        color: root.accent
+                    }
+                }
+            }
+
+            // Remaining time over elapsed time, red in the last 30 s.
+            ColumnLayout {
+                spacing: -2
+
+                Text {
+                    Layout.alignment: Qt.AlignRight
+                    text: `-${root.formatTime((1 - playPosition.value) * duration.value)}`
+                    color: trackLoaded.value && (1 - playPosition.value) * duration.value < 30 ? "#ff3030" : root.accent
+                    font.pixelSize: 21
+                    font.bold: true
+                }
+
+                Text {
+                    Layout.alignment: Qt.AlignRight
+                    text: root.formatTime(playPosition.value * duration.value)
+                    color: Qt.darker(root.accent, 1.4)
+                    font.pixelSize: 15
+                    font.bold: true
+                }
+            }
+
+            ColumnLayout {
+                spacing: -2
 
                 Text {
                     Layout.alignment: Qt.AlignRight
                     text: bpm.value.toFixed(2)
-                    color: "white"
-                    font.pixelSize: 24
+                    color: root.accent
+                    font.pixelSize: 21
                     font.bold: true
                 }
 
@@ -168,59 +231,19 @@ Rectangle {
                         const percent = (bpm.value / fileBpm.value - 1) * 100
                         return `${percent >= 0 ? "+" : ""}${percent.toFixed(1)}%`
                     }
-                    color: syncEnabled.value || syncLeader.value > 0 ? "#ffb000" : "#aaa"
-                    font.pixelSize: 13
+                    color: syncEnabled.value || syncLeader.value > 0 ? "#ffb000" : Qt.darker(root.accent, 1.4)
+                    font.pixelSize: 15
                     font.bold: true
                 }
             }
 
-            Rectangle {
-                Layout.preferredWidth: 40
-                Layout.preferredHeight: 50
-                radius: 4
+            Text {
+                Layout.preferredWidth: 30
+                horizontalAlignment: Text.AlignHCenter
+                text: root.deckLetter
                 color: root.accent
-
-                Text {
-                    anchors.centerIn: parent
-                    text: root.deckLetter
-                    color: "black"
-                    font.pixelSize: 32
-                    font.bold: true
-                }
-            }
-        }
-
-        // Info bar: key, loop size, elapsed and remaining time.
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 26
-            Layout.leftMargin: 4
-            Layout.rightMargin: 4
-            spacing: 4
-
-            InfoBox {
-                Layout.preferredWidth: 70
-                label: root.openKeys[keyControl.value] || "-"
-                highlighted: keylock.value
-            }
-
-            InfoBox {
-                Layout.preferredWidth: 70
-                label: `↻ ${root.formatBeats(loopSize.value)}`
-                highlighted: loopEnabled.value
-                highlightColor: "#00b400"
-            }
-
-            InfoBox {
-                Layout.fillWidth: true
-                label: `${root.formatTime(playPosition.value * duration.value)}`
-            }
-
-            InfoBox {
-                Layout.fillWidth: true
-                label: `-${root.formatTime((1 - playPosition.value) * duration.value)}`
-                highlighted: trackLoaded.value && (1 - playPosition.value) * duration.value < 30
-                highlightColor: "#d00000"
+                font.pixelSize: 44
+                font.bold: true
             }
         }
 
@@ -228,7 +251,7 @@ Rectangle {
         MixxxControls.WaveformDisplay {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.topMargin: 4
+            Layout.topMargin: 3
             group: root.group
             zoom: zoomControl.value
             backgroundColor: "#000000"
@@ -250,11 +273,16 @@ Rectangle {
                 }
             }
 
+            // Blue tones like TRAKTOR. ignoreEq and normalized (local Mixxx patch) keep the EQ knobs and
+            // pregain out of the drawing, so e.g. a bassline stays visible while its EQ is turned down,
+            // and scale the track's loudest peak to the full height.
             Mixxx.WaveformRendererRGB {
+                ignoreEq: true
+                normalized: true
                 axesColor: "#00ffffff"
-                lowColor: "#ff2020"
-                midColor: "#20ff20"
-                highColor: "#4080ff"
+                lowColor: "#1c4c9c"
+                midColor: "#3c8ce0"
+                highColor: "#b4e8ff"
                 gainAll: 1.0
                 gainLow: 1.0
                 gainMid: 1.0
@@ -266,7 +294,7 @@ Rectangle {
             }
 
             Mixxx.WaveformRendererMark {
-                playMarkerColor: "white"
+                playMarkerColor: "#ff2020"
                 playMarkerBackground: "transparent"
                 defaultMark: Mixxx.WaveformMark {
                     align: "top|right"
@@ -354,12 +382,16 @@ Rectangle {
         // Overview with play position and hotcues.
         Item {
             Layout.fillWidth: true
-            Layout.preferredHeight: 44
-            Layout.margins: 4
+            Layout.preferredHeight: 34
+            Layout.margins: 3
 
             Mixxx.WaveformOverview {
                 anchors.fill: parent
                 track: root.track
+                normalized: true
+                colorLow: "#1c4c9c"
+                colorMid: "#3c8ce0"
+                colorHigh: "#b4e8ff"
             }
 
             Rectangle {
@@ -398,7 +430,7 @@ Rectangle {
                 x: parent.width * playPosition.value - 1
                 width: 2
                 height: parent.height
-                color: "white"
+                color: "#ff2020"
             }
         }
     }
@@ -507,24 +539,6 @@ Rectangle {
                 font.pixelSize: 13
                 font.bold: true
             }
-        }
-    }
-
-    component InfoBox: Rectangle {
-        property string label
-        property bool highlighted: false
-        property color highlightColor: root.accent
-
-        Layout.fillHeight: true
-        radius: 3
-        color: highlighted ? highlightColor : "#262626"
-
-        Text {
-            anchors.centerIn: parent
-            text: parent.label
-            color: parent.highlighted ? "black" : "white"
-            font.pixelSize: 16
-            font.bold: true
         }
     }
 }

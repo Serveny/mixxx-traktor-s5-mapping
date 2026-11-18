@@ -52,11 +52,17 @@ Work in progress, but usable for DJing:
   it Mixxx does not detect the displays at all. With only this line, the displays show decks A and B.
 - **Shared data between controllers** ([mixxxdj/mixxx#16129](https://github.com/mixxxdj/mixxx/pull/16129)):
   the HID mapping uses it to tell the displays about deck focus, pop-ups and the browser. Until it is merged
-  the displays stay on decks A/B without pop-ups or browser; with it applied locally everything works.
+  the displays stay on decks A/B without pop-ups or browser; with it applied everything works.
+- **Waveform options for controller screens** (in the branch below, not upstream yet): the display
+  waveform ignores the EQ knobs and is normalized to the track's peak; without it the screens don't load.
 - **Library access for controller screens** (no PR yet; related:
   [mixxxdj/mixxx#4594](https://github.com/mixxxdj/mixxx/pull/4594)): Mixxx's QML library offers only the
   full track collection and is not thread-safe from controller screens, so the display browser has no
   playlists/crates and reads the track list when it opens.
+
+All of these patches are combined on the branch
+[`Serveny/mixxx@s5-display-screens`](https://github.com/Serveny/mixxx/tree/s5-display-screens);
+build instructions are in [`screens/README.md`](screens/README.md#mixxx-requirements).
 
 The HID mapping also works with an unpatched Mixxx. The browser then uses Mixxx's on-screen library
 instead of the display, which needs the Mixxx window to be focused.

@@ -11,5 +11,6 @@ bulk/QML preset for the two displays in `screens/`. See `README.md` and `screens
 - `attic/` is reverse-engineering scratch material, not part of the build.
 - Check: `npm run check`, `npm run test:run`, `npm run build` (copies the build into Mixxx's controller
   directory via a local symlink).
-- The screens need a locally patched Mixxx in `../mixxx` (see `screens/README.md`). Screen QML renders in
-  its own thread: no `ListView`/dynamic models, no bindings to GUI-thread models.
+- The screens need the patched Mixxx from `Serveny/mixxx@s5-display-screens` in `../mixxx` (see
+  `screens/README.md`). Screen QML renders in its own thread: no `ListView`/dynamic models, no bindings
+  to GUI-thread models.

@@ -8,11 +8,14 @@ HID mapping, and the displays run over USB bulk + Mixxx QML.
 
 Working on hardware with Mixxx 2.7-alpha (upstream `main`):
 
-- Track Deck view per S5 manual 4.2.1.3: artwork, title, artist, BPM,
-  MASTER/SYNC/tempo deviation, deck letter, key (Open Key, highlighted with keylock),
-  loop size (green while a loop is active), elapsed/remaining time (red in the last 30 s).
-- Scrolling waveform (zoom with Display Buttons 3/4), loop range, beat grid, cue mark.
-- Overview waveform with play position and hotcue markers.
+- Track Deck view per S5 manual 4.2.1.3, laid out like TRAKTOR: a compact header with artwork,
+  title, artist, loop size (circle, green while a loop is active), key (Open Key, highlighted with
+  keylock), remaining/elapsed time (red in the last 30 s), BPM, MASTER/SYNC/tempo deviation and deck
+  letter; the rest of the screen is the waveform.
+- Scrolling waveform in TRAKTOR-like blue tones (zoom with Display Buttons 3/4), loop range, beat grid,
+  cue mark, red play head. Normalized to the track's peak and unaffected by EQ knobs and pregain
+  (Mixxx patch 4).
+- Normalized overview waveform with play position and hotcue markers.
 - Stem decks (manual 3.8): one box per stem in the stem colour, filled to the stem volume, dimmed when muted.
 - The other deck on the same side (C below A, D below B) as a slim row with title, BPM and
   progress, shown when it has a track loaded (a reduced form of the manual's Split View).
@@ -40,8 +43,18 @@ Protocol details: `protocol/notes.md`.
 
 ## Mixxx requirements
 
-Local patches in the Mixxx checkout (`../mixxx`). Patch 1 alone is enough for the deck views
-(decks A/B, no deck switching, pop-ups or browser); patch 3 adds the rest:
+All patches below are ready to build on the branch
+[`Serveny/mixxx@s5-display-screens`](https://github.com/Serveny/mixxx/tree/s5-display-screens)
+(rebased onto Mixxx `main` from time to time, so expect force-pushes):
+
+```bash
+git clone -b s5-display-screens https://github.com/Serveny/mixxx.git ../mixxx
+cmake -S ../mixxx -B ../mixxx/build -DLLD_SUPPORT=OFF   # add -DQGLES2=ON for GLES, see below
+cmake --build ../mixxx/build --target mixxx -j "$(nproc)"
+```
+
+What the branch changes, to apply by hand on another Mixxx checkout. Patches 1 and 4 alone are enough
+for the deck views (decks A/B, no deck switching, pop-ups or browser); patch 3 adds the rest:
 
 1. `src/controllers/bulk/bulksupported.h`: register the S5:
 
@@ -61,6 +74,10 @@ Local patches in the Mixxx checkout (`../mixxx`). Patch 1 alone is enough for th
    - same file: `m_pSharedData->moveToThread(m_pThread.get())` after `moveToThread(m_pThread.get())`;
      otherwise the per-controller namespace objects end up without a parent and crash on first use.
    - `src/test/controllershareddata_test.cpp`: add `#include <QElapsedTimer>` to build the tests.
+
+4. Waveform `ignoreEq` / `normalized` properties for the QML signal renderers (commit
+   [`ab9051aa83`](https://github.com/Serveny/mixxx/commit/ab9051aa83) on the branch). Without it, the
+   screens fail to load because `DeckScreen.qml` sets these properties.
 
 If the log shows `ControllerRenderingEngine - GLError after glReadPixels: 1282`, build Mixxx with GLES:
 
