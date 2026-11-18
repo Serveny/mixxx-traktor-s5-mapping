@@ -4,6 +4,7 @@ import type { S5Mapping } from './types/mapping';
 import { HIDReportHolder, isInputReportId } from './hid-report';
 import { S5EffectUnit } from './components/s5-effect-unit';
 import { samplersPerSide } from './components/remix-samplers';
+import { connectStartCues } from './components/start-cue';
 
 export class S5 {
 	reports = new HIDReportHolder();
@@ -42,6 +43,8 @@ export class S5 {
 			this.reports,
 			io.deckRight
 		);
+		connectStartCues();
+
 		this.deckLeft.otherSide = this.deckRight;
 		this.deckRight.otherSide = this.deckLeft;
 

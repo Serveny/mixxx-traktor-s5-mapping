@@ -3600,6 +3600,24 @@ var S5EffectUnit = class extends ComponentContainer {
 		engine.setValue(this.group, "show_parameters", this.focusedEffect !== null ? 1 : 0);
 	}
 };
+// src/components/start-cue.ts
+var hotcueCount = 36;
+var cueLoadDelayMillis = 200;
+var trackStartSamplePos = 2;
+var startCueColor = 16777215;
+function connectStartCues() {
+	for (const group of channels) engine.makeConnection(group, "track_loaded", (loaded) => {
+		if (!loaded) return;
+		engine.beginTimer(cueLoadDelayMillis, () => setStartCue(group), true);
+	});
+}
+function setStartCue(group) {
+	if (!engine.getValue(group, "track_loaded")) return;
+	for (let n = 1; n <= hotcueCount; n++) if (engine.getValue(group, `hotcue_${n}_status`)) return;
+	engine.setValue(group, "hotcue_1_setcue", 1);
+	engine.setValue(group, "hotcue_1_position", trackStartSamplePos);
+	engine.setValue(group, "hotcue_1_color", startCueColor);
+}
 // src/s5.ts
 var S5 = class {
 	constructor(io) {
@@ -3611,6 +3629,7 @@ var S5 = class {
 		this.mixer = new Mixer(this, io.mixer);
 		this.deckLeft = new S5Deck([1, 3], this.fxUnitLeft, this.mixer, this.reports, io.deckLeft);
 		this.deckRight = new S5Deck([2, 4], this.fxUnitRight, this.mixer, this.reports, io.deckRight);
+		connectStartCues();
 		this.deckLeft.otherSide = this.deckRight;
 		this.deckRight.otherSide = this.deckLeft;
 		const volumeMeter = [
