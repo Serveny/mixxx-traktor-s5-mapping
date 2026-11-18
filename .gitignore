@@ -10,7 +10,6 @@ lerna-debug.log*
 docs/*.pdf
 
 node_modules
-dist
 dist-ssr
 *.local
 .worktrees/

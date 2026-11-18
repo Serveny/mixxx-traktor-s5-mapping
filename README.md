@@ -6,11 +6,35 @@ Mixxx allows.
 
 ## 🎧 Usage
 
-- Copy `dist/Traktor-Kontrol-S5.js` and `mapping/Traktor Kontrol S5.hid.xml` into
-  **Preferences → Controllers → Open User Mapping Folder**
-- Connect the S5, restart Mixxx, then select _Traktor Kontrol S5_ in **Preferences → Controllers**,
-  choose the mapping and click **Enabled → Apply**.
-- Displays require a patched Mixxx: see [screens/README.md](screens/README.md).
+1. **Download** this repository: **Code → Download ZIP** on GitHub, then unzip it (or `git clone` it).
+2. **Open the mapping folder** in Mixxx: **Preferences → Controllers → Open User Mapping Folder**.
+   It is usually:
+
+   | OS      | User mapping folder                                                                       |
+   | ------- | ----------------------------------------------------------------------------------------- |
+   | Linux   | `~/.mixxx/controllers`                                                                    |
+   | macOS   | `~/Library/Containers/org.mixxx.mixxx/Data/Library/Application Support/Mixxx/controllers` |
+   | Windows | `%LOCALAPPDATA%\Mixxx\controllers`                                                        |
+
+3. **Copy these two files** into that folder, side by side (no subfolder):
+   - `dist/Traktor-Kontrol-S5.js`
+   - `mapping/Traktor Kontrol S5.hid.xml`
+4. **Connect the S5 and restart Mixxx.** In **Preferences → Controllers**, select _Traktor Kontrol S5_ in the
+   list, pick the _Traktor Kontrol S5_ mapping, tick **Enabled** and click **Apply**.
+5. Optional: the mapping's **Settings** tab (same page) has options such as keylock on SHIFT+SYNC and
+   software gain for MAIN/BOOTH/headphones.
+
+**Updating:** download again and overwrite both files, then restart Mixxx.
+
+**Displays:** the two screens need a patched Mixxx and a second mapping, see
+[screens/README.md](screens/README.md). Without it the S5 works fully, only the displays stay dark.
+
+**Troubleshooting:**
+
+- _S5 not listed (Linux):_ Mixxx needs access to the USB device. Distribution packages install the udev
+  rules; for self-built Mixxx copy `res/linux/mixxx-usb-uaccess.rules` to `/etc/udev/rules.d/` and replug.
+- _Mapping not listed:_ both files must be directly in the user mapping folder, with unchanged file names.
+- _Close Traktor_ (or any other app using the S5) before starting Mixxx.
 
 ## 🗿 Status
 
@@ -48,6 +72,9 @@ ln -s ~/.mixxx/controllers attic/mappings/controllers      # where builds get co
 npm run dev                                                # watch build; or: npm run build
 npm run start                                              # ../mixxx/build/mixxx --controller-debug --developer
 ```
+
+`dist/Traktor-Kontrol-S5.js` is committed so users can install without building: run `npm run build` and
+commit `dist/` together with every change to `src/`.
 
 `tsconfig.json` takes the Mixxx API types from `../mixxx/res/controllers`; adjust the paths if your
 checkout lives elsewhere.
