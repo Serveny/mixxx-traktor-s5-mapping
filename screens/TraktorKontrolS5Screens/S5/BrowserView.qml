@@ -1,10 +1,10 @@
-// Browser view, following S5 manual 2.1: track list with the selected entry highlighted in blue,
-// location at the top, SORT BY at the bottom left and PREVIEW at the bottom right.
-// Mixxx's QML library only offers the full track collection, so there are no playlist/folder levels.
-// The screen renders in its own thread while the library model lives in the GUI thread, and Qt aborts when
-// a view binds to a model across threads. So the rows are copied into a JS array when the browser opens.
-// Views whose delegates are created while rendering hit the same check, so the list is a fixed set of rows.
-// shortcut: library changes while the browser is open only show up when it is opened again.
+// Browser view, following S5 manual 2.1: the folders and tracks of the current library folder with the
+// selected entry highlighted in blue, the location at the top, SORT BY at the bottom left and PREVIEW at the
+// bottom right. The folders are Mixxx's library sidebar (Tracks, Playlists, Crates, Computer, History, ...);
+// opening one also opens it in Mixxx's library, like TRAKTOR's browser follows the controller.
+// The screen renders in its own thread while the library lives in the GUI thread, so Mixxx.LibraryBrowser
+// (Mixxx patch) sends plain copies, and the list is a fixed set of rows: views whose delegates are created
+// while rendering abort with a cross-thread connection error.
 import QtQuick 2.15
 
 import Mixxx 1.0 as Mixxx
@@ -20,12 +20,21 @@ Rectangle {
     property bool previewMode: false
 
     readonly property int rowHeight: 31
-    // Same order as browserSortColumns in src/components/screen-browser.ts.
-    readonly property var sortLabels: ["TITLE", "ARTIST", "BPM", "KEY"]
-    readonly property var sortKeys: ["title", "artist", "bpm", "key"]
+    // Same order as browserSortColumns in src/components/screen-browser.ts; "#" is the order in Mixxx's library.
+    readonly property var sortLabels: ["TITLE", "ARTIST", "BPM", "#", "KEY"]
+    readonly property var sortKeys: ["title", "artist", "bpm", "position", "key"]
     readonly property int visibleRows: 7
+
+    // Opened folder: child rows from the top level, and their labels.
+    property var path: []
+    property var pathLabels: []
+    property var folders: []
+    property var tracks: []
+    // Folders first, then the sorted tracks.
     property var rows: []
     property int selected: 0
+    // Row to select once the requested folder arrives; -1 keeps the selection.
+    property int pendingSelection: -1
     // First row shown, keeping the selection in the middle where possible.
     readonly property int firstRow: Math.max(0, Math.min(root.selected - Math.floor(root.visibleRows / 2),
                                                          root.rows.length - root.visibleRows))
@@ -36,8 +45,35 @@ Rectangle {
         root.selected = Math.max(0, Math.min(root.rows.length - 1, root.selected + rows))
     }
 
+    function selectedEntry() {
+        return root.rows[root.selected] ?? null
+    }
+
     function selectedUrl() {
-        return root.rows.length > 0 ? root.rows[root.selected].url : null
+        const entry = root.selectedEntry()
+        return entry && !entry.folder ? entry.url : null
+    }
+
+    // -- 🚜 S5 Docs 2.1.2: "Press the BROWSE encoder to open a folder." / "Press the BROWSE encoder to load a track."
+    function activateSelected() {
+        const entry = root.selectedEntry()
+        if (entry && entry.folder) {
+            root.openFolder(root.path.concat([root.selected]), 0)
+        } else {
+            root.loadSelected()
+        }
+    }
+
+    // -- 🚜 S5 Docs 2.1.2: "To return to the previous folder: Press the BACK button."
+    function back() {
+        if (root.path.length > 0) {
+            root.openFolder(root.path.slice(0, -1), root.path[root.path.length - 1])
+        }
+    }
+
+    function openFolder(path, selection) {
+        root.pendingSelection = selection
+        libraryBrowser.open(path)
     }
 
     function loadSelected() {
@@ -62,54 +98,56 @@ Rectangle {
         }
     }
 
-    // Plain reads only: no signal connections to the GUI-thread model.
-    function readRows() {
-        const model = sourceTree.allTracks()
-        const text = (row, column) => String(model.data(model.index(row, column), 0) ?? "")
-        const result = []
-        for (let row = 0, count = model.rowCount(); row < count; row++) {
-            result.push({
-                title: text(row, 0),
-                artist: text(row, 1),
-                bpm: Number(model.data(model.index(row, 2), 0)) || 0,
-                key: text(row, 3),
-                url: model.getUrl(row),
-            })
-        }
-        return result
-    }
-
-    function sortRows() {
+    function sortTracks() {
         const key = root.sortKeys[root.sortColumn]
         const direction = root.sortDescending ? -1 : 1
-        const compare = key === "bpm"
-            ? (a, b) => (a.bpm - b.bpm) * direction
+        const compare = typeof root.tracks[0]?.[key] === "number"
+            ? (a, b) => (a[key] - b[key]) * direction
             : (a, b) => a[key].localeCompare(b[key], undefined, { sensitivity: "base" }) * direction
-        root.rows = root.rows.slice().sort(compare)
-        root.selected = 0
+        root.tracks = root.tracks.slice().sort(compare)
     }
 
+    function updateRows() {
+        root.rows = root.folders.map(label => ({ folder: true, title: label })).concat(root.tracks)
+        if (root.pendingSelection >= 0) {
+            root.selected = root.pendingSelection
+            root.pendingSelection = -1
+        }
+        root.scroll(0)
+    }
+
+    function resort() {
+        root.sortTracks()
+        // Show the first track in the new order.
+        root.selected = root.folders.length
+        root.updateRows()
+    }
+
+    // -- 🚜 S5 Docs 2.2.3: "The Browser resumes at the last selected item."
     onVisibleChanged: {
         if (visible) {
-            root.rows = root.readRows()
-            root.sortRows()
+            root.openFolder(root.path, root.selected)
         }
     }
-    onSortColumnChanged: sortRows()
-    onSortDescendingChanged: sortRows()
+    onSortColumnChanged: resort()
+    onSortDescendingChanged: resort()
 
     Mixxx.ControlProxy { id: previewPlay; group: "[PreviewDeck1]"; key: "play" }
 
-    Mixxx.LibrarySourceTree {
-        id: sourceTree
+    Mixxx.LibraryBrowser {
+        id: libraryBrowser
 
-        // readRows() reads the columns by position.
-        defaultColumns: [
-            Mixxx.TrackListColumn { columnIdx: Mixxx.TrackListColumn.SQLColumns.Title },
-            Mixxx.TrackListColumn { columnIdx: Mixxx.TrackListColumn.SQLColumns.Artist },
-            Mixxx.TrackListColumn { columnIdx: Mixxx.TrackListColumn.SQLColumns.Bpm },
-            Mixxx.TrackListColumn { columnIdx: Mixxx.TrackListColumn.SQLColumns.Key }
-        ]
+        // Always followed by tracksChanged, which applies the pending selection.
+        onOpened: (path, labels, children) => {
+            root.path = Array.from(path)
+            root.pathLabels = Array.from(labels)
+            root.folders = Array.from(children)
+        }
+        onTracksChanged: tracks => {
+            root.tracks = Array.from(tracks, (track, index) => Object.assign({ position: index }, track))
+            root.sortTracks()
+            root.updateRows()
+        }
     }
 
     // Header: location in the library.
@@ -120,17 +158,23 @@ Rectangle {
         height: 26
         color: "#1a1a1a"
 
+        // -- 🚜 S5 Docs 2.1.2: "shows your current location in the folder structure at the top of the display,
+        // e.g. BROWSER>PLAYLIST>DEMO TRACKS". Long paths keep their end visible.
         Text {
             anchors.left: parent.left
             anchors.leftMargin: 6
+            anchors.right: counter.left
+            anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
-            text: "BROWSER > TRACKS"
+            text: ["BROWSER"].concat(root.pathLabels).join(" > ").toUpperCase()
             color: "#aaa"
             font.pixelSize: 14
             font.bold: true
+            elide: Text.ElideLeft
         }
 
         Text {
+            id: counter
             anchors.right: parent.right
             anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
@@ -154,14 +198,40 @@ Rectangle {
                 readonly property int row: root.firstRow + index
                 readonly property var entry: root.rows[row] ?? null
                 readonly property bool isSelected: entry !== null && row === root.selected
+                readonly property bool isFolder: entry?.folder ?? false
 
                 width: parent.width
                 height: root.rowHeight
                 color: isSelected ? "#2aa6ff" : (row % 2 ? "#141414" : "black")
 
-                Column {
+                // Folder symbol: a tab on top of the body.
+                Item {
+                    id: folderIcon
                     anchors.left: parent.left
                     anchors.leftMargin: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: isFolder ? 16 : 0
+                    height: 12
+                    visible: isFolder
+
+                    Rectangle {
+                        width: 7
+                        height: 3
+                        color: isSelected ? "white" : "#bbb"
+                    }
+
+                    Rectangle {
+                        y: 2
+                        width: parent.width
+                        height: parent.height - 2
+                        radius: 1
+                        color: isSelected ? "white" : "#bbb"
+                    }
+                }
+
+                Column {
+                    anchors.left: folderIcon.right
+                    anchors.leftMargin: isFolder ? 6 : 0
                     anchors.right: details.left
                     anchors.rightMargin: 6
                     anchors.verticalCenter: parent.verticalCenter
@@ -177,7 +247,8 @@ Rectangle {
 
                     Text {
                         width: parent.width
-                        text: entry ? entry.artist : ""
+                        visible: !isFolder
+                        text: entry?.artist ?? ""
                         color: isSelected ? "white" : "#999"
                         font.pixelSize: 12
                         elide: Text.ElideRight
@@ -199,7 +270,7 @@ Rectangle {
 
                     Text {
                         anchors.right: parent.right
-                        text: entry ? entry.key : ""
+                        text: entry?.key ?? ""
                         color: isSelected ? "white" : "#999"
                         font.pixelSize: 12
                     }

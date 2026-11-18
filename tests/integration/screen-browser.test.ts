@@ -23,7 +23,7 @@ describe('browser on the deck display (manual 2.1)', () => {
 		settings.autoOpenBrowserOnTouch = false;
 	});
 
-	test('BROWSE press opens the browser, turning scrolls, pressing again loads and closes it (2.1.1 / 2.1.2)', () => {
+	test('BROWSE press opens the browser, turning scrolls, pressing again opens or loads the selection (2.1.1 / 2.1.2)', () => {
 		const s5 = new S5(mapping);
 		const enc = s5.deckLeft.browserEncoder;
 
@@ -41,7 +41,24 @@ describe('browser on the deck display (manual 2.1)', () => {
 		expect(shared.leftdeck.browserScrollRequest).toBe(9);
 
 		enc.onPress(1);
-		expect(shared.leftdeck.browserLoadRequest).toBe(1);
+		expect(shared.leftdeck.browserActivateRequest).toBe(1);
+		expect(shared.leftdeck.popup).toBe('browser');
+	});
+
+	test('loading a track into the deck closes its browser (2.2.1)', () => {
+		const s5 = new S5(mapping);
+		s5.deckLeft.browserEncoder.onPress(1);
+		const trackLoaded = (group: string) =>
+			globalThis.__mixxxTestState.connections
+				.filter((c: any) => c.group === group && c.control === 'track_loaded')
+				.forEach((c: any) => c.trigger());
+
+		set('[Channel2]', 'track_loaded', 1);
+		trackLoaded('[Channel2]');
+		expect(shared.leftdeck.popup).toBe('browser');
+
+		set('[Channel1]', 'track_loaded', 1);
+		trackLoaded('[Channel1]');
 		expect(shared.leftdeck.popup).toBe('none');
 	});
 
@@ -53,10 +70,19 @@ describe('browser on the deck display (manual 2.1)', () => {
 		expect(shared.rightdeck.popup).toBe('browser');
 	});
 
-	test('BACK and VIEW close the browser without touching the Mixxx GUI library (2.1.2)', () => {
+	test('BACK goes up a folder, holding it for a second or VIEW closes the browser (2.1.2 / 4.2.2)', () => {
+		const timers = globalThis.__mixxxTestState.timers;
+		const newestTimer = () => Math.max(...timers.keys());
 		const s5 = new S5(mapping);
 		s5.deckLeft.browserEncoder.onPress(1);
 		s5.deckLeft.browserBackButton.input(1);
+		s5.deckLeft.browserBackButton.input(0);
+		expect(shared.leftdeck.browserBackRequest).toBe(1);
+		expect(shared.leftdeck.popup).toBe('browser');
+
+		s5.deckLeft.browserBackButton.input(1);
+		timers.get(newestTimer())!();
+		expect(shared.leftdeck.browserBackRequest).toBe(2);
 		expect(shared.leftdeck.popup).toBe('none');
 
 		s5.deckLeft.browserEncoder.onPress(1);
@@ -72,8 +98,9 @@ describe('browser on the deck display (manual 2.1)', () => {
 		deck.display.perfModeLeftButton.input(1);
 		expect(shared.leftdeck.browserSorting).toBe(true);
 
+		expect(shared.leftdeck.browserSortColumn).toBe(3); // "#": Mixxx's library order
 		deck.loopEncoder.onChange(false);
-		expect(shared.leftdeck.browserSortColumn).toBe(3);
+		expect(shared.leftdeck.browserSortColumn).toBe(2);
 		deck.loopEncoder.onPress(1);
 		expect(shared.leftdeck.browserSortDescending).toBe(true);
 		expect(get('[Channel1]', 'beatloop_activate')).toBe(0);

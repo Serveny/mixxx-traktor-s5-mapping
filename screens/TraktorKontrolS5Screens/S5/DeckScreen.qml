@@ -56,7 +56,8 @@ Rectangle {
         case "browserSortDescending": root.browserSortDescending = !!value; break
         case "browserPreviewMode": root.browserPreviewMode = !!value; break
         case "browserScrollRequest": browser.scroll(root.takeRequests(key, value)); break
-        case "browserLoadRequest": if (root.takeRequests(key, value) > 0) browser.loadSelected(); break
+        case "browserActivateRequest": if (root.takeRequests(key, value) > 0) browser.activateSelected(); break
+        case "browserBackRequest": if (root.takeRequests(key, value) > 0) browser.back(); break
         case "browserPreviewRequest": if (root.takeRequests(key, value) > 0) browser.previewSelected(); break
         }
     }
@@ -67,8 +68,8 @@ Rectangle {
             return
         }
         for (const key of ["group", "popup", "sliceSize", "quantizeSize", "browserSorting", "browserSortColumn",
-                "browserSortDescending", "browserPreviewMode", "browserScrollRequest", "browserLoadRequest",
-                "browserPreviewRequest"]) {
+                "browserSortDescending", "browserPreviewMode", "browserScrollRequest", "browserActivateRequest",
+                "browserBackRequest", "browserPreviewRequest"]) {
             const value = engine.getSharedValue(root.screenId, key)
             if (value !== undefined) {
                 // Counters only record a baseline here, so requests from before startup are not replayed.

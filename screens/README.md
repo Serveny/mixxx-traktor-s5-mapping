@@ -20,10 +20,13 @@ Working on hardware with Mixxx 2.7-alpha (upstream `main`):
 - The other deck on the same side (C below A, D below B) as a slim row with title, BPM and
   progress, shown when it has a track loaded (a reduced form of the manual's Split View).
 - BPM / KEY / SLICE SIZE / QUANTIZE pop-ups.
-- Browser (manual 2.1, `S5/BrowserView.qml`): BROWSE opens it, turning scrolls (SHIFT: 8 rows),
-  pressing loads; BACK/VIEW close it. SORT BY (TITLE, ARTIST, BPM, KEY) and PREVIEW via the
-  Performance Mode buttons and the LOOP encoder. Only the full track collection is listed:
-  Mixxx's QML library has no playlists/crates yet, and IMPORT DATE / # are not exposed as columns.
+- Browser (manual 2.1, `S5/BrowserView.qml`): the folder structure of Mixxx's library sidebar (Tracks,
+  Playlists, Crates, Computer, History, external libraries) with the location at the top. BROWSE opens it,
+  turning scrolls (SHIFT: 8 rows), pressing opens a folder or loads a track (which closes the browser);
+  BACK goes up a level, holding BACK for a second or VIEW closes it. It resumes at the last folder.
+  Opening a folder also opens it in Mixxx's library view (the sidebar selection does not follow).
+  SORT BY (TITLE, ARTIST, BPM, # = Mixxx's order, KEY) and PREVIEW via the Performance Mode buttons and
+  the LOOP encoder. IMPORT DATE is not available. Auto DJ's queue is not listed (Mixxx shows it in its own view).
 
 Needs Mixxx's controller shared-data API (open PR mixxxdj/mixxx#16129, see below):
 
@@ -53,7 +56,7 @@ cmake -S ../mixxx -B ../mixxx/build -DLLD_SUPPORT=OFF   # add -DQGLES2=ON for GL
 cmake --build ../mixxx/build --target mixxx -j "$(nproc)"
 ```
 
-What the branch changes, to apply by hand on another Mixxx checkout. Patches 1 and 4 alone are enough
+What the branch changes, to apply by hand on another Mixxx checkout. Patches 1, 4 and 5 alone are enough
 for the deck views (decks A/B, no deck switching, pop-ups or browser); patch 3 adds the rest:
 
 1. `src/controllers/bulk/bulksupported.h`: register the S5:
@@ -80,6 +83,11 @@ for the deck views (decks A/B, no deck switching, pop-ups or browser); patch 3 a
    [`ab9051aa83`](https://github.com/Serveny/mixxx/commit/ab9051aa83) and
    [`d4c236e3b3`](https://github.com/Serveny/mixxx/commit/d4c236e3b3) on the branch). Without them, the screens fail
    to load because `DeckScreen.qml` sets these properties.
+
+5. `Mixxx.LibraryBrowser` for the display browser: new `src/qml/qmllibrarybrowser.{h,cpp}` (added to
+   `CMakeLists.txt` next to `qmllibrarysource.cpp`) and `Library::sidebarModel()` in `src/library/library.h`.
+   It opens Mixxx's library sidebar items in the GUI thread and sends their children and tracks to the screen
+   as plain values. Without it, the screens fail to load because `BrowserView.qml` uses it.
 
 If the log shows `ControllerRenderingEngine - GLError after glReadPixels: 1282`, build Mixxx with GLES:
 

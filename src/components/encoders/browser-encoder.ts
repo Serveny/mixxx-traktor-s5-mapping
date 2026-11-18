@@ -148,7 +148,7 @@ export class BrowserEncoder extends TouchEncoder<'[Library]'> {
 		}
 
 		if (this.deck.display.activePopup === 'browser') {
-			this.deck.browser.load();
+			this.deck.browser.activate();
 			return;
 		}
 

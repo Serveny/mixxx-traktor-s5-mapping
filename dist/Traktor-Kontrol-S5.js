@@ -1848,7 +1848,7 @@ var BrowserEncoder = class extends TouchEncoder {
 			return;
 		}
 		if (this.deck.display.activePopup === "browser") {
-			this.deck.browser.load();
+			this.deck.browser.activate();
 			return;
 		}
 		if (this.deck.browser.enabled) {
@@ -1890,7 +1890,12 @@ var BrowserBackButton = class extends PushButton {
 		if (!pressed) return;
 		const browser = this.display.deck.browser;
 		if (browser.enabled) {
-			browser.close();
+			if (!browser.isOpen) return;
+			browser.back();
+			this.exitTimer = engine.beginTimer(1e3, () => {
+				this.exitTimer = 0;
+				browser.close();
+			}, true);
 			return;
 		}
 		this.exitTimer = engine.beginTimer(1e3, () => {
@@ -3188,22 +3193,28 @@ var browserSortColumns = [
 	"TITLE",
 	"ARTIST",
 	"BPM",
+	"#",
 	"KEY"
 ];
+var defaultSortColumn = browserSortColumns.indexOf("#");
 var fastScrollRows = 8;
 var touchCloseDelayMillis = 3e3;
 var ScreenBrowser = class {
 	constructor(deck) {
 		this.deck = deck;
 		this.scrollRequest = 0;
-		this.loadRequest = 0;
+		this.activateRequest = 0;
+		this.backRequest = 0;
 		this.previewRequest = 0;
 		this.isSorting = false;
-		this.sortColumn = 0;
+		this.sortColumn = defaultSortColumn;
 		this.sortDescending = false;
 		this.isPreviewMode = false;
 		this.openedByTouch = false;
 		this.closeTimer = 0;
+		for (const group of channels) engine.makeConnection(group, "track_loaded", (loaded) => {
+			if (loaded && group === this.deck.group) this.close();
+		});
 	}
 	get enabled() {
 		return hasScreenApi();
@@ -3234,10 +3245,15 @@ var ScreenBrowser = class {
 		this.keepOpen();
 		this.deck.publishScreenState();
 	}
-	load() {
-		this.loadRequest++;
+	activate() {
+		this.activateRequest++;
+		this.keepOpen();
 		this.deck.publishScreenState();
-		this.close();
+	}
+	back() {
+		this.backRequest++;
+		this.keepOpen();
+		this.deck.publishScreenState();
 	}
 	touch(touched) {
 		if (!settings.autoOpenBrowserOnTouch) return;
@@ -3392,7 +3408,8 @@ var S5Deck = class extends Deck {
 			sliceSize: this.sliceSizePresets[this.sliceSizeIndex],
 			quantizeSize: this.quantizeSizes[this.quantizeSizeIndex],
 			browserScrollRequest: this.browser.scrollRequest,
-			browserLoadRequest: this.browser.loadRequest,
+			browserActivateRequest: this.browser.activateRequest,
+			browserBackRequest: this.browser.backRequest,
 			browserPreviewRequest: this.browser.previewRequest,
 			browserSorting: this.browser.isSorting,
 			browserSortColumn: this.browser.sortColumn,

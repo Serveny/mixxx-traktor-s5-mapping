@@ -10,7 +10,8 @@ export type ScreenState = {
 	quantizeSize: number;
 	// Display browser (manual 2.1). The *Request values are counters: the screen acts once per increment.
 	browserScrollRequest: number;
-	browserLoadRequest: number;
+	browserActivateRequest: number;
+	browserBackRequest: number;
 	browserPreviewRequest: number;
 	browserSorting: boolean;
 	browserSortColumn: number;

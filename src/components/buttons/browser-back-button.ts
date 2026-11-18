@@ -29,9 +29,18 @@ export class BrowserBackButton extends PushButton {
 		if (!pressed) return;
 		const browser = this.display.deck.browser;
 		if (browser.enabled) {
-			// -- 🚜 S5 Docs 2.1.2: "To return to the previous folder: Press the BACK button."
-			// The display browser has no folder levels (Mixxx's QML library only offers all tracks), so BACK closes it.
-			browser.close();
+			if (!browser.isOpen) return;
+			// -- 🚜 S5 Docs 4.2.2: "the BACK button lets you navigate a level up in the folder structure, up to
+			// the Browser's top level. Pressing the BACK button for longer than a second lets you exit the Browser."
+			browser.back();
+			this.exitTimer = engine.beginTimer(
+				1000,
+				() => {
+					this.exitTimer = 0;
+					browser.close();
+				},
+				true
+			);
 			return;
 		}
 		// -- 🚜 S5 Docs 4.2.2: "Pressing the BACK button for longer than a second lets you exit the Browser."

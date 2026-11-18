@@ -66,10 +66,11 @@ Work in progress, but usable for DJing:
   the displays stay on decks A/B without pop-ups or browser; with it applied everything works.
 - **Waveform options for controller screens** (in the branch below, not upstream yet): the display
   waveform ignores the EQ knobs and is normalized to the track's peak; without it the screens don't load.
-- **Library access for controller screens** (no PR yet; related:
+- **Library access for controller screens** (in the branch below, no PR yet; related:
   [mixxxdj/mixxx#4594](https://github.com/mixxxdj/mixxx/pull/4594)): Mixxx's QML library offers only the
-  full track collection and is not thread-safe from controller screens, so the display browser has no
-  playlists/crates and reads the track list when it opens.
+  full track collection and is not thread-safe from controller screens. The branch adds
+  `Mixxx.LibraryBrowser`, which lets the display browser walk the library sidebar (playlists, crates, folders,
+  history) like TRAKTOR's browser; without it the screens don't load.
 
 All of these patches are combined on the branch
 [`Serveny/mixxx@s5-display-screens`](https://github.com/Serveny/mixxx/tree/s5-display-screens);

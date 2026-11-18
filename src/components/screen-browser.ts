@@ -1,11 +1,13 @@
-import { settings } from '../settings';
+import { channels, settings } from '../settings';
 import { hasScreenApi } from '../screen-state';
 import { popupNames } from './display-area';
 import type { S5Deck } from './s5-deck';
 
 // -- 🚜 S5 Docs 2.1.5: "TITLE, ARTIST, BPM, IMPORT DATE, #, and KEY".
-// Mixxx's QML library model only exposes these columns; the order must match the sort columns in DeckScreen.qml.
-const browserSortColumns = ['TITLE', 'ARTIST', 'BPM', 'KEY'] as const;
+// Mixxx has no import date for every folder; "#" is the order in Mixxx's library (playlist order).
+// The order must match the sort columns in BrowserView.qml.
+const browserSortColumns = ['TITLE', 'ARTIST', 'BPM', '#', 'KEY'] as const;
+const defaultSortColumn = browserSortColumns.indexOf('#');
 
 // Rows moved per detent while SHIFT is held.
 const fastScrollRows = 8;
@@ -13,20 +15,29 @@ const fastScrollRows = 8;
 const touchCloseDelayMillis = 3000;
 
 // -- 🚜 S5 Docs 2.1: the Browser on the deck display.
-// The track list lives in the screen QML (Mixxx's track library model); the mapping owns
-// the open/close state and sends scroll, load, preview and sort requests through the screen state.
+// The folders and tracks live in the screen QML (Mixxx's library sidebar); the mapping owns the
+// open/close state and sends scroll, open/load, back, preview and sort requests through the screen state.
 export class ScreenBrowser {
 	scrollRequest = 0;
-	loadRequest = 0;
+	activateRequest = 0;
+	backRequest = 0;
 	previewRequest = 0;
 	isSorting = false;
-	sortColumn = 0;
+	sortColumn = defaultSortColumn;
 	sortDescending = false;
 	isPreviewMode = false;
 	private openedByTouch = false;
 	private closeTimer = 0;
 
-	constructor(private deck: S5Deck) {}
+	constructor(private deck: S5Deck) {
+		// -- 🚜 S5 Docs 2.2.1: after loading "Its waveform and info appear in the display."
+		// Only the screen knows whether BROWSE opened a folder or loaded a track, so a load closes the browser.
+		for (const group of channels) {
+			engine.makeConnection(group, 'track_loaded', (loaded) => {
+				if (loaded && group === this.deck.group) this.close();
+			});
+		}
+	}
 
 	// Without the shared-data API the screens can't show a browser; the mapping falls back to the Mixxx GUI library.
 	get enabled() {
@@ -67,11 +78,18 @@ export class ScreenBrowser {
 		this.deck.publishScreenState();
 	}
 
-	// -- 🚜 S5 Docs 2.1.2: "Press the BROWSE encoder to load a track."
-	load() {
-		this.loadRequest++;
+	// -- 🚜 S5 Docs 2.1.2: "Press the BROWSE encoder to open a folder." / "Press the BROWSE encoder to load a track."
+	activate() {
+		this.activateRequest++;
+		this.keepOpen();
 		this.deck.publishScreenState();
-		this.close();
+	}
+
+	// -- 🚜 S5 Docs 2.1.2: "To return to the previous folder: Press the BACK button."
+	back() {
+		this.backRequest++;
+		this.keepOpen();
+		this.deck.publishScreenState();
 	}
 
 	// -- 🚜 S5 Docs 2.1.3: with "Auto Open Browser on Touch", touching opens the Browser;
