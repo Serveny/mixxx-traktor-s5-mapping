@@ -12,10 +12,10 @@ Working on hardware with Mixxx 2.7-alpha (upstream `main`):
   title, artist, loop size (circle, green while a loop is active), key (Open Key, highlighted with
   keylock), remaining/elapsed time (red in the last 30 s), BPM, MASTER/SYNC/tempo deviation and deck
   letter; the rest of the screen is the waveform.
-- Scrolling waveform in TRAKTOR-like blue tones (zoom with Display Buttons 3/4), loop range, beat grid,
-  cue mark, red play head. Normalized to the track's peak and unaffected by EQ knobs and pregain
-  (Mixxx patch 4).
-- Normalized overview waveform with play position and hotcue markers.
+- Scrolling waveform in TRAKTOR-like blue tones (zoom with Display Buttons 3/4), beat grid, cue mark,
+  red play head. Normalized to the track's peak and unaffected by EQ knobs and pregain. An active loop
+  turns the waveform green on a dark green background, with green ▲ markers at loop in/out (Mixxx patch 4).
+- Normalized overview waveform with play position, hotcue markers and green ▲ loop in/out markers.
 - Stem decks (manual 3.8): one box per stem in the stem colour, filled to the stem volume, dimmed when muted.
 - The other deck on the same side (C below A, D below B) as a slim row with title, BPM and
   progress, shown when it has a track loaded (a reduced form of the manual's Split View).
@@ -75,9 +75,11 @@ for the deck views (decks A/B, no deck switching, pop-ups or browser); patch 3 a
      otherwise the per-controller namespace objects end up without a parent and crash on first use.
    - `src/test/controllershareddata_test.cpp`: add `#include <QElapsedTimer>` to build the tests.
 
-4. Waveform `ignoreEq` / `normalized` properties for the QML signal renderers (commit
-   [`ab9051aa83`](https://github.com/Serveny/mixxx/commit/ab9051aa83) on the branch). Without it, the
-   screens fail to load because `DeckScreen.qml` sets these properties.
+4. Waveform `ignoreEq` / `normalized` properties for the QML signal renderers and loop colors
+   (`loopLowColor` / `loopMidColor` / `loopHighColor`) for the RGB renderer (commits
+   [`ab9051aa83`](https://github.com/Serveny/mixxx/commit/ab9051aa83) and
+   [`d4c236e3b3`](https://github.com/Serveny/mixxx/commit/d4c236e3b3) on the branch). Without them, the screens fail
+   to load because `DeckScreen.qml` sets these properties.
 
 If the log shows `ControllerRenderingEngine - GLError after glReadPixels: 1282`, build Mixxx with GLES:
 

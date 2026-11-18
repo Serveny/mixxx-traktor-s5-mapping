@@ -95,6 +95,8 @@ Rectangle {
     Mixxx.ControlProxy { id: syncLeader; group: root.group; key: "sync_leader" }
     Mixxx.ControlProxy { id: loopSize; group: root.group; key: "beatloop_size" }
     Mixxx.ControlProxy { id: loopEnabled; group: root.group; key: "loop_enabled" }
+    Mixxx.ControlProxy { id: loopStart; group: root.group; key: "loop_start_position" }
+    Mixxx.ControlProxy { id: loopEnd; group: root.group; key: "loop_end_position" }
     Mixxx.ControlProxy { id: playPosition; group: root.group; key: "playposition" }
     Mixxx.ControlProxy { id: duration; group: root.group; key: "duration" }
     Mixxx.ControlProxy { id: trackLoaded; group: root.group; key: "track_loaded" }
@@ -266,10 +268,11 @@ Rectangle {
                     startControl: "loop_start_position"
                     endControl: "loop_end_position"
                     enabledControl: "loop_enabled"
+                    // Dark green background tint for an active loop, nothing for an inactive one.
                     color: "#00b400"
-                    opacity: 0.5
-                    disabledColor: "#ffffff"
-                    disabledOpacity: 0.2
+                    opacity: 0.3
+                    disabledColor: "transparent"
+                    disabledOpacity: 0
                 }
             }
 
@@ -283,6 +286,10 @@ Rectangle {
                 lowColor: "#1c4c9c"
                 midColor: "#3c8ce0"
                 highColor: "#b4e8ff"
+                // Green inside an active loop, like TRAKTOR (local Mixxx patch).
+                loopLowColor: "#1c7c1c"
+                loopMidColor: "#3cc83c"
+                loopHighColor: "#c0ffc0"
                 gainAll: 1.0
                 gainLow: 1.0
                 gainMid: 1.0
@@ -301,6 +308,23 @@ Rectangle {
                     color: "#ff8000"
                     textColor: "#ffffff"
                     text: " %1 "
+                }
+
+                // Loop in/out: green line with a triangle at the bottom.
+                Mixxx.WaveformMark {
+                    control: "loop_start_position"
+                    text: "▲"
+                    align: "bottom|center"
+                    color: "#00e000"
+                    textColor: "#00e000"
+                }
+
+                Mixxx.WaveformMark {
+                    control: "loop_end_position"
+                    text: "▲"
+                    align: "bottom|center"
+                    color: "#00e000"
+                    textColor: "#00e000"
                 }
 
                 Mixxx.WaveformMark {
@@ -423,6 +447,24 @@ Rectangle {
                         height: parent.height
                         color: `#${Math.max(0, cueColor.value).toString(16).padStart(6, "0")}`
                     }
+                }
+            }
+
+            // Loop in/out as green triangles at the bottom.
+            Repeater {
+                model: 2
+
+                Text {
+                    required property int index
+                    readonly property real position: index === 0 ? loopStart.value : loopEnd.value
+
+                    visible: loopEnabled.value > 0 && position >= 0 && samples.value > 0
+                    x: parent.width * position / samples.value - width / 2
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: -4
+                    text: "▲"
+                    color: "#00e000"
+                    font.pixelSize: 12
                 }
             }
 
