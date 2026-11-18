@@ -31,3 +31,24 @@ function setStartCue(group: MixxxChannelGroup) {
 	engine.setValue(group, 'hotcue_1_position', trackStartSamplePos);
 	engine.setValue(group, 'hotcue_1_color', startCueColor);
 }
+
+// Keeps the automatic start cue on the grid's first beat after a beatgrid edit, so it marks the
+// corrected start. Only a white hotcue 1 within the first two beats counts as the start cue; any
+// other hotcue 1 is the user's and stays put. Assumes a constant-tempo grid (Mixxx's default).
+// Mixxx updates beat_closest synchronously when the grid changes, so this can run right after the edit.
+export function moveStartCueToFirstBeat(group: MixxxChannelGroup) {
+	const bpm = engine.getValue(group, 'file_bpm');
+	const sampleRate = engine.getValue(group, 'track_samplerate');
+	const closestBeat = engine.getValue(group, 'beat_closest');
+	if (bpm <= 0 || sampleRate <= 0 || closestBeat < 0) return;
+	if (!engine.getValue(group, 'hotcue_1_status')) return;
+	if (engine.getValue(group, 'hotcue_1_color') !== startCueColor) return;
+
+	// Engine sample positions count both stereo channels.
+	const beatLength = (60 / bpm) * sampleRate * 2;
+	if (engine.getValue(group, 'hotcue_1_position') >= 2 * beatLength) return;
+
+	const firstBeat = ((closestBeat % beatLength) + beatLength) % beatLength;
+	const firstFrame = Math.round(firstBeat / 2) * 2;
+	engine.setValue(group, 'hotcue_1_position', Math.max(firstFrame, trackStartSamplePos));
+}

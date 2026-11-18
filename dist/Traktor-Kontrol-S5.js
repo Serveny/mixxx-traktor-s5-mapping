@@ -2392,6 +2392,37 @@ var PerformanceRightButton = class extends Button {
 		}
 	}
 };
+// src/components/start-cue.ts
+var hotcueCount = 36;
+var cueLoadDelayMillis = 200;
+var trackStartSamplePos = 2;
+var startCueColor = 16777215;
+function connectStartCues() {
+	for (const group of channels) engine.makeConnection(group, "track_loaded", (loaded) => {
+		if (!loaded) return;
+		engine.beginTimer(cueLoadDelayMillis, () => setStartCue(group), true);
+	});
+}
+function setStartCue(group) {
+	if (!engine.getValue(group, "track_loaded")) return;
+	for (let n = 1; n <= hotcueCount; n++) if (engine.getValue(group, `hotcue_${n}_status`)) return;
+	engine.setValue(group, "hotcue_1_setcue", 1);
+	engine.setValue(group, "hotcue_1_position", trackStartSamplePos);
+	engine.setValue(group, "hotcue_1_color", startCueColor);
+}
+function moveStartCueToFirstBeat(group) {
+	const bpm = engine.getValue(group, "file_bpm");
+	const sampleRate = engine.getValue(group, "track_samplerate");
+	const closestBeat = engine.getValue(group, "beat_closest");
+	if (bpm <= 0 || sampleRate <= 0 || closestBeat < 0) return;
+	if (!engine.getValue(group, "hotcue_1_status")) return;
+	if (engine.getValue(group, "hotcue_1_color") !== startCueColor) return;
+	const beatLength = 60 / bpm * sampleRate * 2;
+	if (engine.getValue(group, "hotcue_1_position") >= 2 * beatLength) return;
+	const firstBeat = (closestBeat % beatLength + beatLength) % beatLength;
+	const firstFrame = Math.round(firstBeat / 2) * 2;
+	engine.setValue(group, "hotcue_1_position", Math.max(firstFrame, trackStartSamplePos));
+}
 // src/components/beatgrid-mode.ts
 var beatgridParams = [
 	"offset",
@@ -2422,17 +2453,26 @@ var BeatgridMode = class {
 			case "fine":
 				engine.setValue(group, up ? "beats_adjust_faster" : "beats_adjust_slower", 1);
 				break;
-			case "scan": engine.setValue(group, up ? "beatjump_4_forward" : "beatjump_4_backward", 1);
+			case "scan":
+				engine.setValue(group, up ? "beatjump_4_forward" : "beatjump_4_backward", 1);
+				return;
 		}
+		moveStartCueToFirstBeat(group);
 	}
 	lock() {
 		script.toggleControl(this.deck.group, "bpmlock");
 	}
 	tap() {
 		engine.setValue(this.deck.group, "bpm_tap", 1);
+		moveStartCueToFirstBeat(this.deck.group);
+	}
+	alignToPlayhead() {
+		engine.setValue(this.deck.group, "beats_translate_curpos", 1);
+		moveStartCueToFirstBeat(this.deck.group);
 	}
 	reset() {
 		engine.setValue(this.deck.group, "beats_undo_adjustment", 1);
+		moveStartCueToFirstBeat(this.deck.group);
 	}
 };
 // src/components/display-area.ts
@@ -2548,6 +2588,7 @@ var PopupButton = class extends SingleColorOutMixin(InMixin(Component)) {
 		if (this.display.activePopup === popupNames.beatgrid) {
 			if (this.popup === popupNames.bpm && !this.display.deck.isShifted) this.display.beatgrid.lock();
 			else if (this.popup === popupNames.bpm) this.display.closePopup();
+			else this.display.beatgrid.alignToPlayhead();
 			return;
 		}
 		if (this.popup === popupNames.bpm && this.display.deck.isShifted) {
@@ -3600,24 +3641,6 @@ var S5EffectUnit = class extends ComponentContainer {
 		engine.setValue(this.group, "show_parameters", this.focusedEffect !== null ? 1 : 0);
 	}
 };
-// src/components/start-cue.ts
-var hotcueCount = 36;
-var cueLoadDelayMillis = 200;
-var trackStartSamplePos = 2;
-var startCueColor = 16777215;
-function connectStartCues() {
-	for (const group of channels) engine.makeConnection(group, "track_loaded", (loaded) => {
-		if (!loaded) return;
-		engine.beginTimer(cueLoadDelayMillis, () => setStartCue(group), true);
-	});
-}
-function setStartCue(group) {
-	if (!engine.getValue(group, "track_loaded")) return;
-	for (let n = 1; n <= hotcueCount; n++) if (engine.getValue(group, `hotcue_${n}_status`)) return;
-	engine.setValue(group, "hotcue_1_setcue", 1);
-	engine.setValue(group, "hotcue_1_position", trackStartSamplePos);
-	engine.setValue(group, "hotcue_1_color", startCueColor);
-}
 // src/s5.ts
 var S5 = class {
 	constructor(io) {

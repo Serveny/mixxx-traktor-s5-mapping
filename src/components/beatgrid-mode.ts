@@ -1,11 +1,13 @@
 import type { S5Deck } from './s5-deck';
+import { moveStartCueToFirstBeat } from './start-cue';
 
 const beatgridParams = ['offset', 'bpm', 'fine', 'scan'] as const;
 export type BeatgridParam = (typeof beatgridParams)[number];
 
 // -- 🚜 S5 Docs 3.9.2 / 3.9.3: Beatgrid mode (SHIFT + Display Button 1).
 // Performance Mode buttons select OFFSET, BPM, FINE or SCAN; the LOOP encoder adjusts it.
-// Display Button 1 = LOCK, 3 = TAP, 4 = RST. The audible Tick (Display Button 2) has no Mixxx equivalent.
+// Display Button 1 = LOCK, 3 = TAP, 4 = RST. The audible Tick (Display Button 2) has no Mixxx equivalent,
+// so that button snaps the nearest beat to the playhead instead.
 export class BeatgridMode {
 	param: BeatgridParam = 'offset';
 
@@ -35,8 +37,9 @@ export class BeatgridMode {
 				break;
 			case 'scan':
 				engine.setValue(group, up ? 'beatjump_4_forward' : 'beatjump_4_backward', 1);
-				break;
+				return;
 		}
+		moveStartCueToFirstBeat(group);
 	}
 
 	lock() {
@@ -45,9 +48,16 @@ export class BeatgridMode {
 
 	tap() {
 		engine.setValue(this.deck.group, 'bpm_tap', 1);
+		moveStartCueToFirstBeat(this.deck.group);
+	}
+
+	alignToPlayhead() {
+		engine.setValue(this.deck.group, 'beats_translate_curpos', 1);
+		moveStartCueToFirstBeat(this.deck.group);
 	}
 
 	reset() {
 		engine.setValue(this.deck.group, 'beats_undo_adjustment', 1);
+		moveStartCueToFirstBeat(this.deck.group);
 	}
 }

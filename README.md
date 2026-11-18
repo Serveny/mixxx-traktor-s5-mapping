@@ -36,6 +36,17 @@ Mixxx allows.
 - _Mapping not listed:_ both files must be directly in the user mapping folder, with unchanged file names.
 - _Close Traktor_ (or any other app using the S5) before starting Mixxx.
 
+## ➕ Differences from TRAKTOR
+
+Additions that are not in the S5 manual:
+
+- **Beatgrid: grid to playhead.** In beatgrid mode (SHIFT + Display Button 1), Display Button 2 moves the
+  grid so the nearest beat sits on the playhead. Stop on the first downbeat and press it to fix a grid
+  whose start is off. TRAKTOR's Tick, which this button does there, has no Mixxx equivalent.
+- **Start cue follows the grid.** After any beatgrid edit (OFFSET, BPM, FINE, TAP, RST, grid to playhead),
+  the white start cue on pad 1 moves to the grid's first beat. A hotcue 1 you set yourself (another color,
+  or further into the track) stays where it is.
+
 ## 🗿 Status
 
 Work in progress, but usable for DJing:

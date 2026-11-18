@@ -202,9 +202,11 @@ class PopupButton extends SingleColorOutMixin(InMixin(Component)) {
 			return;
 		}
 		if (this.display.activePopup === popupNames.beatgrid) {
-			// -- 🚜 S5 Docs 3.9.3: "Press Display Button 1 (LOCK)." Display Button 2 (Tick) is not available.
+			// -- 🚜 S5 Docs 3.9.3: "Press Display Button 1 (LOCK)." Display Button 2 (Tick) is not
+			// available in Mixxx, so it moves the grid so the nearest beat sits on the playhead.
 			if (this.popup === popupNames.bpm && !this.display.deck.isShifted) this.display.beatgrid.lock();
 			else if (this.popup === popupNames.bpm) this.display.closePopup();
+			else this.display.beatgrid.alignToPlayhead();
 			return;
 		}
 		if (this.popup === popupNames.bpm && this.display.deck.isShifted) {
