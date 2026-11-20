@@ -24,6 +24,7 @@ Rectangle {
     readonly property color accent: deckLetter === "C" || deckLetter === "D" ? "#e6e6e6" : "#2aa6ff"
     readonly property int deckNumber: parseInt(root.group.replace(/\D/g, ""))
     readonly property string deckLetter: "ABCD"[root.deckNumber - 1] || "?"
+    readonly property bool stemDeck: trackLoaded.value > 0 && stemCount.value > 0 && !!root.track
     // The other deck on this side (A<->C, B<->D), shown small like the manual's Split View (2.6).
     readonly property string secondaryGroup: `[Channel${root.deckNumber > 2 ? root.deckNumber - 2 : root.deckNumber + 2}]`
 
@@ -250,147 +251,124 @@ Rectangle {
         }
 
         // Scrolling waveform, zoomed with Display Buttons 3/4 (manual 2.6).
-        MixxxControls.WaveformDisplay {
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.topMargin: 3
-            group: root.group
-            zoom: zoomControl.value
-            backgroundColor: "#000000"
 
-            Mixxx.WaveformRendererEndOfTrack {
-                color: "#d00000"
-                endOfTrackWarningTime: 30
-            }
+            MixxxControls.WaveformDisplay {
+                id: waveform
+                anchors.fill: parent
+                group: root.group
+                zoom: zoomControl.value
+                backgroundColor: "#000000"
 
-            Mixxx.WaveformRendererMarkRange {
-                Mixxx.WaveformMarkRange {
-                    startControl: "loop_start_position"
-                    endControl: "loop_end_position"
-                    enabledControl: "loop_enabled"
-                    // Dark green background tint for an active loop, nothing for an inactive one.
-                    color: "#00b400"
-                    opacity: 0.3
-                    disabledColor: "transparent"
-                    disabledOpacity: 0
+                Mixxx.WaveformRendererEndOfTrack {
+                    color: "#d00000"
+                    endOfTrackWarningTime: 30
+                }
+
+                Mixxx.WaveformRendererMarkRange {
+                    Mixxx.WaveformMarkRange {
+                        startControl: "loop_start_position"
+                        endControl: "loop_end_position"
+                        enabledControl: "loop_enabled"
+                        // Dark green background tint for an active loop, nothing for an inactive one.
+                        color: "#00b400"
+                        opacity: 0.3
+                        disabledColor: "transparent"
+                        disabledOpacity: 0
+                    }
+                }
+
+                // Blue tones like TRAKTOR. ignoreEq and normalized (local Mixxx patch) keep the EQ knobs and
+                // pregain out of the drawing, so e.g. a bassline stays visible while its EQ is turned down,
+                // and scale the track's loudest peak to the full height.
+                // Mixxx scales each column to full brightness, so only the hue ratios count: lows are a deep,
+                // saturated blue and only the highs mix in white, which keeps lows and highs apart.
+                Mixxx.WaveformRendererRGB {
+                    ignoreEq: true
+                    normalized: true
+                    axesColor: "#00ffffff"
+                    lowColor: "#0020a0"
+                    midColor: "#1048b0"
+                    highColor: "#78b8f0"
+                    // Green inside an active loop, like TRAKTOR (local Mixxx patch).
+                    loopLowColor: "#1c7c1c"
+                    loopMidColor: "#3cc83c"
+                    loopHighColor: "#c0ffc0"
+                    gainAll: 1.0
+                    gainLow: 1.0
+                    gainMid: 1.0
+                    gainHigh: 1.0
+                }
+
+                // Stem decks (manual 3.8): one lane per stem in its colour, like TRAKTOR. The RGB renderer
+                // skips stem tracks by itself. The dim outline keeps a muted or turned-down stem's shape visible.
+                Mixxx.WaveformRendererStem {
+                    splitStemTracks: true
+                    reorderOnChange: false
+                    // Single stems are much quieter than the mix; the renderer clamps each stem to its lane.
+                    gainAll: 4.0
+                    opacity: 1.0
+                    outlineOpacity: 0.25
+                }
+
+                Mixxx.WaveformRendererBeat {
+                    color: "#808080"
+                }
+
+                Mixxx.WaveformRendererMark {
+                    playMarkerColor: "#ff2020"
+                    playMarkerBackground: "transparent"
+                    defaultMark: Mixxx.WaveformMark {
+                        align: "top|right"
+                        color: "#ff8000"
+                        textColor: "#ffffff"
+                        text: " %1 "
+                    }
+
+                    // Loop in/out: green line with a triangle at the bottom.
+                    Mixxx.WaveformMark {
+                        control: "loop_start_position"
+                        text: "▲"
+                        align: "bottom|center"
+                        color: "#00e000"
+                        textColor: "#00e000"
+                    }
+
+                    Mixxx.WaveformMark {
+                        control: "loop_end_position"
+                        text: "▲"
+                        align: "bottom|center"
+                        color: "#00e000"
+                        textColor: "#00e000"
+                    }
+
+                    Mixxx.WaveformMark {
+                        control: "cue_point"
+                        text: "C"
+                        align: "top|right"
+                        color: "#ff8000"
+                        textColor: "#ffffff"
+                    }
                 }
             }
 
-            // Blue tones like TRAKTOR. ignoreEq and normalized (local Mixxx patch) keep the EQ knobs and
-            // pregain out of the drawing, so e.g. a bassline stays visible while its EQ is turned down,
-            // and scale the track's loudest peak to the full height.
-            // Mixxx scales each column to full brightness, so only the hue ratios count: lows are a deep,
-            // saturated blue and only the highs mix in white, which keeps lows and highs apart.
-            Mixxx.WaveformRendererRGB {
-                ignoreEq: true
-                normalized: true
-                axesColor: "#00ffffff"
-                lowColor: "#0020a0"
-                midColor: "#1048b0"
-                highColor: "#78b8f0"
-                // Green inside an active loop, like TRAKTOR (local Mixxx patch).
-                loopLowColor: "#1c7c1c"
-                loopMidColor: "#3cc83c"
-                loopHighColor: "#c0ffc0"
-                gainAll: 1.0
-                gainLow: 1.0
-                gainMid: 1.0
-                gainHigh: 1.0
-            }
-
-            Mixxx.WaveformRendererBeat {
-                color: "#808080"
-            }
-
-            Mixxx.WaveformRendererMark {
-                playMarkerColor: "#ff2020"
-                playMarkerBackground: "transparent"
-                defaultMark: Mixxx.WaveformMark {
-                    align: "top|right"
-                    color: "#ff8000"
-                    textColor: "#ffffff"
-                    text: " %1 "
-                }
-
-                // Loop in/out: green line with a triangle at the bottom.
-                Mixxx.WaveformMark {
-                    control: "loop_start_position"
-                    text: "▲"
-                    align: "bottom|center"
-                    color: "#00e000"
-                    textColor: "#00e000"
-                }
-
-                Mixxx.WaveformMark {
-                    control: "loop_end_position"
-                    text: "▲"
-                    align: "bottom|center"
-                    color: "#00e000"
-                    textColor: "#00e000"
-                }
-
-                Mixxx.WaveformMark {
-                    control: "cue_point"
-                    text: "C"
-                    align: "top|right"
-                    color: "#ff8000"
-                    textColor: "#ffffff"
-                }
-            }
-        }
-
-        // Stem Deck: one box per stem with volume and mute (manual 3.8).
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 30
-            Layout.leftMargin: 4
-            Layout.rightMargin: 4
-            Layout.topMargin: 4
-            visible: trackLoaded.value && stemCount.value > 0
-            spacing: 4
-
+            // Stem colour bars at both edges of each stem lane (the stem renderer splits the height in four).
             Repeater {
-                model: root.track && stemCount.value > 0 ? root.track.stemsModel : 0
+                model: root.stemDeck ? root.track.stemsModel : 0
 
                 Item {
-                    id: stem
-
                     required property int index
-                    required property string label
                     required property color color
-                    readonly property string stemGroup: `${root.group.slice(0, -1)}_Stem${stem.index + 1}]`
 
-                    Mixxx.ControlProxy { id: stemVolume; group: stem.stemGroup; key: "volume" }
-                    Mixxx.ControlProxy { id: stemMute; group: stem.stemGroup; key: "mute" }
+                    y: waveform.height * index / 4 + 1
+                    width: waveform.width
+                    height: waveform.height / 4 - 2
 
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    opacity: stemMute.value ? 0.35 : 1
-
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: 3
-                        color: "#262626"
-                    }
-
-                    Rectangle {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        width: parent.width * stemVolume.value
-                        radius: 3
-                        color: stem.color
-                    }
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: stemMute.value ? `${stem.label} (M)` : stem.label
-                        color: "white"
-                        style: Text.Outline
-                        styleColor: "black"
-                        font.pixelSize: 13
-                        font.bold: true
-                    }
+                    Rectangle { width: 4; height: parent.height; color: parent.color }
+                    Rectangle { anchors.right: parent.right; width: 4; height: parent.height; color: parent.color }
                 }
             }
         }
@@ -475,6 +453,63 @@ Rectangle {
                 width: 2
                 height: parent.height
                 color: "#ff2020"
+            }
+        }
+
+        // Stem names in their colours with the stem volume below, like TRAKTOR's stem deck (manual 3.8).
+        RowLayout {
+            Layout.fillWidth: true
+            // Nested layouts fill by default; leave the free height to the waveform.
+            Layout.fillHeight: false
+            Layout.preferredHeight: 20
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
+            Layout.bottomMargin: 2
+            visible: root.stemDeck
+            spacing: 6
+
+            Repeater {
+                model: root.stemDeck ? root.track.stemsModel : 0
+
+                Item {
+                    id: stem
+
+                    required property int index
+                    required property string label
+                    required property color color
+                    readonly property string stemGroup: `${root.group.slice(0, -1)}_Stem${stem.index + 1}]`
+
+                    Mixxx.ControlProxy { id: stemVolume; group: stem.stemGroup; key: "volume" }
+                    Mixxx.ControlProxy { id: stemMute; group: stem.stemGroup; key: "mute" }
+
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    opacity: stemMute.value ? 0.35 : 1
+
+                    Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width
+                        horizontalAlignment: Text.AlignHCenter
+                        text: stem.label.toUpperCase()
+                        color: stem.color
+                        font.pixelSize: 12
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        width: parent.width
+                        height: 3
+                        color: "#333"
+
+                        Rectangle {
+                            width: parent.width * stemVolume.value
+                            height: parent.height
+                            color: "white"
+                        }
+                    }
+                }
             }
         }
     }

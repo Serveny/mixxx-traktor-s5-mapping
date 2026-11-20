@@ -16,7 +16,9 @@ Working on hardware with Mixxx 2.7-alpha (upstream `main`):
   red play head. Normalized to the track's peak and unaffected by EQ knobs and pregain. An active loop
   turns the waveform green on a dark green background, with green ▲ markers at loop in/out (Mixxx patch 4).
 - Normalized overview waveform with play position, hotcue markers and green ▲ loop in/out markers.
-- Stem decks (manual 3.8): one box per stem in the stem colour, filled to the stem volume, dimmed when muted.
+- Stem decks (manual 3.8): like TRAKTOR, the waveform splits into one lane per stem in the stem colour
+  (scaled by stem volume, muted stems leave a dim outline), with colour bars at the lane edges and the
+  stem names with volume bars below the overview.
 - The other deck on the same side (C below A, D below B) as a slim row with title, BPM and
   progress, shown when it has a track loaded (a reduced form of the manual's Split View).
 - BPM / KEY / SLICE SIZE / QUANTIZE pop-ups.
