@@ -88,7 +88,8 @@ for the deck views (decks A/B, no deck switching, pop-ups or browser); patch 3 a
 5. `Mixxx.LibraryBrowser` for the display browser: new `src/qml/qmllibrarybrowser.{h,cpp}` (added to
    `CMakeLists.txt` next to `qmllibrarysource.cpp`) and `Library::sidebarModel()` in `src/library/library.h`.
    It opens Mixxx's library sidebar items in the GUI thread and sends their children and tracks (with key id,
-   played flag and artwork URL) to the screen as plain values (commit [`166d59ac14`](https://github.com/Serveny/mixxx/commit/166d59ac14) on the branch).
+   played flag and artwork URL) to the screen as plain values (commits [`166d59ac14`](https://github.com/Serveny/mixxx/commit/166d59ac14)
+   and [`c5501f6ebc`](https://github.com/Serveny/mixxx/commit/c5501f6ebc) on the branch).
    Without it, the screens fail to load because `BrowserView.qml` uses it.
 
 If the log shows `ControllerRenderingEngine - GLError after glReadPixels: 1282`, build Mixxx with GLES:
