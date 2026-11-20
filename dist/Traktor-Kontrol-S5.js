@@ -2723,6 +2723,7 @@ var PadButton = class extends RgbOutMixin(ShiftMixin(ControlInMixin(ControlOutMi
 		this.isActive = false;
 		this.isPressed = false;
 		this.fluxJumped = false;
+		this.heldActivateKey = null;
 		if (number < 1 || number > 32) throw Error("HotcueButton must have a number property of an integer between 1 and 32");
 		this.colorComp = new ColorComponent(number === 1 ? RgbColor.white() : RgbColor.blue(), this);
 		this.updateBindings();
@@ -2748,6 +2749,10 @@ var PadButton = class extends RgbOutMixin(ShiftMixin(ControlInMixin(ControlOutMi
 		}
 		this.colorComp.colorOutput(this.isActive, this.isPressed);
 		if (!pressed) {
+			if (this.heldActivateKey) {
+				engine.setValue(this.group, this.heldActivateKey, 0);
+				this.heldActivateKey = null;
+			}
 			if (this.fluxJumped) {
 				this.fluxJumped = false;
 				engine.setValue(this.group, "slip_enabled", 0);
@@ -2762,6 +2767,7 @@ var PadButton = class extends RgbOutMixin(ShiftMixin(ControlInMixin(ControlOutMi
 			return;
 		}
 		engine.setValue(this.group, this.inKey, 1);
+		if (!this.isShifted) this.heldActivateKey = this.inKey;
 		this.fluxJumped = !this.isShifted && engine.getValue(this.group, "slip_enabled") !== 0;
 	}
 	output(isActive) {

@@ -58,4 +58,19 @@ describe('hotcue pages', () => {
 			1
 		);
 	});
+
+	// Traktor: a HotCue on a paused deck plays while held and jumps back on release; Mixxx needs the release.
+	test('releasing a pad releases the hotcue it activated', () => {
+		const s5 = new S5(mapping);
+
+		s5.deckLeft.pads[2].input(1);
+		s5.deckLeft.hotcueModeButton.onShortPress();
+		s5.deckLeft.pads[2].input(0);
+
+		expect(globalThis.engine.setValue).toHaveBeenCalledWith(
+			'[Channel1]',
+			'hotcue_3_activate',
+			0
+		);
+	});
 });

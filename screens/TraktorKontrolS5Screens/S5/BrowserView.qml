@@ -9,6 +9,8 @@ import QtQuick 2.15
 
 import Mixxx 1.0 as Mixxx
 
+import "Keys.js" as Keys
+
 Rectangle {
     id: root
 
@@ -124,9 +126,17 @@ Rectangle {
     }
 
     // -- 🚜 S5 Docs 2.2.3: "The Browser resumes at the last selected item."
+    // TRAKTOR has a single browser, so both displays share its location: the closing display stores it
+    // and the opening one resumes there. Only one display shows the browser at a time (manual 2.1).
     onVisibleChanged: {
+        const shared = typeof engine.getSharedValue === "function"
         if (visible) {
-            root.openFolder(root.path, root.selected)
+            const path = shared ? engine.getSharedValue("browser", "path") : undefined
+            const selected = shared ? engine.getSharedValue("browser", "selected") : undefined
+            root.openFolder(path ? Array.from(path) : root.path, selected ?? root.selected)
+        } else if (shared) {
+            engine.setSharedValue("browser", "path", root.path)
+            engine.setSharedValue("browser", "selected", root.selected)
         }
     }
     onSortColumnChanged: resort()
@@ -268,11 +278,26 @@ Rectangle {
                         font.pixelSize: 14
                     }
 
+                    // Open Key like the deck view, in TRAKTOR's key colors; unknown keys keep Mixxx's text.
                     Text {
+                        readonly property color keyColor: Keys.color(entry?.keyId) ?? "#999"
+
                         anchors.right: parent.right
-                        text: entry?.key ?? ""
-                        color: isSelected ? "white" : "#999"
+                        text: Keys.openKey(entry?.keyId) || (entry?.key ?? "")
+                        color: isSelected ? "white" : keyColor
                         font.pixelSize: 12
+                        font.bold: true
+
+                        // The blue selection bar would swallow the blue keys, so the color moves to a badge.
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: -1
+                            z: -1
+                            radius: 2
+                            visible: isSelected && parent.text !== ""
+                            color: "black"
+                            border.color: parent.keyColor
+                        }
                     }
                 }
             }

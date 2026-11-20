@@ -83,6 +83,8 @@ export class PadButton extends RgbOutMixin(
 	}
 
 	private fluxJumped = false;
+	// The hotcue_X_activate control a press triggered; its release ends Mixxx's hold-to-play preview.
+	private heldActivateKey: MixxxControls.CtrlRW<MixxxChannelGroup> | null = null;
 
 	input(pressed: number) {
 		this.isPressed = pressed !== 0;
@@ -92,6 +94,13 @@ export class PadButton extends RgbOutMixin(
 		}
 		this.colorComp.colorOutput(this.isActive, this.isPressed);
 		if (!pressed) {
+			if (this.heldActivateKey) {
+				// Traktor: on a paused deck a HotCue plays only while held, then jumps back and stays paused.
+				// Mixxx's hotcue_X_activate does the same, but only when it also gets the release; without
+				// it the deck keeps playing in preview state and ignores further hotcue presses.
+				engine.setValue(this.group, this.heldActivateKey, 0);
+				this.heldActivateKey = null;
+			}
 			if (this.fluxJumped) {
 				// -- 🚜 S5 Docs 3.4:
 				// "When you let go, playback resumes at the second Playhead's position."
@@ -115,6 +124,7 @@ export class PadButton extends RgbOutMixin(
 			return;
 		}
 		engine.setValue(this.group, this.inKey, 1);
+		if (!this.isShifted) this.heldActivateKey = this.inKey;
 		this.fluxJumped =
 			!this.isShifted && engine.getValue(this.group, 'slip_enabled') !== 0;
 	}

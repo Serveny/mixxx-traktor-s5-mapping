@@ -6,6 +6,8 @@ import QtQuick.Layouts 1.3
 import Mixxx 1.0 as Mixxx
 import Mixxx.Controls 1.0 as MixxxControls
 
+import "Keys.js" as Keys
+
 Rectangle {
     id: root
 
@@ -24,9 +26,6 @@ Rectangle {
     readonly property string deckLetter: "ABCD"[root.deckNumber - 1] || "?"
     // The other deck on this side (A<->C, B<->D), shown small like the manual's Split View (2.6).
     readonly property string secondaryGroup: `[Channel${root.deckNumber > 2 ? root.deckNumber - 2 : root.deckNumber + 2}]`
-    // Mixxx key enum order, shown in Open Key notation like Traktor.
-    readonly property var openKeys: ["", "1d", "8d", "3d", "10d", "5d", "12d", "7d", "2d", "9d", "4d", "11d", "6d",
-        "10m", "5m", "12m", "7m", "2m", "9m", "4m", "11m", "6m", "1m", "8m", "3m"]
 
     color: "black"
 
@@ -177,7 +176,7 @@ Rectangle {
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: root.openKeys[keyControl.value] || ""
+                    text: Keys.openKey(keyControl.value)
                     color: keylock.value ? "black" : "#aaa"
                     font.pixelSize: 11
                     font.bold: true
@@ -280,13 +279,15 @@ Rectangle {
             // Blue tones like TRAKTOR. ignoreEq and normalized (local Mixxx patch) keep the EQ knobs and
             // pregain out of the drawing, so e.g. a bassline stays visible while its EQ is turned down,
             // and scale the track's loudest peak to the full height.
+            // Mixxx scales each column to full brightness, so only the hue ratios count: lows are a deep,
+            // saturated blue and only the highs mix in white, which keeps lows and highs apart.
             Mixxx.WaveformRendererRGB {
                 ignoreEq: true
                 normalized: true
                 axesColor: "#00ffffff"
-                lowColor: "#1c4c9c"
-                midColor: "#3c8ce0"
-                highColor: "#b4e8ff"
+                lowColor: "#0020a0"
+                midColor: "#1048b0"
+                highColor: "#78b8f0"
                 // Green inside an active loop, like TRAKTOR (local Mixxx patch).
                 loopLowColor: "#1c7c1c"
                 loopMidColor: "#3cc83c"
@@ -414,9 +415,9 @@ Rectangle {
                 anchors.fill: parent
                 track: root.track
                 normalized: true
-                colorLow: "#1c4c9c"
-                colorMid: "#3c8ce0"
-                colorHigh: "#b4e8ff"
+                colorLow: "#0020a0"
+                colorMid: "#1048b0"
+                colorHigh: "#78b8f0"
             }
 
             Rectangle {
@@ -507,7 +508,7 @@ Rectangle {
                     switch (root.popup) {
                     case "bpm":
                     case "beatgrid": return bpm.value.toFixed(2)
-                    case "key": return `${root.openKeys[keyControl.value] || "-"}${keylock.value ? " 🔒" : ""}`
+                    case "key": return `${Keys.openKey(keyControl.value) || "-"}${keylock.value ? " 🔒" : ""}`
                     case "sliceSize": return root.formatBeats(root.sliceSize)
                     case "quantize": return quantize.value ? root.formatBeats(root.quantizeSize) : "OFF"
                     }
