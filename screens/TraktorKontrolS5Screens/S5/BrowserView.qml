@@ -26,6 +26,11 @@ Rectangle {
     readonly property var sortLabels: ["TITLE", "ARTIST", "BPM", "#", "KEY"]
     readonly property var sortKeys: ["title", "artist", "bpm", "position", "key"]
     readonly property int visibleRows: 7
+    readonly property var deckPlayers: ["[Channel1]", "[Channel2]", "[Channel3]", "[Channel4]"]
+        .map(group => Mixxx.PlayerManager.getPlayer(group))
+    // URL of the track on each deck (A-D), "" when empty.
+    readonly property var deckUrls: root.deckPlayers
+        .map(player => player && player.currentTrack ? String(player.currentTrack.trackLocationUrl) : "")
 
     // Opened folder: child rows from the top level, and their labels.
     property var path: []
@@ -100,12 +105,19 @@ Rectangle {
         }
     }
 
+    function compareValues(a, b) {
+        return typeof a === "number" ? a - b : a.localeCompare(b, undefined, { sensitivity: "base" })
+    }
+
+    // Ties (many tracks share a BPM or key) are ordered by title, artist and URL, not by Mixxx's library order:
+    // that order changes while Mixxx's library view applies its own sorting, which would reshuffle the list.
     function sortTracks() {
         const key = root.sortKeys[root.sortColumn]
         const direction = root.sortDescending ? -1 : 1
-        const compare = typeof root.tracks[0]?.[key] === "number"
-            ? (a, b) => (a[key] - b[key]) * direction
-            : (a, b) => a[key].localeCompare(b[key], undefined, { sensitivity: "base" }) * direction
+        const compare = (a, b) => root.compareValues(a[key], b[key]) * direction
+            || root.compareValues(a.title, b.title)
+            || root.compareValues(a.artist, b.artist)
+            || root.compareValues(a.urlText, b.urlText)
         root.tracks = root.tracks.slice().sort(compare)
     }
 
@@ -154,9 +166,33 @@ Rectangle {
             root.folders = Array.from(children)
         }
         onTracksChanged: tracks => {
-            root.tracks = Array.from(tracks, (track, index) => Object.assign({ position: index }, track))
+            root.tracks = Array.from(tracks,
+                (track, index) => Object.assign({ position: index, urlText: String(track.url) }, track))
             root.sortTracks()
             root.updateRows()
+        }
+    }
+
+    // Letter of a deck the track is loaded on, in the deck view's colors (A/B blue, C/D white).
+    component DeckBadge: Rectangle {
+        required property string letter
+        required property string decks
+        required property bool highlighted
+
+        anchors.verticalCenter: parent.verticalCenter
+        visible: decks.includes(letter)
+        width: 16
+        height: 16
+        radius: 2
+        color: letter === "A" || letter === "B" ? "#2aa6ff" : "#e6e6e6"
+        border.color: highlighted ? "white" : "transparent"
+
+        Text {
+            anchors.centerIn: parent
+            text: parent.letter
+            color: "black"
+            font.pixelSize: 12
+            font.bold: true
         }
     }
 
@@ -209,6 +245,10 @@ Rectangle {
                 readonly property var entry: root.rows[row] ?? null
                 readonly property bool isSelected: entry !== null && row === root.selected
                 readonly property bool isFolder: entry?.folder ?? false
+                // Like TRAKTOR, tracks that are loaded or were already played are marked, so they aren't picked twice.
+                readonly property string loadedDecks: isFolder || !entry ? ""
+                    : root.deckUrls.map((url, deck) => url === entry.urlText ? "ABCD"[deck] : "").join("")
+                readonly property bool isPlayed: !isFolder && (entry?.played ?? false)
 
                 width: parent.width
                 height: root.rowHeight
@@ -239,17 +279,38 @@ Rectangle {
                     }
                 }
 
+                // Artwork, with a dark square when the track has none.
+                Rectangle {
+                    id: artwork
+                    anchors.left: parent.left
+                    anchors.leftMargin: 2
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: entry && !isFolder ? root.rowHeight - 4 : 0
+                    height: width
+                    visible: width > 0
+                    color: "#262626"
+
+                    Image {
+                        anchors.fill: parent
+                        source: parent.visible ? entry.coverArtUrl : ""
+                        sourceSize.width: parent.width
+                        sourceSize.height: parent.height
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                    }
+                }
+
                 Column {
-                    anchors.left: folderIcon.right
-                    anchors.leftMargin: isFolder ? 6 : 0
-                    anchors.right: details.left
+                    anchors.left: isFolder ? folderIcon.right : artwork.right
+                    anchors.leftMargin: 6
+                    anchors.right: markers.left
                     anchors.rightMargin: 6
                     anchors.verticalCenter: parent.verticalCenter
 
                     Text {
                         width: parent.width
                         text: entry ? entry.title : ""
-                        color: "white"
+                        color: isPlayed && !isSelected ? "#888" : "white"
                         font.pixelSize: 15
                         font.bold: true
                         elide: Text.ElideRight
@@ -262,6 +323,29 @@ Rectangle {
                         color: isSelected ? "white" : "#999"
                         font.pixelSize: 12
                         elide: Text.ElideRight
+                    }
+                }
+
+                // Deck letters of the decks the track is loaded on, then a check mark once it was played.
+                Row {
+                    id: markers
+                    anchors.right: details.left
+                    anchors.rightMargin: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 3
+
+                    DeckBadge { letter: "A"; decks: loadedDecks; highlighted: isSelected }
+                    DeckBadge { letter: "B"; decks: loadedDecks; highlighted: isSelected }
+                    DeckBadge { letter: "C"; decks: loadedDecks; highlighted: isSelected }
+                    DeckBadge { letter: "D"; decks: loadedDecks; highlighted: isSelected }
+
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: isPlayed
+                        text: "✓"
+                        color: isSelected ? "white" : "#5ad25a"
+                        font.pixelSize: 16
+                        font.bold: true
                     }
                 }
 

@@ -26,7 +26,8 @@ Working on hardware with Mixxx 2.7-alpha (upstream `main`):
   BACK goes up a level, holding BACK for a second or VIEW closes it. It resumes at the last folder.
   Opening a folder also opens it in Mixxx's library view (the sidebar selection does not follow).
   SORT BY (TITLE, ARTIST, BPM, # = Mixxx's order, KEY) and PREVIEW via the Performance Mode buttons and
-  the LOOP encoder. IMPORT DATE is not available. Auto DJ's queue is not listed (Mixxx shows it in its own view).
+  the LOOP encoder. IMPORT DATE is not available. Each track row shows its artwork, the letters of the decks
+  it is loaded on and a check mark (and a grey title) once it was played in this Mixxx session. Auto DJ's queue is not listed (Mixxx shows it in its own view).
 
 Needs Mixxx's controller shared-data API (open PR mixxxdj/mixxx#16129, see below):
 
@@ -86,8 +87,8 @@ for the deck views (decks A/B, no deck switching, pop-ups or browser); patch 3 a
 
 5. `Mixxx.LibraryBrowser` for the display browser: new `src/qml/qmllibrarybrowser.{h,cpp}` (added to
    `CMakeLists.txt` next to `qmllibrarysource.cpp`) and `Library::sidebarModel()` in `src/library/library.h`.
-   It opens Mixxx's library sidebar items in the GUI thread and sends their children and tracks to the screen
-   as plain values (commit [`166d59ac14`](https://github.com/Serveny/mixxx/commit/166d59ac14) on the branch).
+   It opens Mixxx's library sidebar items in the GUI thread and sends their children and tracks (with key id,
+   played flag and artwork URL) to the screen as plain values (commit [`166d59ac14`](https://github.com/Serveny/mixxx/commit/166d59ac14) on the branch).
    Without it, the screens fail to load because `BrowserView.qml` uses it.
 
 If the log shows `ControllerRenderingEngine - GLError after glReadPixels: 1282`, build Mixxx with GLES:
